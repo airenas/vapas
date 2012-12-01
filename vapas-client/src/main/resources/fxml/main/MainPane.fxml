@@ -17,6 +17,7 @@
         <Button mnemonicParsing="false" prefHeight="41.0" onAction="#showPrekes" prefWidth="275.0" text="Prekės/vaistai" />
         <Button mnemonicParsing="false" onAction="#showMatavimoVienetai" prefHeight="41.0" prefWidth="275.0" text="Matavimo vienetai" />
         <Button mnemonicParsing="false" onAction="#showTiekejai" prefHeight="41.0" prefWidth="275.0" text="Tiekėjai" />
+        <Button mnemonicParsing="false" onAction="#showImones" prefHeight="41.0" prefWidth="275.0" text="Įmonės" />
       </children>
     </VBox>
   </children>

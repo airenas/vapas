@@ -14,7 +14,8 @@
            http://www.springframework.org/schema/data/jpa
                http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
                http://www.springframework.org/schema/tx
-               http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+               http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
+       default-lazy-init="true">
     <bean id="myFactoryBean"
           class="com.aireno.vapas.gui.MainAppFactory"/>
 
@@ -58,6 +59,16 @@
         <constructor-arg type="java.lang.String" value="/fxml/tiekejai/Tiekejai.fxml" />
     </bean>
 
+    <bean id="ImonesListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/imones/ImonesList.fxml" />
+    </bean>
+
+    <bean id="ImonesPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/imones/Imones.fxml" />
+    </bean>
+
     <bean id="MatavimoVienetaiListReq"
           class="com.aireno.vapas.service.matavimoVienetai.MatavimoVienetaiListPr"/>
     <bean id="MatavimoVienetasSaveReq"
@@ -69,6 +80,8 @@
           class="com.aireno.vapas.service.prekes.PrekeServiceImpl"/>
     <bean id="TiekejasService"
           class="com.aireno.vapas.service.tiekejai.TiekejasServiceImpl"/>
+    <bean id="ImoneService"
+          class="com.aireno.vapas.service.imones.ImoneServiceImpl"/>
 
 
     <!-- Database Setup -->

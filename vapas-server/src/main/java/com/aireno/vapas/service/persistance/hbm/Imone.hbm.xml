@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!--
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.aireno.vapas.service.persistance">
+
+    <class name="Imone" table="Imones">
+        <id name="id" column="Id">
+            <generator class="increment"/>
+        </id>
+        <property name="pavadinimas" type="string" length="100" not-null="true" unique="true"/>
+        <property name="telefonas" type="string" length="50" not-null="false" unique="false"/>
+        <property name="adresas" type="string" length="500" not-null="false" unique="false"/>
+        <property name="pastaba" type="string" length="5000" not-null="false" unique="false"/>
+    </class>
+
+</hibernate-mapping>

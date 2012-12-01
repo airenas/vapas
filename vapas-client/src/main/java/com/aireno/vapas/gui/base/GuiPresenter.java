@@ -11,7 +11,7 @@ import javafx.scene.Node;
  */
 public interface GuiPresenter {
     Node getView();
-    boolean init();
+    boolean init() throws GuiException;
     Node getButtonView();
     void from(GuiPresenter currentPresenter);
 

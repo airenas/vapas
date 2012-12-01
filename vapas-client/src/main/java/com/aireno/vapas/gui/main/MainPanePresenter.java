@@ -19,7 +19,7 @@ public class MainPanePresenter implements GuiPresenter
 
     @Override
     public boolean init() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return true;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void showMatavimoVienetai() {
@@ -37,6 +37,13 @@ public class MainPanePresenter implements GuiPresenter
         mainPresenter.show(Constants.PREKESLIST_PRESENTER);
     }
 
+    public void showImones() {
+        MainPresenter mainPresenter = getMainPresenter();
+        mainPresenter.show(Constants.IMONESLIST_PRESENTER);
+    }
+
+
+
     public Node getButtonView() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -51,4 +58,7 @@ public class MainPanePresenter implements GuiPresenter
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    public MainPresenter getMainPresenter() {
+        return ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
+    }
 }

@@ -34,6 +34,7 @@
         <mapping resource="com/aireno/vapas/service/persistance/hbm/Preke.hbm.xml"/>
         <mapping resource="com/aireno/vapas/service/persistance/hbm/PrekeList.hbm.xml"/>
         <mapping resource="com/aireno/vapas/service/persistance/hbm/Tiekejas.hbm.xml"/>
+        <mapping resource="com/aireno/vapas/service/persistance/hbm/Imone.hbm.xml"/>
 
     </session-factory>
 

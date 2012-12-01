@@ -31,4 +31,15 @@ create table Tiekejai (
         primary key (Id),
         unique (pavadinimas)
     );
+
+    --drop table prekes
+create table Imones (
+        Id bigint not null,
+        pavadinimas varchar(100) not null,
+        telefonas varchar(50) not null,
+        adresas varchar(200) not null,
+        pastaba varchar(5000) null,
+        primary key (Id),
+        unique (pavadinimas)
+    );
  

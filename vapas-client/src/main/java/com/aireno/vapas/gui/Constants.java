@@ -15,4 +15,6 @@ public class Constants {
     public static final String TIEKEJAI_PRESENTER = "TiekejaiPresenter";
     public static final String PREKESLIST_PRESENTER = "PrekesListPresenter";
     public static final String PREKES_PRESENTER = "PrekesPresenter";
+    public static final String IMONESLIST_PRESENTER = "ImonesListPresenter";
+    public static final String IMONES_PRESENTER = "ImonesPresenter";
 }
