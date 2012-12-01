@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" prefHeight="552.0" prefWidth="981.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.main.MainPresenter">
+  <!-- Header -->
+  <!-- Content Area -->
+  <left>
+    <BorderPane fx:id="dataArea" prefHeight="552.0" prefWidth="847.0">
+      <top>
+        <Pane prefHeight="30.0" prefWidth="835.0">
+          <children>
+            <Label fx:id="topLabel" alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="117.0" layoutY="8.0" text="Viršus" />
+          </children>
+        </Pane>
+      </top>
+    </BorderPane>
+  </left>
+  <right>
+    <BorderPane fx:id="buttonArea" minWidth="100.0" prefHeight="552.0" prefWidth="100.0" BorderPane.alignment="TOP_CENTER">
+      <top>
+        <VBox alignment="CENTER" prefHeight="81.0" prefWidth="146.0">
+          <children>
+            <Button mnemonicParsing="false" onAction="#showMain" text="Pagrindinis" />
+          </children>
+        </VBox>
+      </top>
+    </BorderPane>
+  </right>
+</BorderPane>

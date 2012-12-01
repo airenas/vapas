@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:data="http://www.springframework.org/schema/data/jpa"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/data/jpa
+               http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+               http://www.springframework.org/schema/tx
+               http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+    <bean id="myFactoryBean"
+          class="com.aireno.vapas.gui.MainAppFactory"/>
+
+    <bean id="MainPresenter" factory-bean="myFactoryBean"
+          factory-method="mainPresenter">
+
+    </bean>
+
+    <bean id="MainPanePresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/main/MainPane.fxml" />
+    </bean>
+
+    <bean id="MatavimoVienetaiListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/matavimoVienetai/MatavimoVienetaiList.fxml" />
+    </bean>
+
+    <bean id="MatavimoVienetaiPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/matavimoVienetai/MatavimoVienetai.fxml" />
+    </bean>
+
+    <bean id="PrekesListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/prekes/prekesList.fxml" />
+    </bean>
+
+    <bean id="PrekesPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/prekes/prekes.fxml" />
+    </bean>
+
+    <bean id="TiekejaiListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/tiekejai/TiekejaiList.fxml" />
+    </bean>
+
+    <bean id="TiekejaiPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/tiekejai/Tiekejai.fxml" />
+    </bean>
+
+    <bean id="MatavimoVienetaiListReq"
+          class="com.aireno.vapas.service.matavimoVienetai.MatavimoVienetaiListPr"/>
+    <bean id="MatavimoVienetasSaveReq"
+          class="com.aireno.vapas.service.matavimoVienetai.MatavimoVienetasSavePr"/>
+    <bean id="MatavimoVienetasGautiReq"
+          class="com.aireno.vapas.service.matavimoVienetai.MatavimoVienetasGautiPr"/>
+
+    <bean id="PrekeService"
+          class="com.aireno.vapas.service.prekes.PrekeServiceImpl"/>
+    <bean id="TiekejasService"
+          class="com.aireno.vapas.service.tiekejai.TiekejasServiceImpl"/>
+
+
+    <!-- Database Setup -->
+
+    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">-->
+        <!--<property name="persistenceUnitName" value="vapas" />-->
+    <!--</bean>-->
+
+    <!--<data:repositories base-package="com.aireno.vapas.service.repository"/>-->
+
+    <!-- Transaction Setup -->
+
+    <!--<tx:annotation-driven/>-->
+
+    <!--<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">-->
+        <!--<property name="entityManagerFactory" ref="entityManagerFactory"/>-->
+    <!--</bean>-->
+
+</beans>

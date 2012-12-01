@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!--
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.aireno.vapas.service.persistance">
+
+    <class name="Preke" table="Prekes">
+        <id name="id" column="Id">
+            <generator class="increment"/>
+        </id>
+
+        <property name="pavadinimas" type="string" length="100" not-null="true" unique="true"/>
+        <property name="matVienetasId" type="long" not-null="true"/>
+        <property name="pastaba" type="string" length="5000" not-null="false" unique="false"/>
+    </class>
+
+</hibernate-mapping>

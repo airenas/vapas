@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.tiekejai.TiekejaiPresenter">
+  <center>
+    <AnchorPane fx:id="root" prefHeight="200.0" prefWidth="200.0">
+      <children>
+        <Label layoutX="29.0" layoutY="76.0" text="Adresas" />
+        <Label layoutX="29.0" layoutY="27.0" text="Pavadinimas" />
+         <TextField fx:id="pavadinimas" layoutY="24.0" prefWidth="302.0" AnchorPane.leftAnchor="111.5" AnchorPane.rightAnchor="86.5" />
+
+        <TextField id="kodas" fx:id="adresas" layoutY="73.0" prefWidth="302.0" AnchorPane.leftAnchor="112.5" AnchorPane.rightAnchor="85.5" />
+       <Label layoutX="29.0" layoutY="132.0" text="Telefonas" />
+        <TextField id="kodas" fx:id="telefonas" layoutY="129.0" prefWidth="302.0" AnchorPane.leftAnchor="111.5" AnchorPane.rightAnchor="86.5" />
+        <Label layoutX="29.0" layoutY="180.0" text="Pastabos" />
+        <TextArea fx:id="pastaba" prefHeight="194.0" prefWidth="303.0" wrapText="true" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="180.0" />
+      </children>
+    </AnchorPane>
+  </center>
+  <right>
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+      <children>
+        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
+        <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />
+      </children>
+    </VBox>
+  </right>
+</BorderPane>

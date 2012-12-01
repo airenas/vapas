@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.aireno</groupId>
+        <artifactId>vapas</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <groupId>com.aireno</groupId>
+    <artifactId>vapas-server</artifactId>
+    <name>Vapas Server</name>
+
+    <packaging>jar</packaging>
+    <version>1.0</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.aireno</groupId>
+            <artifactId>vapas-common</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- Spring Web MVC -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>3.0.6.RELEASE</version>
+        </dependency>
+
+        <!-- Spring data -->
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>1.0.2.RELEASE</version>
+        </dependency>
+
+        <!-- JPA -->
+
+        <dependency>
+            <groupId>org.hibernate.java-persistence</groupId>
+            <artifactId>jpa-api</artifactId>
+            <version>2.0-cr-1</version>
+        </dependency>
+
+        <!-- Hibernate -->
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.6.8.Final</version>
+        </dependency>
+
+        <!-- HSQL DB -->
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+        </dependency>
+
+        <!-- Injection framework -->
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>hibernate3-maven-plugin</artifactId>
+                <version>2.2</version>
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>process-classes</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>hbm2ddl</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <configuration>
+                    <componentProperties>
+                        <jdk5>true</jdk5>
+                        <packagename>com.aireno.vapas.service.persistance</packagename>
+                        <!--<propertyfile>src/main/resources/database.properties</propertyfile>-->
+                        <configurationfile>hibernate.cfg.xml</configurationfile>
+                        <!-- Tells the plugin to send the output to a file -->
+                        <outputfilename>schema.sql</outputfilename>
+                        <!-- Pretty Format SQL Code -->
+                        <format>true</format>
+                        <!-- Do not create tables automatically - other plug-ins will handle that -->
+                        <export>true</export>
+                        <!-- Do not print the DDL to the console -->
+                        <console>true</console>
+                    </componentProperties>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>hsqldb</groupId>
+                        <artifactId>hsqldb</artifactId>
+                        <version>1.8.0.10</version>
+                    </dependency>
+                </dependencies>
+
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
