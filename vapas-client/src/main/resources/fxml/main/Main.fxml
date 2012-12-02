@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.util.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="root" prefHeight="552.0" prefWidth="981.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.main.MainPresenter">
-  <!-- Header -->
-  <!-- Content Area -->
-  <left>
-    <BorderPane fx:id="dataArea" prefHeight="552.0" prefWidth="847.0">
-      <top>
-        <Pane prefHeight="30.0" prefWidth="835.0">
+<AnchorPane id="AnchorPane" fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="623.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.main.MainPresenter">
+  <children>
+    <AnchorPane id="buttonArea" prefHeight="450.0" prefWidth="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <AnchorPane fx:id="buttonArea" prefHeight="393.9999000000025" prefWidth="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="56.0" />
+        <Button layoutX="9.0" layoutY="23.0" mnemonicParsing="false" onAction="#showMain" text="Pagrindinis" />
+      </children>
+    </AnchorPane>
+    <AnchorPane prefHeight="450.0" prefWidth="527.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="96.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <AnchorPane prefHeight="42.0" prefWidth="524.0" AnchorPane.bottomAnchor="408.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <children>
-            <Label fx:id="topLabel" alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="117.0" layoutY="8.0" text="Viršus" />
+            <Label fx:id="topLabel" layoutX="21.0" layoutY="14.0" text="" />
           </children>
-        </Pane>
-      </top>
-    </BorderPane>
-  </left>
-  <right>
-    <BorderPane fx:id="buttonArea" minWidth="100.0" prefHeight="552.0" prefWidth="100.0" BorderPane.alignment="TOP_CENTER">
-      <top>
-        <VBox alignment="CENTER" prefHeight="81.0" prefWidth="146.0">
+        </AnchorPane>
+        <AnchorPane fx:id="dataArea" prefHeight="408.0" prefWidth="527.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="42.0">
           <children>
-            <Button mnemonicParsing="false" onAction="#showMain" text="Pagrindinis" />
+            <TableView prefHeight="408.0" prefWidth="527.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="Column X" />
+                <TableColumn prefWidth="75.0" text="Column X" />
+              </columns>
+            </TableView>
           </children>
-        </VBox>
-      </top>
-    </BorderPane>
-  </right>
-</BorderPane>
+        </AnchorPane>
+      </children>
+    </AnchorPane>
+  </children>
+</AnchorPane>

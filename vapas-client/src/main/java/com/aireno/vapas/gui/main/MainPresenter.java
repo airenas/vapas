@@ -1,7 +1,7 @@
 package com.aireno.vapas.gui.main;
 
-import com.aireno.vapas.gui.Constants;
 import com.aireno.base.ApplicationContextProvider;
+import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.GuiException;
 import com.aireno.vapas.gui.base.GuiPresenter;
 import com.aireno.vapas.gui.base.PresenterBase;
@@ -10,20 +10,24 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import org.springframework.beans.BeansException;
 
-public class MainPresenter extends PresenterBase
-{
-    @FXML private Parent root;
-    @FXML private BorderPane dataArea;
-    @FXML private BorderPane buttonArea;
-    @FXML private Label topLabel;
+public class MainPresenter extends PresenterBase {
+    @FXML
+    private Parent root;
+    @FXML
+    private AnchorPane dataArea;
+    @FXML
+    private AnchorPane buttonArea;
+    @FXML
+    private Label topLabel;
 
     GuiPresenter currentPresenter;
+    private Stage stage;
 
-    public Parent getView()
-    {
+    public Parent getView() {
         return root;
     }
 
@@ -51,20 +55,30 @@ public class MainPresenter extends PresenterBase
 
     public void show(GuiPresenter presenter) {
         try {
-           if (!presenter.init())
-               return;
+            if (!presenter.init())
+                return;
         } catch (GuiException e) {
             this.setError(e.getErrorOn(), e);
             return;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             this.setError("Klaida:", e);
             return;
         }
         //presenter.from(currentPresenter);
-        dataArea.setCenter(presenter.getView());
-        buttonArea.setCenter(presenter.getButtonView());
+        Node node = presenter.getView();
+        dataArea.getChildren().clear();
+        dataArea.getChildren().add(node);
+        AnchorPane.setTopAnchor(node, 10.0);
+        AnchorPane.setLeftAnchor(node, 10.0);
+        AnchorPane.setRightAnchor(node, 0.0);
+        AnchorPane.setBottomAnchor(node, 0.0);
+
+        buttonArea.getChildren().clear();
+        if (presenter.getButtonView() != null)
+            buttonArea.getChildren().add(presenter.getButtonView());
+        //buttonArea.setCenter(presenter.getButtonView());
         currentPresenter = presenter;
+        setTitle(presenter.getTitle());
     }
 
     public void showMain(ActionEvent event) {
@@ -86,5 +100,14 @@ public class MainPresenter extends PresenterBase
         presenter.setId(id);
         presenter.from(currentPresenter);
         show(presenter);
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public void setTitle(String info) {
+        if (stage != null)
+            stage.setTitle(info);
     }
 }

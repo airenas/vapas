@@ -1,4 +1,3 @@
-
 package com.aireno.vapas.gui.main;
 
 import com.aireno.base.ApplicationContextProvider;
@@ -8,12 +7,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 
-public class MainPanePresenter implements GuiPresenter
-{
-    @FXML private Parent root;
+public class MainPanePresenter implements GuiPresenter {
+    @FXML
+    private Parent root;
 
-    public Parent getView()
-    {
+    public Parent getView() {
         return root;
     }
 
@@ -42,6 +40,10 @@ public class MainPanePresenter implements GuiPresenter
         mainPresenter.show(Constants.IMONESLIST_PRESENTER);
     }
 
+    public void showSaskaitos() {
+        MainPresenter mainPresenter = getMainPresenter();
+        mainPresenter.show(Constants.SASKAITALIST_PRESENTER);
+    }
 
 
     public Node getButtonView() {
@@ -56,6 +58,11 @@ public class MainPanePresenter implements GuiPresenter
     @Override
     public void setId(long id) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getTitle() {
+        return "Vaistų apskaita";
     }
 
     public MainPresenter getMainPresenter() {

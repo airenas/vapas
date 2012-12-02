@@ -39,6 +39,10 @@ public abstract class PresenterBase implements GuiPresenter
         getMainPresenter().setText(info);
     }
 
+    public void setTitle(String info) {
+        getMainPresenter().setTitle(info);
+    }
+
     public void goBack() {
         if (from != null)
         getMainPresenter().show(from);
@@ -60,5 +64,10 @@ public abstract class PresenterBase implements GuiPresenter
         dialog.setMessage(msg + e.getLocalizedMessage());
         e.printStackTrace();
         dialog.showDialog();
+    }
+
+    public String getTitle()
+    {
+        return "Vaistų apskaita";
     }
 }

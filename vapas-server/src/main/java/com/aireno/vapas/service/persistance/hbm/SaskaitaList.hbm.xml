@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<!--
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.aireno.vapas.service.persistance">
+
+    <class name="SaskaitaList" table="vSaskaitos">
+        <id name="id" column="Id">
+            <generator class="increment"/>
+        </id>
+
+        <property name="arSaskaita" type="boolean" not-null="true" />
+        <property name="numeris" type="string" length="100" not-null="true" unique="true"/>
+        <property name="imone" type="string" length="100" not-null="true" unique="false"/>
+        <property name="tiekejas" type="string" length="100" not-null="true" unique="false"/>
+        <property name="data" type="timestamp" length="100" not-null="true" unique="false"/>
+        <property name="sumaSuPvm" type="big_decimal" not-null="false" unique="false"/>
+        <property name="statusas">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.aireno.vapas.service.persistance.SaskaitaStatusas</param>
+            </type>
+        </property>
+
+    </class>
+
+</hibernate-mapping>

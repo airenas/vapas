@@ -6,15 +6,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0000999999975" prefWidth="600.0000999999975" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.main.MainPanePresenter">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.main.MainPanePresenter">
   <children>
-    <VBox fx:id="root" alignment="CENTER" prefHeight="400.0000999999975" prefWidth="600.0000999999975" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <VBox fx:id="root" alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
         <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="275.0" text="Nurašymai" />
-        <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="275.0" text="Sąskaitos" />
+        <Button mnemonicParsing="false" onAction="#showSaskaitos" prefHeight="41.0" prefWidth="275.0" text="Sąskaitos" />
         <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="275.0" text="Likučiai" />
         <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="275.0" text="Ataskaitos" />
-        <Button mnemonicParsing="false" prefHeight="41.0" onAction="#showPrekes" prefWidth="275.0" text="Prekės/vaistai" />
+        <Button mnemonicParsing="false" onAction="#showPrekes" prefHeight="41.0" prefWidth="275.0" text="Prekės/vaistai" />
         <Button mnemonicParsing="false" onAction="#showMatavimoVienetai" prefHeight="41.0" prefWidth="275.0" text="Matavimo vienetai" />
         <Button mnemonicParsing="false" onAction="#showTiekejai" prefHeight="41.0" prefWidth="275.0" text="Tiekėjai" />
         <Button mnemonicParsing="false" onAction="#showImones" prefHeight="41.0" prefWidth="275.0" text="Įmonės" />

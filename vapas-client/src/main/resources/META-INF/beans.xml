@@ -69,6 +69,16 @@
         <constructor-arg type="java.lang.String" value="/fxml/imones/Imones.fxml" />
     </bean>
 
+    <bean id="SaskaitaListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/saskaitos/saskaitaList.fxml" />
+    </bean>
+
+    <bean id="SaskaitaPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane">
+        <constructor-arg type="java.lang.String" value="/fxml/saskaitos/saskaita.fxml" />
+    </bean>
+
     <bean id="MatavimoVienetaiListReq"
           class="com.aireno.vapas.service.matavimoVienetai.MatavimoVienetaiListPr"/>
     <bean id="MatavimoVienetasSaveReq"
@@ -82,6 +92,8 @@
           class="com.aireno.vapas.service.tiekejai.TiekejasServiceImpl"/>
     <bean id="ImoneService"
           class="com.aireno.vapas.service.imones.ImoneServiceImpl"/>
+    <bean id="SaskaitaService"
+          class="com.aireno.vapas.service.saskaitos.SaskaitaServiceImpl"/>
 
 
     <!-- Database Setup -->

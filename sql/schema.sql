@@ -42,4 +42,48 @@ create table Imones (
         primary key (Id),
         unique (pavadinimas)
     );
+	
+	-- drop table saskaitos
+    create table Saskaitos (
+        Id bigint not null,
+        arSaskaita bit not null,
+        numeris varchar(100) not null,
+        imoneId bigint not null,
+        tiekejasId bigint not null,
+        data timestamp not null,
+        sumaSuPvm numeric not null,
+        sumaBePvm numeric not null,
+        sumaPvm numeric not null,
+        prekiuKiekis integer not null,
+        statusas integer,
+        primary key (Id),
+        unique (numeris),
+        FOREIGN KEY (imoneId) REFERENCES Imones(Id),
+        FOREIGN KEY (tiekejasId) REFERENCES Tiekejai(Id)
+    );
+-- drop table SaskaitosPrekes
+    create table SaskaitosPrekes (
+        Id bigint not null,
+        serija varchar(100) not null,
+        saskaitaId bigint not null,
+        prekeId bigint not null,
+        matavimoVienetasId bigint not null,
+        kiekis numeric not null,
+        galiojaIki timestamp,
+        kainaBePvm numeric,
+        nuolaidosProc numeric,
+        pvm numeric,
+        sumaPvm numeric,
+        sumaSuPvm numeric,
+        sumaBePvm numeric,
+        primary key (Id),
+        FOREIGN KEY (matavimoVienetasId) REFERENCES MatavimoVienetas(Id),
+        FOREIGN KEY (prekeId) REFERENCES Prekes(Id),
+        FOREIGN KEY (saskaitaId) REFERENCES SASKAITOS(ID)
+    );
+-- drop view vSaskaitos
+create view vSaskaitos as 
+select s.Id, s.arSaskaita, s.numeris, s.SUMASUPVM, s.STATUSAS, s.DATA, i.PAVADINIMAS as imone, t.PAVADINIMAS as tiekejas
+	from saskaitos s 	left join imones i on s.IMONEID = i.id
+					left join TIEKEJAI t on s.TIEKEJASID = t.id;
  

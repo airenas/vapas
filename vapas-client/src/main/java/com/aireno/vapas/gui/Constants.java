@@ -17,4 +17,7 @@ public class Constants {
     public static final String PREKES_PRESENTER = "PrekesPresenter";
     public static final String IMONESLIST_PRESENTER = "ImonesListPresenter";
     public static final String IMONES_PRESENTER = "ImonesPresenter";
+
+    public static final String SASKAITALIST_PRESENTER = "SaskaitaListPresenter";
+    public static final String SASKAITA_PRESENTER = "SaskaitaPresenter";
 }

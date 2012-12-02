@@ -16,4 +16,6 @@ public interface GuiPresenter {
     void from(GuiPresenter currentPresenter);
 
     void setId(long id);
+
+    String getTitle();
 }

@@ -18,12 +18,13 @@ public class MainApp extends Application
         ApplicationContextProvider.init();
 
         MainPresenter mainPresenter = ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
+        mainPresenter.setStage(stage);
         mainPresenter.show(Constants.MAIN_PRESENTER);
-        Scene scene = new Scene(mainPresenter.getView()//, 800, 600);
-                );
+
+        Scene scene = new Scene(mainPresenter.getView());
         scene.getStylesheets().add("styles.css");
         stage.setScene(scene);
-        stage.setTitle("Vaistų apskaita - VApas");
+        //stage.setTitle("Vaistų apskaita - VApas");
         stage.show();
     }
 }

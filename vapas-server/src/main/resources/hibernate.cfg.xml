@@ -35,6 +35,9 @@
         <mapping resource="com/aireno/vapas/service/persistance/hbm/PrekeList.hbm.xml"/>
         <mapping resource="com/aireno/vapas/service/persistance/hbm/Tiekejas.hbm.xml"/>
         <mapping resource="com/aireno/vapas/service/persistance/hbm/Imone.hbm.xml"/>
+        <mapping resource="com/aireno/vapas/service/persistance/hbm/Saskaita.hbm.xml"/>
+        <mapping resource="com/aireno/vapas/service/persistance/hbm/SaskaitaList.hbm.xml"/>
+        <mapping resource="com/aireno/vapas/service/persistance/hbm/SaskaitosPreke.hbm.xml"/>
 
     </session-factory>
 
