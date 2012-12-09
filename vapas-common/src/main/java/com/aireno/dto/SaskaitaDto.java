@@ -113,8 +113,4 @@ public class SaskaitaDto extends DtoBase {
             prekes = new ArrayList<SaskaitosPrekeDto>();
         return prekes;
     }
-
-    public void setPrekes(List<SaskaitosPrekeDto> prekes) {
-        this.prekes = prekes;
-    }
 }

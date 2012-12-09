@@ -30,14 +30,15 @@
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">none</property>
 
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/MatavimoVienetas.hbm.xml"/>
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/Preke.hbm.xml"/>
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/PrekeList.hbm.xml"/>
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/Tiekejas.hbm.xml"/>
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/Imone.hbm.xml"/>
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/Saskaita.hbm.xml"/>
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/SaskaitaList.hbm.xml"/>
-        <mapping resource="com/aireno/vapas/service/persistance/hbm/SaskaitosPreke.hbm.xml"/>
+        <mapping resource="hbm/MatavimoVienetas.hbm.xml"/>
+        <mapping resource="hbm/Preke.hbm.xml"/>
+        <mapping resource="hbm/PrekeList.hbm.xml"/>
+        <mapping resource="hbm/Tiekejas.hbm.xml"/>
+        <mapping resource="hbm/Imone.hbm.xml"/>
+        <mapping resource="hbm/Saskaita.hbm.xml"/>
+        <mapping resource="hbm/SaskaitaList.hbm.xml"/>
+        <mapping resource="hbm/SaskaitosPreke.hbm.xml"/>
+        <mapping resource="hbm/Likutis.hbm.xml"/>
 
     </session-factory>
 

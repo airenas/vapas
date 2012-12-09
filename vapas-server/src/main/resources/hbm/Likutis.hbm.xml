@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<!--
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.aireno.vapas.service.persistance">
+
+    <class name="Likutis" table="Likuciai">
+        <id name="id" column="Id">
+            <generator class="increment"/>
+        </id>
+        <property name="dokumentas" type="string" length="100" not-null="true" unique="false"/>
+        <property name="irasoId" type="long" not-null="false"/>
+        <property name="prekeId" type="long" not-null="true"/>
+        <property name="matavimoVienetasId" type="long" not-null="true"/>
+        <property name="kiekis" type="big_decimal" not-null="true"/>
+        <property name="galiojaIki" type="timestamp"  not-null="false"/>
+        <property name="serija" type="string" length="100" not-null="false"/>
+        <property name="data" type="timestamp" not-null="true"/>
+        <property name="arSaskaita" type="boolean" not-null="true" />
+    </class>
+
+</hibernate-mapping>

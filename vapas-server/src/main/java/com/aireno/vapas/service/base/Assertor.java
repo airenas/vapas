@@ -27,4 +27,8 @@ public class Assertor {
     public void hasId(long id, String s) throws Exception {
         isTrue(id != 0, s);
     }
+
+    public void isFalse(boolean b, String s) throws Exception {
+        isTrue(!b, s);
+    }
 }

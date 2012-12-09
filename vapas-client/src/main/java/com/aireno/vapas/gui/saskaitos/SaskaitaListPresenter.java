@@ -104,9 +104,9 @@ public class SaskaitaListPresenter extends PresenterBase implements Initializabl
            fields.add(new FieldDefinition<SaskaitaListDto, String>("Nr", 200, new PropertyValueFactory<SaskaitaListDto,String>("numeris")));
            fields.add(new FieldDefinition<SaskaitaListDto, String>("Tiekėjas", 200, new PropertyValueFactory<SaskaitaListDto,String>("tiekejas")));
            fields.add(new FieldDefinition<SaskaitaListDto, String>("Įmonė", 200, new PropertyValueFactory<SaskaitaListDto,String>("imone")));
-           fields.add(new FieldDefinition<SaskaitaListDto, Date>("Data", 50, new PropertyValueFactory<SaskaitaListDto,Date>("data")));
+           fields.add(new FieldDefinition<SaskaitaListDto, Date>("Data", 100, new PropertyValueFactory<SaskaitaListDto,Date>("data")));
            fields.add(new FieldDefinition<SaskaitaListDto, BigDecimal>("Suma", 50, new PropertyValueFactory<SaskaitaListDto,BigDecimal>("suma")));
-           fields.add(new FieldDefinition<SaskaitaListDto, String>("Statusas", 50, new PropertyValueFactory<SaskaitaListDto,String>("statusas")));
+           fields.add(new FieldDefinition<SaskaitaListDto, String>("Statusas", 70, new PropertyValueFactory<SaskaitaListDto,String>("statusas")));
        }
    }
 }

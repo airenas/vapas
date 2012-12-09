@@ -22,6 +22,8 @@ public class SaskaitosPrekeDto extends DtoBase {
     private BigDecimal nuolaidosProc;
     private BigDecimal pvm;
 
+    private BigDecimal suma;
+
     public String getSerija() {
         return serija;
     }
@@ -84,5 +86,13 @@ public class SaskaitosPrekeDto extends DtoBase {
 
     public void setPvm(BigDecimal pvm) {
         this.pvm = pvm;
+    }
+
+    public BigDecimal getSuma() {
+        return suma;
+    }
+
+    public void setSuma(BigDecimal suma) {
+        this.suma = suma;
     }
 }

@@ -1,14 +1,14 @@
 package com.aireno.vapas.service.saskaitos;
 
-import com.aireno.dto.PrekeDto;
 import com.aireno.dto.SaskaitaDto;
 import com.aireno.dto.SaskaitaListDto;
+import com.aireno.dto.SaskaitosPrekeDto;
 import com.aireno.vapas.service.SaskaitaService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.ServiceBase;
-import com.aireno.vapas.service.persistance.Saskaita;
-import com.aireno.vapas.service.persistance.SaskaitaList;
-import com.aireno.vapas.service.persistance.SaskaitosPreke;
+import com.aireno.vapas.service.persistance.*;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,18 +80,124 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
                     List<Saskaita> list = getSession().createQuery(queryString)
                             .setParameter("1", dto.getId()).list();
                     getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
+
                     item = list.get(0);
+                    getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Sąskaita jau patvirtinta. Negalima saugoti");
                 }
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
-                return getMapper().toDto(item);
+                // saugom prekes
+                String queryString = "from SaskaitosPreke c where c.saskaitaId = ?1";
+                List<SaskaitosPreke> listP = getSession().createQuery(queryString)
+                        .setParameter("1", item.getId()).list();
+
+                List<SaskaitosPreke> newP = new ArrayList<SaskaitosPreke>();
+                List<SaskaitosPreke> updatedP = new ArrayList<SaskaitosPreke>();
+                for (SaskaitosPrekeDto itemPDto : dto.getPrekes()) {
+                    SaskaitosPreke itemP = raskPaimkPreke(listP, itemPDto);
+                    if (itemP == null) {
+                        itemP = new SaskaitosPreke();
+                    }
+                    getAssertor().isNotNullStr(itemPDto.getSerija(), "Nėra serijos");
+                    getAssertor().isTrue(itemPDto.getKiekis().doubleValue() > 0, "Nėra kiekio");
+                    getAssertor().isTrue(itemPDto.getPrekeId() > 0, "Nėra prekės");
+
+                    getMapper().fromPrekeDto(itemP, itemPDto, item);
+                    if (itemP.getMatavimoVienetasId() == 0) {
+                        MatavimoVienetas mv = gautiMatavimoVieneta(itemP.getPrekeId(), getSession());
+                        itemP.setMatavimoVienetasId(mv.getId());
+                        itemP.setMatavimoVienetas(mv.getKodas());
+                    }
+
+                    getSession().save(itemP);
+                    newP.add(itemP);
+                }
+                for (SaskaitosPreke itemP : listP) {
+                    getSession().delete(itemP);
+                }
+
+                SaskaitaDto result = getMapper().toDto(item);
+                for (SaskaitosPreke itemP : newP) {
+                    result.getPrekes().add(getMapper().toPrekeDto(itemP));
+                }
+                return result;
             }
         }.process(dto);
 
     }
 
+    private MatavimoVienetas gautiMatavimoVieneta(long prekeId, Session session) throws Exception {
+        String queryString = "from Preke c where c.id = ?1";
+        List<Preke> list = session.createQuery(queryString)
+                .setParameter("1", prekeId).list();
+        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
+        Preke item = list.get(0);
+
+        queryString = "from MatavimoVienetas c where c.id = ?1";
+        List<MatavimoVienetas> listMv = session.createQuery(queryString)
+                .setParameter("1", item.getMatVienetasId()).list();
+        getAssertor().isTrue(list.size() == 1, "Nerastas matavimo vienatas pagal id " + item.getMatVienetasId() + " įrašas");
+        MatavimoVienetas item1 = listMv.get(0);
+        return item1;
+    }
+
+    private SaskaitosPreke raskPaimkPreke(List<SaskaitosPreke> listP, SaskaitosPrekeDto itemPDto) {
+        SaskaitosPreke result = null;
+        for (SaskaitosPreke p : listP) {
+            if (p.getId() == itemPDto.getId() || (p.getPrekeId() == itemPDto.getPrekeId()
+                    && StringUtils.equals(p.getSerija(), itemPDto.getSerija()))
+                    ) {
+                result = p;
+                break;
+            }
+        }
+        if (result != null) {
+            listP.remove(result);
+        }
+        return result;
+    }
+
+
     @Override
-    public void tvirtinti(Long id) throws Exception {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public Boolean tvirtinti(Long id) throws Exception {
+        return new ProcessorBase<Long, Boolean>() {
+            @Override
+            protected Boolean processInt(Long id) throws Exception {
+                Saskaita item;
+                getAssertor().isTrue(id > 0, "Nėra id");
+                String queryString = "from Saskaita c where c.id = ?1";
+                List<Saskaita> list = getSession().createQuery(queryString)
+                        .setParameter("1", id).list();
+                getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
+
+                item = list.get(0);
+                getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Sąskaita jau patvirtinta. Negalima saugoti");
+                item.setStatusas(SaskaitaStatusas.Patvirtinta);
+                getSession().save(item);
+
+                // saugom prekes
+                String queryStringP = "from SaskaitosPreke c where c.saskaitaId = ?1";
+                List<SaskaitosPreke> listP = getSession().createQuery(queryStringP)
+                        .setParameter("1", item.getId()).list();
+
+                getAssertor().isTrue(listP.size() > 0, "Nėra prekių");
+                for (SaskaitosPreke itemP : listP) {
+                    Likutis l = new Likutis();
+                    l.setArSaskaita(true);
+                    l.setData(item.getData());
+                    l.setDokumentas(item.getNumeris());
+                    l.setGaliojaIki(itemP.getGaliojaIki());
+                    l.setIrasoId(itemP.getId());
+                    l.setKiekis(itemP.getKiekis());
+                    l.setMatavimoVienetasId(itemP.getMatavimoVienetasId());
+                    l.setPrekeId(itemP.getPrekeId());
+                    l.setSerija(itemP.getSerija());
+
+                    getSession().save(l);
+                }
+
+                return true;
+            }
+        }.process(id);
     }
 }

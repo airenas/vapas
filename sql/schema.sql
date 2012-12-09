@@ -86,4 +86,21 @@ create view vSaskaitos as
 select s.Id, s.arSaskaita, s.numeris, s.SUMASUPVM, s.STATUSAS, s.DATA, i.PAVADINIMAS as imone, t.PAVADINIMAS as tiekejas
 	from saskaitos s 	left join imones i on s.IMONEID = i.id
 					left join TIEKEJAI t on s.TIEKEJASID = t.id;
+
+--drop table likuciai
+create table Likuciai (
+        Id bigint not null,
+        dokumentas varchar(100) not null,
+        irasoId bigint,
+        prekeId bigint not null,
+        matavimoVienetasId bigint not null,
+        kiekis numeric not null,
+        galiojaIki timestamp,
+        serija varchar(100),
+        data timestamp not null,
+        arSaskaita bit not null,
+        primary key (Id),
+		FOREIGN KEY (matavimoVienetasId) REFERENCES MatavimoVienetas(Id),
+        FOREIGN KEY (prekeId) REFERENCES Prekes(Id)
+    );
  

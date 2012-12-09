@@ -1,11 +1,13 @@
 package com.aireno.vapas.gui.base;
 
-import javafx.application.Platform;
+import com.aireno.dto.SaskaitosPrekeDto;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.util.Callback;
 
 
@@ -16,9 +18,15 @@ import javafx.util.Callback;
  * Time: 23.34
  * To change this template use File | Settings | File Templates.
  */
-public class EditFieldDefinition<T, S> extends FieldDefinition<T, S> {
-    public EditFieldDefinition(String name, int size, Callback<TableColumn.CellDataFeatures<T, S>, ObservableValue<S>> valueFactory) {
+public abstract class EditFieldDefinition<T, S> extends FieldDefinition<T, S> {
+
+
+    private final EventHandler<TableColumn.CellEditEvent<T,S>> cellEditEventEventHandler;
+
+    public EditFieldDefinition(String name, int size, Callback<TableColumn.CellDataFeatures<T, S>,
+            ObservableValue<S>> valueFactory, EventHandler<TableColumn.CellEditEvent<T,S>> cellEditEventEventHandler) {
         super(name, size, valueFactory);
+        this.cellEditEventEventHandler = cellEditEventEventHandler;
     }
 
     public TableColumn<T, S> addToTable(ListDefinition<T> tListDefinition, TableView<T> tableView) {
@@ -26,92 +34,20 @@ public class EditFieldDefinition<T, S> extends FieldDefinition<T, S> {
         col.prefWidthProperty().setValue(getSize());
         col.setCellValueFactory(getValueFactory());
 
-        Callback<TableColumn, TableCell> cellFactory =
-                new Callback<TableColumn, TableCell>() {
+        Callback<TableColumn<T, S>, TableCell<T, S>> cellFactory =
+                new Callback<TableColumn<T, S>, TableCell<T, S>>() {
                     public TableCell call(TableColumn p) {
-                        return new EditingCell();
+                        return createCell();
                     }
                 };
 
-        Callback<TableColumn<T, S>, TableCell<T, S>> editableFactory = new Callback<TableColumn<T, S>, TableCell<T, S>>() {
-            @Override
-            public TableCell call(TableColumn p) {
-                return new EditingCell<T,S>();
-            }
-        };
+        col.setOnEditCommit(cellEditEventEventHandler);
+
         col.setEditable(true);
-        col.setCellFactory(editableFactory);
+        col.setCellFactory(cellFactory);
         tableView.getColumns().add(col);
         return col;
     }
 
-
-    class EditingCell<T, S> extends TableCell<T, S> {
-
-        private TextField textField;
-
-        public EditingCell() {}
-
-        @Override
-        public void startEdit() {
-            super.startEdit();
-
-            if (textField == null) {
-                createTextField();
-            }
-
-            setGraphic(textField);
-            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-            textField.selectAll();
-        }
-
-        @Override
-        public void cancelEdit() {
-            super.cancelEdit();
-
-            setText(String.valueOf(getItem()));
-            setContentDisplay(ContentDisplay.TEXT_ONLY);
-        }
-
-        @Override
-        public void updateItem(S item, boolean empty) {
-            super.updateItem(item, empty);
-
-            if (empty) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                if (isEditing()) {
-                    if (textField != null) {
-                        textField.setText(getString());
-                    }
-                    setGraphic(textField);
-                    setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                } else {
-                    setText(getString());
-                    setContentDisplay(ContentDisplay.TEXT_ONLY);
-                }
-            }
-        }
-
-        private void createTextField() {
-            textField = new TextField(getString());
-            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()*2);
-            textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-                @Override
-                public void handle(KeyEvent t) {
-                    if (t.getCode() == KeyCode.ENTER) {
-                        commitEdit((S)textField.getText());
-                    } else if (t.getCode() == KeyCode.ESCAPE) {
-                        cancelEdit();
-                    }
-                }
-            });
-        }
-
-        private String getString() {
-            return getItem() == null ? "" : getItem().toString();
-        }
-    }
+    protected abstract TableCell createCell();
 }

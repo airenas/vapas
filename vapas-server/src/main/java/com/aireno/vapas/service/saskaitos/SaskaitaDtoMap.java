@@ -35,7 +35,7 @@ public class SaskaitaDtoMap {
         item.setArSaskaita(dto.isArSaskaita());
         item.setNumeris(dto.getNumeris());
         item.setData(dto.getData());
-        if (item.getId() == 0)
+        if (0 == item.getId())
             item.setStatusas(SaskaitaStatusas.Pildoma);
     }
 
@@ -62,6 +62,18 @@ public class SaskaitaDtoMap {
         dto.setSerija(itemP.getSerija());
         dto.setPrekeId(itemP.getPrekeId());
         dto.setKiekis(itemP.getKiekis());
+        dto.setGaliojaIki(itemP.getGaliojaIki());
+        dto.setKaina(itemP.getKainaBePvm());
         return dto;
+    }
+
+    public void fromPrekeDto(SaskaitosPreke itemP, SaskaitosPrekeDto itemPDto, Saskaita item) {
+        itemP.setId(itemP.getId());
+        itemP.setSerija(itemPDto.getSerija());
+        itemP.setPrekeId(itemPDto.getPrekeId());
+        itemP.setKiekis(itemPDto.getKiekis());
+        itemP.setSaskaitaId(item.getId());
+        itemP.setGaliojaIki(itemPDto.getGaliojaIki());
+        itemP.setKainaBePvm(itemPDto.getKaina());
     }
 }

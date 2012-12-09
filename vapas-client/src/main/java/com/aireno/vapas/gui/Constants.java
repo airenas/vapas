@@ -20,4 +20,6 @@ public class Constants {
 
     public static final String SASKAITALIST_PRESENTER = "SaskaitaListPresenter";
     public static final String SASKAITA_PRESENTER = "SaskaitaPresenter";
+
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
 }

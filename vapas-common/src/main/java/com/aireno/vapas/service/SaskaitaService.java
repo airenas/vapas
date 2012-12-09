@@ -13,5 +13,5 @@ public interface SaskaitaService {
 
     SaskaitaDto saugoti(SaskaitaDto updatedContact) throws Exception;
 
-    void tvirtinti(Long id) throws Exception;
+    Boolean tvirtinti(Long id) throws Exception;
 }

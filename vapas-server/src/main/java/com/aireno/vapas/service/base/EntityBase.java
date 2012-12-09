@@ -20,6 +20,8 @@ public abstract class EntityBase implements Serializable
 
     public Long getId()
     {
+        if (id == null)
+            id = new Long(0);
         return id;
     }
 }
