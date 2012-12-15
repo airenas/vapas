@@ -39,6 +39,10 @@
         <mapping resource="hbm/SaskaitaList.hbm.xml"/>
         <mapping resource="hbm/SaskaitosPreke.hbm.xml"/>
         <mapping resource="hbm/Likutis.hbm.xml"/>
+        <mapping resource="hbm/LikutisList.hbm.xml"/>
+        <mapping resource="hbm/Nurasymas.hbm.xml"/>
+        <mapping resource="hbm/NurasymasList.hbm.xml"/>
+        <mapping resource="hbm/NurasymasPreke.hbm.xml"/>
 
     </session-factory>
 

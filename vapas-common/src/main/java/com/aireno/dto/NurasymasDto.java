@@ -1,19 +1,24 @@
-package com.aireno.vapas.service.persistance;
+package com.aireno.dto;
 
-import com.aireno.vapas.service.base.EntityBase;
+import com.aireno.base.DtoBase;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-
-public class Nurasymas extends EntityBase implements Serializable
-{
-    private String numeris;
+/**
+ * Created with IntelliJ IDEA.
+ * User: Airenas
+ * Date: 12.11.17
+ * Time: 16.25
+ * To change this template use File | Settings | File Templates.
+ */
+public class NurasymasDto extends DtoBase {
     private long imoneId;
     private Date data;
-    private SaskaitaStatusas statusas;
+    private String statusas;
     private int prekiuKiekis;
+    private List<NurasymoPrekeDto> prekes;
 
     public String getNumeris() {
         return numeris;
@@ -22,6 +27,8 @@ public class Nurasymas extends EntityBase implements Serializable
     public void setNumeris(String numeris) {
         this.numeris = numeris;
     }
+
+    private String numeris;
 
     public long getImoneId() {
         return imoneId;
@@ -39,11 +46,11 @@ public class Nurasymas extends EntityBase implements Serializable
         this.data = data;
     }
 
-    public SaskaitaStatusas getStatusas() {
+    public String getStatusas() {
         return statusas;
     }
 
-    public void setStatusas(SaskaitaStatusas statusas) {
+    public void setStatusas(String statusas) {
         this.statusas = statusas;
     }
 
@@ -53,5 +60,11 @@ public class Nurasymas extends EntityBase implements Serializable
 
     public void setPrekiuKiekis(int prekiuKiekis) {
         this.prekiuKiekis = prekiuKiekis;
+    }
+
+    public List<NurasymoPrekeDto> getPrekes() {
+        if (prekes == null)
+            prekes = new ArrayList<NurasymoPrekeDto>();
+        return prekes;
     }
 }

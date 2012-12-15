@@ -3,41 +3,46 @@ package com.aireno.vapas.service.persistance;
 import com.aireno.vapas.service.base.EntityBase;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 
 public class NurasymasList extends EntityBase implements Serializable
 {
-    public long getMatVienetasId() {
-        return matVienetasId;
+    private String imone;
+    private SaskaitaStatusas statusas;
+    private String numeris;
+    private Date data;
+
+    public String getImone() {
+        return imone;
     }
 
-    public void setMatVienetasId(long matVienetasId) {
-        this.matVienetasId = matVienetasId;
+    public void setImone(String imone) {
+        this.imone = imone;
     }
 
-    private long matVienetasId;
-    private String pavadinimas;
-
-    public String getPastaba() {
-        return pastaba;
+    public SaskaitaStatusas getStatusas() {
+        return statusas;
     }
 
-    public void setPastaba(String pastaba) {
-        this.pastaba = pastaba;
+    public void setStatusas(SaskaitaStatusas statusas) {
+        this.statusas = statusas;
     }
 
-    private String pastaba;
-
-    public NurasymasList()
-    {
+    public String getNumeris() {
+        return numeris;
     }
 
-    public String getPavadinimas() {
-        return pavadinimas;
+    public void setNumeris(String numeris) {
+        this.numeris = numeris;
     }
 
-    public void setPavadinimas(String pavadinimas) {
-        this.pavadinimas = pavadinimas;
+    public Date getData() {
+        return data;
     }
 
+    public void setData(Date data) {
+        this.data = data;
+    }
 }

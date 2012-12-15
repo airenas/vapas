@@ -40,6 +40,16 @@ public class MainPanePresenter implements GuiPresenter {
         mainPresenter.show(Constants.IMONESLIST_PRESENTER);
     }
 
+    public void showNurasymai() {
+        MainPresenter mainPresenter = getMainPresenter();
+        mainPresenter.show(Constants.NURASYMASLIST_PRESENTER);
+    }
+
+    public void showLikuciai() {
+        MainPresenter mainPresenter = getMainPresenter();
+        mainPresenter.show(Constants.LIKUTISLIST_PRESENTER);
+    }
+
     public void showSaskaitos() {
         MainPresenter mainPresenter = getMainPresenter();
         mainPresenter.show(Constants.SASKAITALIST_PRESENTER);

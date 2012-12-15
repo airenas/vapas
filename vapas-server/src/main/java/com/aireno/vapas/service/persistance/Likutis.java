@@ -17,6 +17,7 @@ public class Likutis extends EntityBase implements Serializable {
     private Date data;
     private String dokumentas;
     private long irasoId;
+    private long imoneId;
     private boolean arSaskaita;
 
     public boolean isArSaskaita() {
@@ -89,5 +90,13 @@ public class Likutis extends EntityBase implements Serializable {
 
     public void setGaliojaIki(Date galiojaIki) {
         this.galiojaIki = galiojaIki;
+    }
+
+    public long getImoneId() {
+        return imoneId;
+    }
+
+    public void setImoneId(long imoneId) {
+        this.imoneId = imoneId;
     }
 }

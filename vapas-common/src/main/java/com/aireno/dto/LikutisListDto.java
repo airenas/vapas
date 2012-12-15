@@ -1,13 +1,18 @@
-package com.aireno.vapas.service.persistance;
+package com.aireno.dto;
 
-import com.aireno.vapas.service.base.EntityBase;
+import com.aireno.base.DtoBase;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
-public class LikutisList extends EntityBase implements Serializable {
+/**
+ * Created with IntelliJ IDEA.
+ * User: Airenas
+ * Date: 12.11.17
+ * Time: 16.25
+ * To change this template use File | Settings | File Templates.
+ */
+public class LikutisListDto extends DtoBase {
     protected String matavimoVienetas;
     protected String imone;
     private BigDecimal kiekis;
@@ -17,20 +22,20 @@ public class LikutisList extends EntityBase implements Serializable {
     private String serija;
     private Date data;
 
-    public String getMatavimoVienetas() {
-        return matavimoVienetas;
-    }
-
-    public void setMatavimoVienetas(String matavimoVienetas) {
-        this.matavimoVienetas = matavimoVienetas;
-    }
-
     public String getImone() {
         return imone;
     }
 
     public void setImone(String imone) {
         this.imone = imone;
+    }
+
+    public String getMatavimoVienetas() {
+        return matavimoVienetas;
+    }
+
+    public void setMatavimoVienetas(String matavimoVienetas) {
+        this.matavimoVienetas = matavimoVienetas;
     }
 
     public BigDecimal getKiekis() {

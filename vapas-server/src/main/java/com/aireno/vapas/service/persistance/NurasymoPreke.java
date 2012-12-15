@@ -3,41 +3,64 @@ package com.aireno.vapas.service.persistance;
 import com.aireno.vapas.service.base.EntityBase;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 
 public class NurasymoPreke extends EntityBase implements Serializable
 {
-    public long getMatVienetasId() {
-        return matVienetasId;
+    private String serija;
+    private long prekeId;
+    private long nurasymasId;
+    private BigDecimal kiekis;
+    private long matavimoVienetasId;
+    private String matavimoVienetas;
+
+    public String getSerija() {
+        return serija;
     }
 
-    public void setMatVienetasId(long matVienetasId) {
-        this.matVienetasId = matVienetasId;
+    public void setSerija(String serija) {
+        this.serija = serija;
     }
 
-    private long matVienetasId;
-    private String pavadinimas;
-
-    public String getPastaba() {
-        return pastaba;
+    public long getPrekeId() {
+        return prekeId;
     }
 
-    public void setPastaba(String pastaba) {
-        this.pastaba = pastaba;
+    public void setPrekeId(long prekeId) {
+        this.prekeId = prekeId;
     }
 
-    private String pastaba;
-
-    public NurasymoPreke()
-    {
+    public long getNurasymasId() {
+        return nurasymasId;
     }
 
-    public String getPavadinimas() {
-        return pavadinimas;
+    public void setNurasymasId(long nurasymasId) {
+        this.nurasymasId = nurasymasId;
     }
 
-    public void setPavadinimas(String pavadinimas) {
-        this.pavadinimas = pavadinimas;
+    public BigDecimal getKiekis() {
+        return kiekis;
     }
 
+    public void setKiekis(BigDecimal kiekis) {
+        this.kiekis = kiekis;
+    }
+
+    public long getMatavimoVienetasId() {
+        return matavimoVienetasId;
+    }
+
+    public void setMatavimoVienetasId(long matavimoVienetasId) {
+        this.matavimoVienetasId = matavimoVienetasId;
+    }
+
+    public String getMatavimoVienetas() {
+        return matavimoVienetas;
+    }
+
+    public void setMatavimoVienetas(String matavimoVienetas) {
+        this.matavimoVienetas = matavimoVienetas;
+    }
 }

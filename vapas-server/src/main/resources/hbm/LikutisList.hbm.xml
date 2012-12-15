@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<!--
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.aireno.vapas.service.persistance">
+
+    <class name="LikutisList" table="vLikuciai">
+        <id name="id" column="Id">
+            <generator class="increment"/>
+        </id>
+
+        <property name="preke" type="string" length="100" not-null="true" unique="false"/>
+        <property name="imone" type="string" length="100" not-null="true" unique="false"/>
+        <property name="data" type="timestamp" length="100" not-null="true" unique="false"/>
+        <property name="matavimoVienetas" type="string" length="100" unique="false"/>
+        <property name="kiekis" type="big_decimal" />
+        <property name="pajamuota" type="big_decimal" />
+
+    </class>
+
+</hibernate-mapping>

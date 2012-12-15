@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.nurasymai.NurasymasPresenter">
+  <center>
+    <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="499.9999000000025">
+      <children>
+        <Label layoutX="280.0" layoutY="27.0" text="Data" />
+        <Label layoutX="29.0" layoutY="27.0" text="Numeris" />
+        <TextField id="pavadinimas" fx:id="numeris" prefWidth="124.0" AnchorPane.leftAnchor="111.5" AnchorPane.topAnchor="24.0" />
+        <TextField id="kodas" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5" AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="25.0" />
+         <Label layoutX="34.0" layoutY="93.0" text="Įmonė" />
+        <TextField id="kodas" fx:id="imone" layoutY="98.0" prefWidth="347.0" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="41.0" />
+        <AnchorPane prefHeight="215.0" prefWidth="485.9999000000025" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="171.0">
+          <children>
+            <TableView fx:id="prekes" prefHeight="186.0" prefWidth="486.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="Column X" />
+                <TableColumn prefWidth="75.0" text="Column X" />
+              </columns>
+            </TableView>
+          </children>
+        </AnchorPane>
+      </children>
+    </AnchorPane>
+  </center>
+  <right>
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <children>
+        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
+        <Button mnemonicParsing="false" onAction="#tvirtinti" text="Tvirtinti" />
+        <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />
+      </children>
+    </VBox>
+  </right>
+</BorderPane>

@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:data="http://www.springframework.org/schema/data/jpa"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/aop
-           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/data/jpa
-               http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-               http://www.springframework.org/schema/tx
-               http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
        default-lazy-init="true">
     <bean id="myFactoryBean"
           class="com.aireno.vapas.gui.MainAppFactory"/>
@@ -40,43 +28,58 @@
     </bean>
 
     <bean id="PrekesListPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/prekes/prekesList.fxml" />
     </bean>
 
     <bean id="PrekesPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/prekes/prekes.fxml" />
     </bean>
 
     <bean id="TiekejaiListPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/tiekejai/TiekejaiList.fxml" />
     </bean>
 
     <bean id="TiekejaiPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/tiekejai/Tiekejai.fxml" />
     </bean>
 
     <bean id="ImonesListPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/imones/ImonesList.fxml" />
     </bean>
 
     <bean id="ImonesPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/imones/Imones.fxml" />
     </bean>
 
     <bean id="SaskaitaListPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/saskaitos/saskaitaList.fxml" />
     </bean>
 
     <bean id="SaskaitaPresenter" factory-bean="myFactoryBean"
-          factory-method="createPane">
+          factory-method="createPane" lazy-init="true">
         <constructor-arg type="java.lang.String" value="/fxml/saskaitos/saskaita.fxml" />
+    </bean>
+
+    <bean id="LikutisListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane" lazy-init="true">
+        <constructor-arg type="java.lang.String" value="/fxml/likuciai/likutisList.fxml" />
+    </bean>
+
+    <bean id="NurasymasListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane" lazy-init="true">
+        <constructor-arg type="java.lang.String" value="/fxml/nurasymai/nurasymasList.fxml" />
+    </bean>
+
+    <bean id="NurasymasPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane" lazy-init="true">
+        <constructor-arg type="java.lang.String" value="/fxml/nurasymai/nurasymas.fxml" />
     </bean>
 
     <bean id="MatavimoVienetaiListReq"
@@ -87,13 +90,17 @@
           class="com.aireno.vapas.service.matavimoVienetai.MatavimoVienetasGautiPr"/>
 
     <bean id="PrekeService"
-          class="com.aireno.vapas.service.prekes.PrekeServiceImpl"/>
+          class="com.aireno.vapas.service.prekes.PrekeServiceImpl" lazy-init="true"/>
     <bean id="TiekejasService"
-          class="com.aireno.vapas.service.tiekejai.TiekejasServiceImpl"/>
+          class="com.aireno.vapas.service.tiekejai.TiekejasServiceImpl" lazy-init="true"/>
     <bean id="ImoneService"
-          class="com.aireno.vapas.service.imones.ImoneServiceImpl"/>
+          class="com.aireno.vapas.service.imones.ImoneServiceImpl" lazy-init="true"/>
     <bean id="SaskaitaService"
-          class="com.aireno.vapas.service.saskaitos.SaskaitaServiceImpl"/>
+          class="com.aireno.vapas.service.saskaitos.SaskaitaServiceImpl" lazy-init="true"/>
+    <bean id="LikutisService"
+          class="com.aireno.vapas.service.likuciai.LikutisServiceImpl" lazy-init="true"/>
+    <bean id="NurasymasService"
+          class="com.aireno.vapas.service.nurasymai.NurasymasServiceImpl" lazy-init="true"/>
 
 
     <!-- Database Setup -->

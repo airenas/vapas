@@ -1,15 +1,16 @@
-package com.aireno.vapas.service.saskaitos;
+package com.aireno.vapas.service.nurasymai;
 
-import com.aireno.dto.SaskaitaDto;
-import com.aireno.dto.SaskaitaListDto;
-import com.aireno.dto.SaskaitosPrekeDto;
+import com.aireno.dto.*;
+import com.aireno.vapas.service.NurasymasService;
 import com.aireno.vapas.service.SaskaitaService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.persistance.*;
+import com.aireno.vapas.service.saskaitos.SaskaitaDtoMap;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,20 +21,20 @@ import java.util.List;
  * Time: 19.41
  * To change this template use File | Settings | File Templates.
  */
-public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService {
-    SaskaitaDtoMap getMapper() {
-        return new SaskaitaDtoMap();
+public class NurasymasServiceImpl extends ServiceBase implements NurasymasService {
+    NurasymasDtoMap getMapper() {
+        return new NurasymasDtoMap();
     }
 
     @Override
-    public List<SaskaitaListDto> sarasas(String[] keywords) throws Exception {
-        return new ProcessorBase<String[], List<SaskaitaListDto>>() {
+    public List<NurasymasListDto> sarasas(String[] keywords) throws Exception {
+        return new ProcessorBase<String[], List<NurasymasListDto>>() {
             @Override
-            protected List<SaskaitaListDto> processInt(String[] request) throws Exception {
-                List<SaskaitaList> result = getSession().createQuery("from SaskaitaList").list();
-                SaskaitaDtoMap mapper = getMapper();
-                List<SaskaitaListDto> res = new ArrayList<SaskaitaListDto>();
-                for (SaskaitaList item : result) {
+            protected List<NurasymasListDto> processInt(String[] request) throws Exception {
+                List<NurasymasList> result = getSession().createQuery("from NurasymasList").list();
+                NurasymasDtoMap mapper = getMapper();
+                List<NurasymasListDto> res = new ArrayList<NurasymasListDto>();
+                for (NurasymasList item : result) {
                     res.add(mapper.toListDto(item));
                 }
                 return res;
@@ -42,20 +43,20 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
     }
 
     @Override
-    public SaskaitaDto gauti(Long id) throws Exception {
-        return new ProcessorBase<Long, SaskaitaDto>() {
+    public NurasymasDto gauti(Long id) throws Exception {
+        return new ProcessorBase<Long, NurasymasDto>() {
             @Override
-            protected SaskaitaDto processInt(Long id) throws Exception {
-                String queryString = "from Saskaita c where c.id = ?1";
-                List<Saskaita> list = getSession().createQuery(queryString)
+            protected NurasymasDto processInt(Long id) throws Exception {
+                String queryString = "from Nurasymas c where c.id = ?1";
+                List<Nurasymas> list = getSession().createQuery(queryString)
                         .setParameter("1", id).list();
                 getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-                Saskaita item = list.get(0);
-                SaskaitaDto result = getMapper().toDto(item);
-                queryString = "from SaskaitosPreke c where c.saskaitaId = ?1";
-                List<SaskaitosPreke> listP = getSession().createQuery(queryString)
+                Nurasymas item = list.get(0);
+                NurasymasDto result = getMapper().toDto(item);
+                queryString = "from NurasymoPreke c where c.nurasymasId = ?1";
+                List<NurasymoPreke> listP = getSession().createQuery(queryString)
                         .setParameter("1", id).list();
-                for (SaskaitosPreke itemP : listP) {
+                for (NurasymoPreke itemP : listP) {
                     result.getPrekes().add(getMapper().toPrekeDto(itemP));
                 }
                 return result;
@@ -64,39 +65,38 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
     }
 
     @Override
-    public SaskaitaDto saugoti(SaskaitaDto dto) throws Exception {
-        return new ProcessorBase<SaskaitaDto, SaskaitaDto>() {
+    public NurasymasDto saugoti(NurasymasDto dto) throws Exception {
+        return new ProcessorBase<NurasymasDto, NurasymasDto>() {
             @Override
-            protected SaskaitaDto processInt(SaskaitaDto dto) throws Exception {
+            protected NurasymasDto processInt(NurasymasDto dto) throws Exception {
 
                 getAssertor().isNotNull(dto, "Nėra įrašo");
-                getAssertor().isNotNullStr(dto.getNumeris(), "Nėra sąsk. numerio");
-                getAssertor().isTrue(dto.getTiekejasId() > 0, "Nėra tiekėjo");
+                getAssertor().isNotNullStr(dto.getNumeris(), "Nėra nurašymo numerio");
                 getAssertor().isTrue(dto.getImoneId() > 0, "Nėra įmonės");
                 getAssertor().isTrue(dto.getData() != null, "Nėra datos");
-                Saskaita item = new Saskaita();
+                Nurasymas item = new Nurasymas();
                 if (dto.getId() > 0) {
-                    String queryString = "from Saskaita c where c.id = ?1";
-                    List<Saskaita> list = getSession().createQuery(queryString)
+                    String queryString = "from Nurasymas c where c.id = ?1";
+                    List<Nurasymas> list = getSession().createQuery(queryString)
                             .setParameter("1", dto.getId()).list();
                     getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
 
                     item = list.get(0);
-                    getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Sąskaita jau patvirtinta. Negalima saugoti");
+                    getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Nurasymas jau patvirtintas. Negalima saugoti");
                 }
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
                 // saugom prekes
-                String queryString = "from SaskaitosPreke c where c.saskaitaId = ?1";
-                List<SaskaitosPreke> listP = getSession().createQuery(queryString)
+                String queryString = "from NurasymoPreke c where c.nurasymasId = ?1";
+                List<NurasymoPreke> listP = getSession().createQuery(queryString)
                         .setParameter("1", item.getId()).list();
 
-                List<SaskaitosPreke> newP = new ArrayList<SaskaitosPreke>();
-                List<SaskaitosPreke> updatedP = new ArrayList<SaskaitosPreke>();
-                for (SaskaitosPrekeDto itemPDto : dto.getPrekes()) {
-                    SaskaitosPreke itemP = raskPaimkPreke(listP, itemPDto);
+                List<NurasymoPreke> newP = new ArrayList<NurasymoPreke>();
+                List<NurasymoPreke> updatedP = new ArrayList<NurasymoPreke>();
+                for (NurasymoPrekeDto itemPDto : dto.getPrekes()) {
+                    NurasymoPreke itemP = raskPaimkPreke(listP, itemPDto);
                     if (itemP == null) {
-                        itemP = new SaskaitosPreke();
+                        itemP = new NurasymoPreke();
                     }
                     getAssertor().isNotNullStr(itemPDto.getSerija(), "Nėra serijos");
                     getAssertor().isTrue(itemPDto.getKiekis().doubleValue() > 0, "Nėra kiekio");
@@ -112,12 +112,12 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
                     getSession().save(itemP);
                     newP.add(itemP);
                 }
-                for (SaskaitosPreke itemP : listP) {
+                for (NurasymoPreke itemP : listP) {
                     getSession().delete(itemP);
                 }
 
-                SaskaitaDto result = getMapper().toDto(item);
-                for (SaskaitosPreke itemP : newP) {
+                NurasymasDto result = getMapper().toDto(item);
+                for (NurasymoPreke itemP : newP) {
                     result.getPrekes().add(getMapper().toPrekeDto(itemP));
                 }
                 return result;
@@ -136,14 +136,14 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
         queryString = "from MatavimoVienetas c where c.id = ?1";
         List<MatavimoVienetas> listMv = session.createQuery(queryString)
                 .setParameter("1", item.getMatVienetasId()).list();
-        getAssertor().isTrue(list.size() == 1, "Nerastas matavimo vienatas pagal id " + item.getMatVienetasId() + " įrašas");
+        getAssertor().isTrue(list.size() == 1, "Nerastas matavimo vienetas pagal id " + item.getMatVienetasId() + " įrašas");
         MatavimoVienetas item1 = listMv.get(0);
         return item1;
     }
 
-    private SaskaitosPreke raskPaimkPreke(List<SaskaitosPreke> listP, SaskaitosPrekeDto itemPDto) {
-        SaskaitosPreke result = null;
-        for (SaskaitosPreke p : listP) {
+    private NurasymoPreke raskPaimkPreke(List<NurasymoPreke> listP, NurasymoPrekeDto itemPDto) {
+        NurasymoPreke result = null;
+        for (NurasymoPreke p : listP) {
             if (p.getId() == itemPDto.getId() || (p.getPrekeId() == itemPDto.getPrekeId()
                     && StringUtils.equals(p.getSerija(), itemPDto.getSerija()))
                     ) {
@@ -163,32 +163,44 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
         return new ProcessorBase<Long, Boolean>() {
             @Override
             protected Boolean processInt(Long id) throws Exception {
-                Saskaita item;
+                Nurasymas item;
                 getAssertor().isTrue(id > 0, "Nėra id");
-                String queryString = "from Saskaita c where c.id = ?1";
-                List<Saskaita> list = getSession().createQuery(queryString)
+                String queryString = "from Nurasymas c where c.id = ?1";
+                List<Nurasymas> list = getSession().createQuery(queryString)
                         .setParameter("1", id).list();
                 getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
 
                 item = list.get(0);
-                getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Sąskaita jau patvirtinta. Negalima saugoti");
+                getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Nurašymas jau patvirtintas. Negalima saugoti");
                 item.setStatusas(SaskaitaStatusas.Patvirtinta);
                 getSession().save(item);
 
                 // saugom prekes
-                String queryStringP = "from SaskaitosPreke c where c.saskaitaId = ?1";
-                List<SaskaitosPreke> listP = getSession().createQuery(queryStringP)
+                String queryStringP = "from NurasymoPreke c where c.nurasymasId = ?1";
+                List<NurasymoPreke> listP = getSession().createQuery(queryStringP)
                         .setParameter("1", item.getId()).list();
 
                 getAssertor().isTrue(listP.size() > 0, "Nėra prekių");
-                for (SaskaitosPreke itemP : listP) {
+
+                for (NurasymoPreke itemP : listP) {
+                    queryStringP = "from Likutis c where c.serija = ?1 and prekeid = ?2 and imoneId = ?3";
+                    List<Likutis> listL = getSession().createQuery(queryStringP)
+                            .setParameter("1", itemP.getSerija()).setParameter("2", itemP.getPrekeId())
+                            .setParameter("3", item.getImoneId()).list();
+                    double suma = 0;
+                    for (Likutis itemL : listL)
+                    {
+                        suma += itemL.getKiekis().doubleValue();
+                    }
+                    getAssertor().isFalse(itemP.getKiekis().doubleValue() > suma, "Nėra pajamuota prekių su serija "
+                            + itemP.getSerija() + ". Reikia " + itemP.getKiekis() + " yra " + suma);
+
                     Likutis l = new Likutis();
-                    l.setArSaskaita(true);
+                    l.setArSaskaita(false);
                     l.setData(item.getData());
                     l.setDokumentas(item.getNumeris());
-                    l.setGaliojaIki(itemP.getGaliojaIki());
                     l.setIrasoId(itemP.getId());
-                    l.setKiekis(itemP.getKiekis());
+                    l.setKiekis(new BigDecimal(0).subtract(itemP.getKiekis()));
                     l.setMatavimoVienetasId(itemP.getMatavimoVienetasId());
                     l.setPrekeId(itemP.getPrekeId());
                     l.setSerija(itemP.getSerija());
