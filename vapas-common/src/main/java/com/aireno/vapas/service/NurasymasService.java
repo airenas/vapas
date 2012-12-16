@@ -13,4 +13,6 @@ public interface NurasymasService {
     NurasymasDto saugoti(NurasymasDto updatedContact) throws Exception;
 
     Boolean tvirtinti(Long id) throws Exception;
+
+    Boolean generuotiAtaskaita(long id) throws Exception;
 }

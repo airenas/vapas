@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-public class SaskaitaPresenter extends PresenterBase implements Initializable, GuiPresenter {
+public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implements Initializable, GuiPresenter {
     @FXML
     private Node root;
     @FXML
@@ -72,6 +72,7 @@ public class SaskaitaPresenter extends PresenterBase implements Initializable, G
                     prekesList.add(i);
                 for (int i = 0; i < 10; i++)
                     prekesList.add(new SaskaitosPrekeDto());
+                item = dto;
 
             } catch (Exception e) {
                 this.setText(e.getLocalizedMessage());
@@ -112,18 +113,19 @@ public class SaskaitaPresenter extends PresenterBase implements Initializable, G
             dto.setData(formatter.parse(data.getText()));
             dto.setImoneId(Long.valueOf(imone.getText()));
             dto.setTiekejasId(Long.valueOf(tiekejas.getText()));
-            dto.setId(id);
+
+                dto.setId(getId());
+
             dto.getPrekes().clear();
-            for (SaskaitosPrekeDto item: prekesList)
-            {
-                if (StringUtils.isNotEmpty(item.getSerija()))
-                {
+            for (SaskaitosPrekeDto item : prekesList) {
+                if (StringUtils.isNotEmpty(item.getSerija())) {
                     dto.getPrekes().add(item);
                 }
             }
 
-            getService().saugoti(dto);
+            dto = getService().saugoti(dto);
             this.setText("Išsaugota");
+            item = dto;
         } catch (Exception e) {
             this.setError("Klaida saugant: ", e);
         }
@@ -136,7 +138,7 @@ public class SaskaitaPresenter extends PresenterBase implements Initializable, G
 
     public void tvirtinti(ActionEvent event) {
         try {
-            getService().tvirtinti(id);
+            getService().tvirtinti(getId());
             this.setText("Patvirtinta");
         } catch (Exception e) {
             this.setError("Klaida tvirtinant: ", e);

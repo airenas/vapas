@@ -139,6 +139,15 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
         }
     }
 
+    public void generuotiAtaskaita(ActionEvent event) {
+        try {
+            getService().generuotiAtaskaita(id);
+            this.setText("Sugeneruota");
+        } catch (Exception e) {
+            this.setError("Klaida tvirtinant: ", e);
+        }
+    }
+
     class MListDefinition extends ListDefinition<NurasymoPrekeDto> {
         MListDefinition() {
             fields.add(new LongFieldDefinition<NurasymoPrekeDto>("Prekė", 50, new PropertyValueFactory<NurasymoPrekeDto, Long>("prekeId"),

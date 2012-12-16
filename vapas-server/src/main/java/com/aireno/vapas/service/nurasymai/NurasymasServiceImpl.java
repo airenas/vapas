@@ -1,18 +1,29 @@
 package com.aireno.vapas.service.nurasymai;
 
-import com.aireno.dto.*;
+import com.aireno.Constants;
+import com.aireno.dto.NurasymasDto;
+import com.aireno.dto.NurasymasListDto;
+import com.aireno.dto.NurasymoPrekeDto;
 import com.aireno.vapas.service.NurasymasService;
-import com.aireno.vapas.service.SaskaitaService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.persistance.*;
-import com.aireno.vapas.service.saskaitos.SaskaitaDtoMap;
 import org.apache.commons.lang.StringUtils;
+import org.docx4j.XmlUtils;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.wml.*;
 import org.hibernate.Session;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -141,6 +152,15 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
         return item1;
     }
 
+    private Imone gautiImone(long id, Session session) throws Exception {
+        String queryString = "from Imone c where c.id = ?1";
+        List<Imone> list = session.createQuery(queryString)
+                .setParameter("1", id).list();
+        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
+        Imone item = list.get(0);
+        return item;
+    }
+
     private NurasymoPreke raskPaimkPreke(List<NurasymoPreke> listP, NurasymoPrekeDto itemPDto) {
         NurasymoPreke result = null;
         for (NurasymoPreke p : listP) {
@@ -188,8 +208,7 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                             .setParameter("1", itemP.getSerija()).setParameter("2", itemP.getPrekeId())
                             .setParameter("3", item.getImoneId()).list();
                     double suma = 0;
-                    for (Likutis itemL : listL)
-                    {
+                    for (Likutis itemL : listL) {
                         suma += itemL.getKiekis().doubleValue();
                     }
                     getAssertor().isFalse(itemP.getKiekis().doubleValue() > suma, "Nėra pajamuota prekių su serija "
@@ -212,5 +231,205 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                 return true;
             }
         }.process(id);
+    }
+
+    @Override
+    public Boolean generuotiAtaskaita(long id) throws Exception {
+        return new ProcessorBase<Long, Boolean>() {
+            @Override
+            protected Boolean processInt(Long id) throws Exception {
+                Nurasymas item;
+                getAssertor().isTrue(id > 0, "Nėra id");
+                String queryString = "from Nurasymas c where c.id = ?1";
+                List<Nurasymas> list = getSession().createQuery(queryString)
+                        .setParameter("1", id).list();
+                getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
+
+                item = list.get(0);
+                getAssertor().isTrue(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Nurašymas dar nepatvirtintas.");
+
+                // saugom prekes
+                String queryStringP = "from NurasymoPreke c where c.nurasymasId = ?1";
+                List<NurasymoPreke> listP = getSession().createQuery(queryStringP)
+                        .setParameter("1", item.getId()).list();
+
+                getAssertor().isTrue(listP.size() > 0, "Nėra prekių");
+
+                WordprocessingMLPackage template = getTemplate("template/nurasymas.docx");
+
+                String toAdd = new SimpleDateFormat(Constants.DATE_FORMAT).format(new Date());
+                replacePlaceholder(template, toAdd, "{DATA}");
+                replacePlaceholder(template, item.getNumeris(), "{NUMERIS}");
+                replacePlaceholder(template, gautiImone(item.getImoneId(), getSession()).getPavadinimas()
+                        , "{IMONE}");
+                replacePlaceholder(template, new SimpleDateFormat("yyyy").format(item.getData()), "{METAI}");
+                replacePlaceholder(template, new SimpleDateFormat("MM").format(item.getData()), "{MENUO}");
+
+                List<Map<String, String>> textToAdd = new ArrayList<Map<String, String>>();
+
+                int i = 1;
+                for (NurasymoPreke itemP : listP) {
+
+                    Map<String, String> repl1 = new HashMap<String, String>();
+                    repl1.put("{NR}", Integer.toString(i));
+                    Preke preke = gautiIrasa(itemP.getPrekeId(),
+                            Preke.class, getSession());
+                    MatavimoVienetas mvienetas = gautiIrasa(preke.getMatVienetasId(),
+                            MatavimoVienetas.class, getSession());
+                    repl1.put("{PAV}", preke.getPavadinimas());
+                    repl1.put("{SERIJA}", itemP.getSerija());
+                    repl1.put("{MATVNT}", mvienetas.getKodas());
+                    repl1.put("{KIEKIS}", itemP.getKiekis().toString());
+
+                    i++;
+                    textToAdd.add(repl1);
+                }
+
+                replaceTable(new String[]{"{NR}", "{PAV}", "{SERIJA}", "{MATVNT}", "{KIEKIS}"},
+                        textToAdd, template);
+
+                writeDocxToStream(template, "documents/nurasymas_" + Long.toString(item.getId()) + ".docx");
+
+
+                return true;
+            }
+        }.process(id);
+    }
+
+    private <T> T gautiIrasa(long id, Class<T> tClass, Session session) throws Exception {
+        String queryString = "from " + tClass.getSimpleName() + " c where c.id = ?1";
+        List<T> list = session.createQuery(queryString)
+                .setParameter("1", id).list();
+        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
+        T item = list.get(0);
+        return item;
+    }
+
+    private WordprocessingMLPackage getTemplate(String name) throws Docx4JException, FileNotFoundException {
+        WordprocessingMLPackage template = WordprocessingMLPackage.load(new FileInputStream(new File(name)));
+        return template;
+    }
+
+    private void writeDocxToStream(WordprocessingMLPackage template, String target) throws IOException, Docx4JException {
+        File f = new File(target);
+        template.save(f);
+    }
+
+    private static List<Object> getAllElementFromObject(Object obj, Class<?> toSearch) {
+        List<Object> result = new ArrayList<Object>();
+        if (obj instanceof JAXBElement) obj = ((JAXBElement<?>) obj).getValue();
+
+        if (obj.getClass().equals(toSearch))
+            result.add(obj);
+        else if (obj instanceof ContentAccessor) {
+            List<?> children = ((ContentAccessor) obj).getContent();
+            for (Object child : children) {
+                result.addAll(getAllElementFromObject(child, toSearch));
+            }
+
+        }
+        return result;
+    }
+
+    private void replacePlaceholder(WordprocessingMLPackage template, String name, String placeholder) {
+        List<Object> texts = getAllElementFromObject(template.getMainDocumentPart(), Text.class);
+
+        for (Object text : texts) {
+            Text textElement = (Text) text;
+            if (textElement.getValue().equals(placeholder)) {
+                textElement.setValue(name);
+            }
+        }
+    }
+
+    private void replaceParagraph(String placeholder, String textToAdd, WordprocessingMLPackage template, ContentAccessor addTo) {
+        // 1. get the paragraph
+        List<Object> paragraphs = getAllElementFromObject(template.getMainDocumentPart(), P.class);
+
+        P toReplace = null;
+        for (Object p : paragraphs) {
+            List<Object> texts = getAllElementFromObject(p, Text.class);
+            for (Object t : texts) {
+                Text content = (Text) t;
+                if (content.getValue().equals(placeholder)) {
+                    toReplace = (P) p;
+                    break;
+                }
+            }
+        }
+
+        // we now have the paragraph that contains our placeholder: toReplace
+        // 2. split into seperate lines
+        String as[] = StringUtils.splitPreserveAllTokens(textToAdd, '\n');
+
+        for (int i = 0; i < as.length; i++) {
+            String ptext = as[i];
+
+            // 3. copy the found paragraph to keep styling correct
+            P copy = (P) XmlUtils.deepCopy(toReplace);
+
+            // replace the text elements from the copy
+            List<?> texts = getAllElementFromObject(copy, Text.class);
+            if (texts.size() > 0) {
+                Text textToReplace = (Text) texts.get(0);
+                textToReplace.setValue(ptext);
+            }
+
+            // add the paragraph to the document
+            addTo.getContent().add(copy);
+        }
+
+        // 4. remove the original one
+        ((ContentAccessor) toReplace.getParent()).getContent().remove(toReplace);
+
+    }
+
+    private void replaceTable(String[] placeholders, List<Map<String, String>> textToAdd,
+                              WordprocessingMLPackage template) throws Docx4JException, JAXBException {
+        List<Object> tables = getAllElementFromObject(template.getMainDocumentPart(), Tbl.class);
+
+        // 1. find the table
+        Tbl tempTable = getTemplateTable(tables, placeholders[0]);
+        List<Object> rows = getAllElementFromObject(tempTable, Tr.class);
+
+        // first row is header, second row is content
+        if (rows.size() == 2) {
+            // this is our template row
+            Tr templateRow = (Tr) rows.get(1);
+
+            for (Map<String, String> replacements : textToAdd) {
+                // 2 and 3 are done in this method
+                addRowToTable(tempTable, templateRow, replacements);
+            }
+
+            // 4. remove the template row
+            tempTable.getContent().remove(templateRow);
+        }
+    }
+
+    private Tbl getTemplateTable(List<Object> tables, String templateKey) throws Docx4JException, JAXBException {
+        for (Iterator<Object> iterator = tables.iterator(); iterator.hasNext(); ) {
+            Object tbl = iterator.next();
+            List<?> textElements = getAllElementFromObject(tbl, Text.class);
+            for (Object text : textElements) {
+                Text textElement = (Text) text;
+                if (textElement.getValue() != null && textElement.getValue().equals(templateKey))
+                    return (Tbl) tbl;
+            }
+        }
+        return null;
+    }
+
+    private static void addRowToTable(Tbl reviewtable, Tr templateRow, Map<String, String> replacements) {
+        Tr workingRow = (Tr) XmlUtils.deepCopy(templateRow);
+        List<?> textElements = getAllElementFromObject(workingRow, Text.class);
+        for (Object object : textElements) {
+            Text text = (Text) object;
+            String replacementValue = (String) replacements.get(text.getValue());
+            if (replacementValue != null)
+                text.setValue(replacementValue);
+        }
+
+        reviewtable.getContent().add(workingRow);
     }
 }
