@@ -15,3 +15,20 @@
 .body {
     -fx-padding: 20;
 }
+
+.label{
+    -fx-font-size: 14pt;
+      }
+.root{
+    -fx-font-size: 14pt;
+    -fx-font-family: "Tahoma";
+    -fx-base: #DFB951;
+    -fx-background: #A78732;
+    -fx-focus-color: #B6A678;
+}
+
+.data{
+    -fx-skin: "com.sun.javafx.scene.control.skin.LabelSkin";
+}
+
+

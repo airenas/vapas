@@ -3,14 +3,10 @@ package com.aireno.vapas.gui.base;
 
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.Processor;
-import com.aireno.dto.MatavimoVienetaiListReq;
-import com.aireno.dto.MatavimoVienetaiListResp;
 import com.aireno.vapas.gui.main.MainPresenter;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
-import org.thehecklers.dialogfx.DialogFX;
+import jfxtras.labs.dialogs.DialogFX;
 
-public abstract class PresenterBase implements GuiPresenter
-{
+public abstract class PresenterBase implements GuiPresenter {
     GuiPresenter from;
     protected long id;
 
@@ -23,15 +19,15 @@ public abstract class PresenterBase implements GuiPresenter
     }
 
 
-    protected MainPresenter getMainPresenter(){
-         return ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
+    protected MainPresenter getMainPresenter() {
+        return ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
     }
 
     protected <T> T getBean(Class<T> cls) {
         return ApplicationContextProvider.getProvider().getBean(cls);
     }
 
-    protected <T, TResp> Processor<T,TResp> getProcessor(Class<T> reqClass) {
+    protected <T, TResp> Processor<T, TResp> getProcessor(Class<T> reqClass) {
         return ApplicationContextProvider.getProvider().getBean(reqClass.getSimpleName(), Processor.class);
     }
 
@@ -45,7 +41,7 @@ public abstract class PresenterBase implements GuiPresenter
 
     public void goBack() {
         if (from != null)
-        getMainPresenter().show(from);
+            getMainPresenter().show(from);
     }
 
     @Override
@@ -58,7 +54,24 @@ public abstract class PresenterBase implements GuiPresenter
         this.id = id;
     }
 
-    public void setError(String msg, Exception e){
+    public void update() {
+        getMainPresenter().update();
+    }
+
+    @Override
+    public void updateControls() {
+    }
+
+    @Override
+    public boolean needSave() {
+        return false;
+    }
+
+    @Override
+    public void save() throws Exception {
+    }
+
+    public void setError(String msg, Exception e) {
         DialogFX dialog = new DialogFX(DialogFX.Type.ERROR);
         dialog.setTitleText("Klaida");
         dialog.setMessage(msg + e.getLocalizedMessage());
@@ -66,8 +79,7 @@ public abstract class PresenterBase implements GuiPresenter
         dialog.showDialog();
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return "Vaistų apskaita";
     }
 }

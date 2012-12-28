@@ -20,6 +20,12 @@ public class Assertor {
         throw new Exception(s);
     }
 
+    public void isTrue(boolean item, String s, Object param) throws Exception {
+        if (item)
+            return;
+        throw new Exception(String.format(s, param));
+    }
+
     public void isNotNullStr(String kodas, String s) throws Exception {
         isTrue(kodas != null && kodas.length() > 0, s);
     }

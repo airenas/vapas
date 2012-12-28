@@ -17,6 +17,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import jfxtras.labs.scene.control.CalendarTextField;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
@@ -24,10 +25,11 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implements Initializable, GuiPresenter {
+public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
     @FXML
     private Node root;
     @FXML
@@ -36,7 +38,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implemen
     @FXML
     private TextField numeris;
     @FXML
-    private TextField data;
+    private CalendarTextField data;
     @FXML
     private TextField tiekejas;
     @FXML
@@ -59,13 +61,16 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implemen
 
     @Override
     public boolean init() {
+        data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
         prekesList = FXCollections.observableArrayList();
         if (id > 0) {
             try {
                 SaskaitaDto dto = getService().gauti(id);
                 this.setText("Gauta");
                 numeris.setText(dto.getNumeris());
-                data.setText(dateToString(dto.getData()));
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(dto.getData());
+                data.setValue(cal);
                 tiekejas.setText(Long.toString(dto.getTiekejasId()));
                 imone.setText(Long.toString(dto.getImoneId()));
                 for (SaskaitosPrekeDto i : dto.getPrekes())
@@ -80,7 +85,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implemen
             }
         } else {
             numeris.setText("");
-            data.setText(dateToString(new Date()));
+            data.setValue(Calendar.getInstance());
             tiekejas.setText("1");
             imone.setText("1");
             for (int i = 0; i < 10; i++)
@@ -106,15 +111,15 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implemen
 
     DateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT);
 
-    public void saugoti(ActionEvent event) throws ParseException {
+    public void saugotiInt() throws Exception {
         try {
             SaskaitaDto dto = new SaskaitaDto();
             dto.setNumeris(numeris.getText());
-            dto.setData(formatter.parse(data.getText()));
+            dto.setData(data.getValue().getTime());
             dto.setImoneId(Long.valueOf(imone.getText()));
             dto.setTiekejasId(Long.valueOf(tiekejas.getText()));
 
-                dto.setId(getId());
+            dto.setId(getId());
 
             dto.getPrekes().clear();
             for (SaskaitosPrekeDto item : prekesList) {
@@ -132,10 +137,6 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implemen
 
     }
 
-    public void iseiti(ActionEvent event) {
-        this.goBack();
-    }
-
     public void tvirtinti(ActionEvent event) {
         try {
             getService().tvirtinti(getId());
@@ -143,6 +144,11 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> implemen
         } catch (Exception e) {
             this.setError("Klaida tvirtinant: ", e);
         }
+    }
+
+    @Override
+    protected boolean pakeista() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     class MListDefinition extends ListDefinition<SaskaitosPrekeDto> {

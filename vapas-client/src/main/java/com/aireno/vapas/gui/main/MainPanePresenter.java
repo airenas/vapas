@@ -75,6 +75,22 @@ public class MainPanePresenter implements GuiPresenter {
         return "Vaistų apskaita";
     }
 
+    @Override
+    public void updateControls() {
+        MainPresenter mainPresenter = getMainPresenter();
+        mainPresenter.updateControls();
+    }
+
+    @Override
+    public boolean needSave() {
+        return false;
+    }
+
+    @Override
+    public void save() {
+
+    }
+
     public MainPresenter getMainPresenter() {
         return ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
     }

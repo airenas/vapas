@@ -11,11 +11,21 @@ import javafx.scene.Node;
  */
 public interface GuiPresenter {
     Node getView();
-    boolean init() throws GuiException;
+    boolean init() throws Exception;
     Node getButtonView();
     void from(GuiPresenter currentPresenter);
 
     void setId(long id);
 
     String getTitle();
+
+    void updateControls();
+
+    /**
+     * check for save
+     * @return
+     */
+    boolean needSave();
+
+    void save() throws Exception;
 }

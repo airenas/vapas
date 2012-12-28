@@ -13,16 +13,22 @@ import javafx.util.Callback;
  * To change this template use File | Settings | File Templates.
  */
 public class FieldDefinition<T, S> {
+    private GenericCellFactory<T, S> cellFactory;
+
     public FieldDefinition(String name, int size, Callback<TableColumn.CellDataFeatures<T, S>, ObservableValue<S>> valueFactory) {
         this.name = name;
         this.size = size;
         this.valueFactory = valueFactory;
     }
 
+
     public TableColumn<T, S> addToTable(ListDefinition<T> tListDefinition, TableView<T> tableView) {
         TableColumn<T, S> col = new TableColumn<T, S>(getName());
         col.prefWidthProperty().setValue(getSize());
         col.setCellValueFactory(getValueFactory());
+        if (cellFactory != null) {
+            col.setCellFactory(cellFactory);
+        }
         tableView.getColumns().add(col);
         return col;
     }
@@ -77,5 +83,10 @@ public class FieldDefinition<T, S> {
 
     public Callback<TableColumn.CellDataFeatures<T, S>, ObservableValue<S>> getValueFactory() {
         return valueFactory;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public FieldDefinition<T, S> addCellFactory(GenericCellFactory<T, S> cellFactory) {
+        this.cellFactory = cellFactory;
+        return this;  //To change body of created methods use File | Settings | File Templates.
     }
 }

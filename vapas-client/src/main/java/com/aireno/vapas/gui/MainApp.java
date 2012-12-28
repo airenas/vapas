@@ -23,6 +23,7 @@ public class MainApp extends Application
 
         Scene scene = new Scene(mainPresenter.getView());
         scene.getStylesheets().add("styles.css");
+        scene.getStylesheets().add("/jfxtras/labs/internal/scene/control/CalendarTextField.css");
         stage.setScene(scene);
         //stage.setTitle("Vaistų apskaita - VApas");
         stage.show();

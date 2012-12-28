@@ -1,11 +1,12 @@
 package com.aireno.vapas.gui.nurasymai;
 
 import com.aireno.base.ApplicationContextProvider;
-import com.aireno.dto.NurasymoPrekeDto;
+import com.aireno.dto.ImoneDto;
 import com.aireno.dto.NurasymasDto;
 import com.aireno.dto.NurasymoPrekeDto;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
+import com.aireno.vapas.gui.controls.DateControl;
 import com.aireno.vapas.service.NurasymasService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import jfxtras.labs.scene.control.CalendarTextField;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
@@ -25,8 +27,10 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
+import com.mytdev.javafx.scene.control.AutoCompleteTextField;
 
 public class NurasymasPresenter extends PresenterBase implements Initializable, GuiPresenter {
     @FXML
@@ -37,9 +41,9 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
     @FXML
     private TextField numeris;
     @FXML
-    private TextField data;
+    private CalendarTextField data;
     @FXML
-    private TextField imone;
+    private AutoCompleteTextField imone;
     @FXML
     private TableView<NurasymoPrekeDto> prekes;
 
@@ -59,12 +63,29 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
     @Override
     public boolean init() {
         prekesList = FXCollections.observableArrayList();
+        data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        ObservableList data1 = FXCollections.observableArrayList();
+        String[] s = new String[]{"apple","ball","cat","doll","elephant",
+                "fight","georgeous","height","ice","jug",
+                "aplogize","bank","call","done","ego",
+                "finger","giant","hollow","internet","jumbo",
+                "kilo","lion","for","length","primary","stage",
+                "scene","zoo","jumble","auto","text",
+                "root","box","items","hip-hop","himalaya","nepal",
+                "kathmandu","kirtipur","everest","buddha","epic","hotel"};
+
+        for(int j=0; j<s.length; j++){
+            data1.add(s[j]);
+        }
+        imone.setItems(data1);
         if (id > 0) {
             try {
                 NurasymasDto dto = getService().gauti(id);
                 this.setText("Gauta");
                 numeris.setText(dto.getNumeris());
-                data.setText(dateToString(dto.getData()));
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(dto.getData());
+                data.setValue(cal);
                 imone.setText(Long.toString(dto.getImoneId()));
                 for (NurasymoPrekeDto i : dto.getPrekes())
                     prekesList.add(i);
@@ -77,12 +98,11 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
             }
         } else {
             numeris.setText("");
-            data.setText(dateToString(new Date()));
+            data.setValue(Calendar.getInstance());
             imone.setText("1");
             for (int i = 0; i < 10; i++)
                 prekesList.add(new NurasymoPrekeDto());
         }
-
         MListDefinition def = new MListDefinition();
         prekes.setEditable(true);
         def.InitTable(prekes);
@@ -106,14 +126,12 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
         try {
             NurasymasDto dto = new NurasymasDto();
             dto.setNumeris(numeris.getText());
-            dto.setData(formatter.parse(data.getText()));
+            dto.setData(data.getValue().getTime());
             dto.setImoneId(Long.valueOf(imone.getText()));
             dto.setId(id);
             dto.getPrekes().clear();
-            for (NurasymoPrekeDto item: prekesList)
-            {
-                if (StringUtils.isNotEmpty(item.getSerija()))
-                {
+            for (NurasymoPrekeDto item : prekesList) {
+                if (StringUtils.isNotEmpty(item.getSerija())) {
                     dto.getPrekes().add(item);
                 }
             }

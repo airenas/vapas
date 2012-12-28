@@ -5,24 +5,26 @@
 <?import javafx.collections.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-client/1.0/vapas-client-1.0.jar?>
+<?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-common/1.0/vapas-common-1.0.jar?>
 
 <BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.prekes.PrekesPresenter">
   <center>
     <AnchorPane fx:id="root" prefHeight="200.0" prefWidth="200.0">
       <children>
-        <Label layoutX="36.0" layoutY="87.0" text="Mat. Vienetas" />
-        <Label layoutX="36.0" layoutY="44.0" text="Pavadinimas" />
-        <TextField fx:id="pavadinimas" prefWidth="354.0" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="41.0" />
-        <ComboBoxWithId fx:id="matVienetas" editable="false" layoutY="84.0" prefHeight="22.0" prefWidth="354.0" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="27.0" />
-        <Label layoutX="33.0" layoutY="137.0" text="Pastaba" />
-        <TextArea fx:id="pastaba" prefHeight="234.0" prefWidth="354.0" wrapText="true" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="137.0" />
+        <Label layoutX="30.0" layoutY="49.0" text="Mat. Vienetas" />
+        <Label layoutX="30.0" layoutY="17.0" text="Pavadinimas" />
+        <TextField fx:id="pavadinimas" onKeyReleased="#update" prefWidth="354.0" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="14.0" />
+        <FilterLookup fx:id="matVienetas" editable="true" layoutY="46.0" onAction="#update" onKeyReleased="#update" prefHeight="22.0" prefWidth="354.0" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="27.0" />
+        <Label layoutX="30.0" layoutY="80.0" text="Pastaba" />
+        <TextArea fx:id="pastaba" onKeyReleased="#update" prefHeight="279.9999000000025" prefWidth="354.0" wrapText="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="80.0" />
       </children>
     </AnchorPane>
   </center>
   <right>
     <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
       <children>
-        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
+        <Button fx:id="bSaugoti" contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
         <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />
       </children>
     </VBox>

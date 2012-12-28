@@ -8,6 +8,7 @@ import com.aireno.vapas.service.matavimoVienetai.MatavimoVienetasDtoMap;
 import com.aireno.vapas.service.persistance.MatavimoVienetas;
 import com.aireno.vapas.service.persistance.Preke;
 import com.aireno.vapas.service.persistance.PrekeList;
+import org.hibernate.classic.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,8 @@ public class PrekeServiceImpl extends ServiceBase implements PrekeService {
                 getAssertor().isNotNull(dto, "Nėra įrašo");
                 getAssertor().isNotNullStr(dto.getPavadinimas(), "Nėra pavadinimo");
                 getAssertor().hasId(dto.getMatVienetasId(), "Nėra matavimo vieneto");
+                getAssertor().isTrue(validateUnique("from Preke c where c.id != ?1 and pavadinimas = ?2",
+                        dto.getPavadinimas(), dto.getId(), getSession()), "Tokia prekė '%s' jau yra", dto.getPavadinimas());
                 Preke item = new Preke();
                 if (dto.getId() > 0){
                     String queryString = "from Preke c where c.id = ?1";
@@ -76,6 +79,13 @@ public class PrekeServiceImpl extends ServiceBase implements PrekeService {
                 return mapper.toDto(item);
             }
         }.process(dto);
+
+    }
+
+    private boolean validateUnique(String s, String pavadinimas, long id, Session session) {
+        List<Preke> list =  session.createQuery(s)
+                .setParameter("1", id).setParameter("2", pavadinimas).setFetchSize(1).list();
+        return list.size() == 0;
 
     }
 }

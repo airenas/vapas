@@ -3,6 +3,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import jfxtras.labs.scene.control.*?>
 
 <BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.saskaitos.SaskaitaPresenter">
   <center>
@@ -11,7 +12,7 @@
         <Label layoutX="280.0" layoutY="27.0" text="Data" />
         <Label layoutX="29.0" layoutY="27.0" text="Numeris" />
         <TextField id="pavadinimas" fx:id="numeris" prefWidth="124.0" AnchorPane.leftAnchor="111.5" AnchorPane.topAnchor="24.0" />
-        <TextField id="kodas" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5" AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="25.0" />
+        <CalendarTextField id="data" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5" AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="25.0" />
         <Label layoutX="29.0" layoutY="56.0" text="Tiekejas" />
         <TextField id="kodas" fx:id="tiekejas" layoutY="61.0" prefWidth="347.0" AnchorPane.leftAnchor="111.5" AnchorPane.rightAnchor="41.5" />
         <Label layoutX="34.0" layoutY="93.0" text="Įmonė" />

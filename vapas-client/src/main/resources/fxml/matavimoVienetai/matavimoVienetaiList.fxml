@@ -24,7 +24,7 @@
       <children>
         <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#naujas" text="Naujas" />
         <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#redaguoti" text="Redaguoti" />
-        <Button mnemonicParsing="false" onAction="#trinti" text="Trinti" />
+        <Button fx:id="bTrinti" mnemonicParsing="false" onAction="#trinti" text="Trinti" />
       </children>
     </VBox>
   </right>
