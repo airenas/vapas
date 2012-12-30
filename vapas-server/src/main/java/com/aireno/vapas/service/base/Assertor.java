@@ -17,13 +17,13 @@ public class Assertor {
     public void isTrue(boolean item, String s) throws Exception {
         if (item)
             return;
-        throw new Exception(s);
+        throw newException(s);
     }
 
     public void isTrue(boolean item, String s, Object param) throws Exception {
         if (item)
             return;
-        throw new Exception(String.format(s, param));
+        throw newException(s, param);
     }
 
     public void isNotNullStr(String kodas, String s) throws Exception {
@@ -36,5 +36,13 @@ public class Assertor {
 
     public void isFalse(boolean b, String s) throws Exception {
         isTrue(!b, s);
+    }
+
+    public Exception newException(String s, Object param) {
+        return new Exception(String.format(s, param));
+    }
+
+    public Exception newException(String s) {
+        return new Exception(s);
     }
 }

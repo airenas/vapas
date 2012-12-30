@@ -4,7 +4,7 @@
     -fx-text-fill: white;
 }
 
-.header .title {
+.header.title {
     -fx-font: 18pt "Tahoma Bold";
 }
 
@@ -22,13 +22,27 @@
 .root{
     -fx-font-size: 14pt;
     -fx-font-family: "Tahoma";
-    -fx-base: #DFB951;
+    -fx-base: #DCE587;
     -fx-background: #A78732;
-    -fx-focus-color: #B6A678;
+    -fx-focus-color: #FAFECB;
 }
 
 .data{
     -fx-skin: "com.sun.javafx.scene.control.skin.LabelSkin";
 }
+
+/*.table-row-cell:selected {
+	-fx-background-color: #DCE587;
+}
+
+.table-row-cell:odd {
+     -fx-background-color: #FAFECB;
+     -fx-background-insets: 0, 0 0 1 0;
+ }
+
+ .table-row-cell:even {
+      -fx-background-color: #FAFECB;
+      -fx-background-insets: 0, 0 0 1 0;
+  }*/
 
 

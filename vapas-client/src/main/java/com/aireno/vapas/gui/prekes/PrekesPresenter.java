@@ -92,42 +92,28 @@ public class PrekesPresenter extends EntityPresenterBase<PrekeDto> {
             }
             matVienetas.setData(data);
 
-            final StringConverter<MatavimoVienetasDto> converter = new StringConverter<MatavimoVienetasDto>() {
-
-                @Override
-                public String toString(MatavimoVienetasDto p) {
-                    return p.getPavadinimas();
-                }
-
-                @Override
-                public MatavimoVienetasDto fromString(String s) {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
-            };
-
-            matVienetas.setCellFactory(new Callback<ListView<MatavimoVienetasDto>, ListCell<MatavimoVienetasDto>>() {
-                @Override
-                public ListCell<MatavimoVienetasDto> call(ListView<MatavimoVienetasDto> matavimoVienetasDtoListView) {
-                    final ListCell<MatavimoVienetasDto> cell = new ListCell<MatavimoVienetasDto>() {
-                        {
-                            super.setPrefWidth(100);
-                        }
-
-                        @Override
-                        public void updateItem(MatavimoVienetasDto item,
-                                               boolean empty) {
-                            super.updateItem(item, empty);
-                            if (item != null) {
-                                setText(item.getPavadinimas());
-                            } else {
-                                setText(null);
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
+//            matVienetas.setCellFactory(new Callback<ListView<MatavimoVienetasDto>, ListCell<MatavimoVienetasDto>>() {
+//                @Override
+//                public ListCell<MatavimoVienetasDto> call(ListView<MatavimoVienetasDto> matavimoVienetasDtoListView) {
+//                    final ListCell<MatavimoVienetasDto> cell = new ListCell<MatavimoVienetasDto>() {
+//                        {
+//                            super.setPrefWidth(100);
+//                        }
+//
+//                        @Override
+//                        public void updateItem(MatavimoVienetasDto item,
+//                                               boolean empty) {
+//                            super.updateItem(item, empty);
+//                            if (item != null) {
+//                                setText(item.getPavadinimas());
+//                            } else {
+//                                setText(null);
+//                            }
+//                        }
+//                    };
+//                    return cell;
+//                }
+//            });
 
         } catch (Exception e) {
             this.setText(e.getLocalizedMessage());

@@ -1,11 +1,12 @@
 package com.aireno.vapas.service.persistance;
 
+import com.aireno.base.LookupDto;
 import com.aireno.vapas.service.base.EntityBase;
 
 import java.io.Serializable;
 
 
-public class Imone extends EntityBase implements Serializable
+public class Imone extends EntityBase implements Serializable, LookupEntityDto
 {
     private String pavadinimas;
 

@@ -1,18 +1,21 @@
 package com.aireno.vapas.gui.saskaitos;
 
 import com.aireno.base.ApplicationContextProvider;
+import com.aireno.base.LookupDto;
 import com.aireno.dto.SaskaitaDto;
 import com.aireno.dto.SaskaitosPrekeDto;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
+import com.aireno.vapas.gui.controls.FilterLookup;
+import com.aireno.vapas.service.LookupService;
 import com.aireno.vapas.service.SaskaitaService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -23,13 +26,12 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
+public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     @FXML
     private Node root;
     @FXML
@@ -40,11 +42,15 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
     @FXML
     private CalendarTextField data;
     @FXML
-    private TextField tiekejas;
+    private FilterLookup tiekejas;
     @FXML
-    private TextField imone;
+    private FilterLookup<LookupDto> imone;
     @FXML
     private TableView<SaskaitosPrekeDto> prekes;
+    @FXML
+    private Button bSaugoti;
+    @FXML
+    private Button bTvirtinti;
 
     ObservableList<SaskaitosPrekeDto> prekesList;
 
@@ -60,7 +66,11 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
     }
 
     @Override
-    public boolean init() {
+    public boolean init() throws Exception {
+        imone.setData(getLookupService().sarasas(
+                new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
+        tiekejas.setData(getLookupService().sarasas(
+                new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_TIEKEJAS)));
         data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
         prekesList = FXCollections.observableArrayList();
         if (id > 0) {
@@ -71,11 +81,11 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(dto.getData());
                 data.setValue(cal);
-                tiekejas.setText(Long.toString(dto.getTiekejasId()));
-                imone.setText(Long.toString(dto.getImoneId()));
+                tiekejas.setValueId(dto.getTiekejasId());
+                imone.setValueId(dto.getImoneId());
                 for (SaskaitosPrekeDto i : dto.getPrekes())
                     prekesList.add(i);
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 2; i++)
                     prekesList.add(new SaskaitosPrekeDto());
                 item = dto;
 
@@ -86,10 +96,11 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
         } else {
             numeris.setText("");
             data.setValue(Calendar.getInstance());
-            tiekejas.setText("1");
-            imone.setText("1");
-            for (int i = 0; i < 10; i++)
+            tiekejas.setValueId(0);
+            imone.setValueId(0);
+            for (int i = 0; i < 2; i++)
                 prekesList.add(new SaskaitosPrekeDto());
+            item = new SaskaitaDto();
         }
 
         MListDefinition def = new MListDefinition();
@@ -116,8 +127,8 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
             SaskaitaDto dto = new SaskaitaDto();
             dto.setNumeris(numeris.getText());
             dto.setData(data.getValue().getTime());
-            dto.setImoneId(Long.valueOf(imone.getText()));
-            dto.setTiekejasId(Long.valueOf(tiekejas.getText()));
+            dto.setImoneId(imone.getValueId());
+            dto.setTiekejasId(tiekejas.getValueId());
 
             dto.setId(getId());
 
@@ -146,56 +157,43 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
         }
     }
 
-    @Override
-    protected boolean pakeista() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     class MListDefinition extends ListDefinition<SaskaitosPrekeDto> {
         MListDefinition() {
             fields.add(new TextFieldDefinition("Serija", 100, new PropertyValueFactory<SaskaitosPrekeDto, String>("serija"),
-                    new EventHandler<TableColumn.CellEditEvent<SaskaitosPrekeDto, String>>() {
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, String>() {
                         @Override
-                        public void handle(TableColumn.CellEditEvent<SaskaitosPrekeDto, String> t) {
-                            ((SaskaitosPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setSerija(t.getNewValue());
+                        public void handle(SaskaitosPrekeDto item, String value) {
+                            item.setSerija(value);
                         }
-                    }));
-            fields.add(new LongFieldDefinition<SaskaitosPrekeDto>("Prekė", 50, new PropertyValueFactory<SaskaitosPrekeDto, Long>("prekeId"),
-                    new EventHandler<TableColumn.CellEditEvent<SaskaitosPrekeDto, Long>>() {
+                    })
+                    );
+            fields.add(new LongFieldDefinition<SaskaitosPrekeDto>("Prekė", 150, new PropertyValueFactory<SaskaitosPrekeDto, Long>("prekeId"),
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, Long>() {
                         @Override
-                        public void handle(TableColumn.CellEditEvent<SaskaitosPrekeDto, Long> t) {
-                            ((SaskaitosPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setPrekeId(t.getNewValue());
+                        public void handle(SaskaitosPrekeDto item, Long value) {
+                            item.setPrekeId(value);
                         }
                     }));
             fields.add(new DecimalFieldDefinition<SaskaitosPrekeDto>("Kiekis", 100, new PropertyValueFactory<SaskaitosPrekeDto, BigDecimal>("kiekis"),
-                    new EventHandler<TableColumn.CellEditEvent<SaskaitosPrekeDto, BigDecimal>>() {
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, BigDecimal>() {
                         @Override
-                        public void handle(TableColumn.CellEditEvent<SaskaitosPrekeDto, BigDecimal> t) {
-                            ((SaskaitosPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setKiekis(t.getNewValue());
+                        public void handle(SaskaitosPrekeDto item, BigDecimal value) {
+                            item.setKiekis(value);
                         }
-                    }));
-            fields.add(new DateFieldDefinition<SaskaitosPrekeDto>("GaliojaIki", 100, new PropertyValueFactory<SaskaitosPrekeDto, Date>("galiojaIki"),
-                    new EventHandler<TableColumn.CellEditEvent<SaskaitosPrekeDto, Date>>() {
+                    })
+                    );
+            fields.add(new DateFieldDefinition<SaskaitosPrekeDto>("GaliojaIki", 120, new PropertyValueFactory<SaskaitosPrekeDto, Date>("galiojaIki"),
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, Date>() {
                         @Override
-                        public void handle(TableColumn.CellEditEvent<SaskaitosPrekeDto, Date> t) {
-                            ((SaskaitosPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setGaliojaIki(t.getNewValue());
+                        public void handle(SaskaitosPrekeDto item, Date value) {
+                            item.setGaliojaIki(value);
                         }
                     }));
             fields.add(new DecimalFieldDefinition<SaskaitosPrekeDto>("Kaina", 100, new PropertyValueFactory<SaskaitosPrekeDto, BigDecimal>("kaina"),
-                    new EventHandler<TableColumn.CellEditEvent<SaskaitosPrekeDto, BigDecimal>>() {
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, BigDecimal>() {
                         @Override
-                        public void handle(TableColumn.CellEditEvent<SaskaitosPrekeDto, BigDecimal> t) {
-                            ((SaskaitosPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setKaina(t.getNewValue());
+                        public void handle(SaskaitosPrekeDto item, BigDecimal value) {
+                            item.setKaina(value);
                         }
                     }));
 /*            fields.add(new EditFieldDefinition<SaskaitosPrekeDto, BigDecimal>("Kiekis", 100, new PropertyValueFactory<SaskaitosPrekeDto, BigDecimal>("kiekis"),
@@ -237,46 +235,25 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto>{
         }
     }
 
-    public String getTitle() {
-        return "Sąskaita";
+    @Override
+    public void updateControls() {
+        boolean pakeista = pakeista();
+        bSaugoti.setDisable(!pakeista || StringUtils.equals(item.getStatusas(), "Patvirtinta"));
+        bTvirtinti.setDisable(StringUtils.equals(item.getStatusas(), "Patvirtinta"));
     }
 
+    public String getTitle() {
+        return "Sąskaita " + (getId() == 0 ? "nauja" : numeris.getText());
+    }
 
-//    public void trytable() {
-//        prekes.setEditable(true);
-//        Callback<TableColumn, TableCell> cellFactory =
-//                new Callback<TableColumn, TableCell>() {
-//                    public TableCell call(TableColumn p) {
-//                        return new EditingCell();
-//                    }
-//                };
-//
-//        TableColumn firstNameCol = new TableColumn("Serija");
-//        firstNameCol.setMinWidth(100);
-//        firstNameCol.setCellValueFactory(
-//                new PropertyValueFactory<SaskaitosPrekeDto, String>("serija"));
-//        firstNameCol.setCellFactory(cellFactory);
-//        firstNameCol.setOnEditCommit(
-//                new EventHandler<TableColumn.CellEditEvent<SaskaitosPrekeDto, String>>() {
-//                    @Override
-//                    public void handle(TableColumn.CellEditEvent<SaskaitosPrekeDto, String> t) {
-//                        ((SaskaitosPrekeDto) t.getTableView().getItems().get(
-//                                t.getTablePosition().getRow())
-//                        ).setSerija(t.getNewValue());
-//                    }
-//                }
-//        );
-//
-//        SaskaitosPrekeDto dto = new SaskaitosPrekeDto();
-//        dto.setSerija("olia");
-//        prekesList =
-//                FXCollections.observableArrayList(
-//                        dto,
-//                        new SaskaitosPrekeDto());
-//
-//        prekes.setItems(prekesList);
-//        prekes.getColumns().addAll(firstNameCol);
-//    }
-
-
+    @Override
+    protected boolean pakeista() {
+        if (!StringUtils.equals(StringUtils.defaultString(item.getNumeris()), numeris.getText()))
+            return true;
+        if (item.getImoneId() != imone.getValueId())
+            return true;
+        if (item.getTiekejasId() != tiekejas.getValueId())
+            return true;
+        return false;
+    }
 }

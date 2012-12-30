@@ -1,13 +1,10 @@
 package com.aireno.vapas.gui.base;
 
-import com.aireno.dto.SaskaitosPrekeDto;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.util.Callback;
 
 
@@ -19,14 +16,12 @@ import javafx.util.Callback;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class EditFieldDefinition<T, S> extends FieldDefinition<T, S> {
-
-
-    private final EventHandler<TableColumn.CellEditEvent<T,S>> cellEditEventEventHandler;
+    protected final ChangeEvent<T, S> editEventHandler;
 
     public EditFieldDefinition(String name, int size, Callback<TableColumn.CellDataFeatures<T, S>,
-            ObservableValue<S>> valueFactory, EventHandler<TableColumn.CellEditEvent<T,S>> cellEditEventEventHandler) {
+            ObservableValue<S>> valueFactory, ChangeEvent<T, S> editEventHandler) {
         super(name, size, valueFactory);
-        this.cellEditEventEventHandler = cellEditEventEventHandler;
+        this.editEventHandler = editEventHandler;
     }
 
     public TableColumn<T, S> addToTable(ListDefinition<T> tListDefinition, TableView<T> tableView) {
@@ -40,9 +35,6 @@ public abstract class EditFieldDefinition<T, S> extends FieldDefinition<T, S> {
                         return createCell();
                     }
                 };
-
-        col.setOnEditCommit(cellEditEventEventHandler);
-
         col.setEditable(true);
         col.setCellFactory(cellFactory);
         tableView.getColumns().add(col);
@@ -50,4 +42,10 @@ public abstract class EditFieldDefinition<T, S> extends FieldDefinition<T, S> {
     }
 
     protected abstract TableCell createCell();
+
+    public interface ChangeEvent<T, S> {
+        void handle(T item, S value);
+    }
 }
+
+

@@ -19,12 +19,12 @@
 
     <bean id="MatavimoVienetaiListPresenter" factory-bean="myFactoryBean"
           factory-method="createPane">
-        <constructor-arg type="java.lang.String" value="/fxml/matavimoVienetai/MatavimoVienetaiList.fxml" />
+        <constructor-arg type="java.lang.String" value="/fxml/matavimoVienetai/matavimoVienetaiList.fxml" />
     </bean>
 
     <bean id="MatavimoVienetaiPresenter" factory-bean="myFactoryBean"
           factory-method="createPane">
-        <constructor-arg type="java.lang.String" value="/fxml/matavimoVienetai/MatavimoVienetai.fxml" />
+        <constructor-arg type="java.lang.String" value="/fxml/matavimoVienetai/matavimoVienetai.fxml" />
     </bean>
 
     <bean id="PrekesListPresenter" factory-bean="myFactoryBean"
@@ -39,22 +39,22 @@
 
     <bean id="TiekejaiListPresenter" factory-bean="myFactoryBean"
           factory-method="createPane" lazy-init="true">
-        <constructor-arg type="java.lang.String" value="/fxml/tiekejai/TiekejaiList.fxml" />
+        <constructor-arg type="java.lang.String" value="/fxml/tiekejai/tiekejaiList.fxml" />
     </bean>
 
     <bean id="TiekejaiPresenter" factory-bean="myFactoryBean"
           factory-method="createPane" lazy-init="true">
-        <constructor-arg type="java.lang.String" value="/fxml/tiekejai/Tiekejai.fxml" />
+        <constructor-arg type="java.lang.String" value="/fxml/tiekejai/tiekejai.fxml" />
     </bean>
 
     <bean id="ImonesListPresenter" factory-bean="myFactoryBean"
           factory-method="createPane" lazy-init="true">
-        <constructor-arg type="java.lang.String" value="/fxml/imones/ImonesList.fxml" />
+        <constructor-arg type="java.lang.String" value="/fxml/imones/imonesList.fxml" />
     </bean>
 
     <bean id="ImonesPresenter" factory-bean="myFactoryBean"
           factory-method="createPane" lazy-init="true">
-        <constructor-arg type="java.lang.String" value="/fxml/imones/Imones.fxml" />
+        <constructor-arg type="java.lang.String" value="/fxml/imones/imones.fxml" />
     </bean>
 
     <bean id="SaskaitaListPresenter" factory-bean="myFactoryBean"
@@ -101,6 +101,8 @@
           class="com.aireno.vapas.service.likuciai.LikutisServiceImpl" lazy-init="true"/>
     <bean id="NurasymasService"
           class="com.aireno.vapas.service.nurasymai.NurasymasServiceImpl" lazy-init="true"/>
+    <bean id="LookupService"
+          class="com.aireno.vapas.service.lookups.LookupServiceImpl" lazy-init="true"/>
 
 
     <!-- Database Setup -->

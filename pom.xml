@@ -17,4 +17,11 @@
         <module>vapas-server</module>
     </modules>
 
+    <distributionManagement>
+        <repository>
+            <id>VapasTarget</id>
+            <name>com.aireno</name>
+            <url>file://d:/test</url>
+        </repository>
+    </distributionManagement>
 </project>

@@ -168,7 +168,7 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
 
     class MListDefinition extends ListDefinition<NurasymoPrekeDto> {
         MListDefinition() {
-            fields.add(new LongFieldDefinition<NurasymoPrekeDto>("Prekė", 50, new PropertyValueFactory<NurasymoPrekeDto, Long>("prekeId"),
+            /*fields.add(new LongFieldDefinition<NurasymoPrekeDto>("Prekė", 50, new PropertyValueFactory<NurasymoPrekeDto, Long>("prekeId"),
                     new EventHandler<TableColumn.CellEditEvent<NurasymoPrekeDto, Long>>() {
                         @Override
                         public void handle(TableColumn.CellEditEvent<NurasymoPrekeDto, Long> t) {
@@ -195,7 +195,7 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
                                     t.getTablePosition().getRow())
                             ).setKiekis(t.getNewValue());
                         }
-                    }));
+                    }));*/
         }
     }
 

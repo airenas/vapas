@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import jfxtras.labs.scene.control.*?>
+<?import com.aireno.vapas.gui.controls.*?>
 
 <BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.saskaitos.SaskaitaPresenter">
   <center>
@@ -11,14 +12,12 @@
       <children>
         <Label layoutX="280.0" layoutY="27.0" text="Data" />
         <Label layoutX="29.0" layoutY="27.0" text="Numeris" />
-        <TextField id="pavadinimas" fx:id="numeris" prefWidth="124.0" AnchorPane.leftAnchor="111.5" AnchorPane.topAnchor="24.0" />
-        <CalendarTextField id="data" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5" AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="25.0" />
+        <TextField id="numeris" fx:id="numeris" onKeyReleased="#update" prefWidth="124.0" AnchorPane.leftAnchor="111.5" AnchorPane.topAnchor="24.0" />
+        <CalendarTextField id="data" fx:id="data" onKeyReleased="#update" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5" AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="25.0" />
         <Label layoutX="29.0" layoutY="56.0" text="Tiekejas" />
-        <TextField id="kodas" fx:id="tiekejas" layoutY="61.0" prefWidth="347.0" AnchorPane.leftAnchor="111.5" AnchorPane.rightAnchor="41.5" />
+        <FilterLookup id="tiekejas" editable="true"  onAction="#update" fx:id="tiekejas" layoutY="61.0" prefWidth="347.0" AnchorPane.leftAnchor="111.5" AnchorPane.rightAnchor="41.5" />
         <Label layoutX="34.0" layoutY="93.0" text="Įmonė" />
-        <TextField id="kodas" fx:id="imone" layoutY="98.0" prefWidth="347.0" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="41.0" />
-        <Label layoutX="34.0" layoutY="131.0" text="Suma su pvm" />
-        <TextField id="kodas" fx:id="sumaSuPvm" layoutY="136.0" prefWidth="347.0" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="41.0" />
+        <FilterLookup id="imone" fx:id="imone"  onAction="#update" editable="true" layoutY="98.0" prefWidth="347.0" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="41.0" />
         <AnchorPane prefHeight="215.0" prefWidth="485.9999000000025" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="171.0">
           <children>
             <TableView fx:id="prekes" prefHeight="186.0" prefWidth="486.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -35,8 +34,8 @@
   <right>
     <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
       <children>
-        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
-        <Button mnemonicParsing="false" onAction="#tvirtinti" text="Tvirtinti" />
+        <Button fx:id="bSaugoti" contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
+        <Button fx:id="bTvirtinti" mnemonicParsing="false" onAction="#tvirtinti" text="Tvirtinti" />
         <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />
       </children>
     </VBox>

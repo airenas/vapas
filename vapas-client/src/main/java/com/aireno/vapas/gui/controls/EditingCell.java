@@ -1,17 +1,13 @@
 package com.aireno.vapas.gui.controls;
 
-import com.aireno.vapas.gui.base.FieldDefinition;
-import com.aireno.vapas.gui.base.ListDefinition;
+import com.aireno.vapas.gui.base.EditFieldDefinition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.util.Callback;
 
-import java.text.ParseException;
+import java.util.Date;
 
 
 /**
@@ -21,72 +17,49 @@ import java.text.ParseException;
  * Time: 23.34
  * To change this template use File | Settings | File Templates.
  */
-public abstract class EditingCell<T, S> extends TableCell<T, S> {
+public abstract class EditingCell<T, S, TField extends Node> extends TableCell<T, S> {
 
-    private TextField textField;
-
-    public EditingCell() {
+    public EditFieldDefinition.ChangeEvent<T, S> getEditEventHandler() {
+        return editEventHandler;
     }
 
-    @Override
-    public void startEdit() {
-        //if (!isEmpty()) {
-        super.startEdit();
-        createTextField();
-        setText(null);
-        setGraphic(textField);
-        textField.selectAll();
-        //}
+    public void setEditEventHandler(EditFieldDefinition.ChangeEvent<T, S> editEventHandler) {
+        this.editEventHandler = editEventHandler;
     }
 
-    @Override
-    public void cancelEdit() {
-        super.cancelEdit();
+    protected EditFieldDefinition.ChangeEvent<T, S> editEventHandler;
 
-        setText(getString());
-        setGraphic(null);
+    protected TField field;
+
+    protected EditingCell(EditFieldDefinition.ChangeEvent<T, S> editEventHandler) {
+        this.editEventHandler = editEventHandler;
     }
 
     @Override
     public void updateItem(S item, boolean empty) {
         super.updateItem(item, false);
-
-        if (empty) {
-            setText(null);
-            setGraphic(null);
-        } else {
-            if (isEditing()) {
-                if (textField != null) {
-                    textField.setText(getString());
-                }
-                setText(null);
-                setGraphic(textField);
-            } else {
-                setText(getString());
-                setGraphic(null);
-            }
+        ObservableValue<S> d = getTableColumn().getCellObservableValue(getIndex());
+        if (d == null)
+        {
+            return;
         }
+        createField();
+        setGraphic(field);
+        setFieldValue(item);
     }
 
-    private void createTextField() {
-        textField = new TextField(getString());
-        textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-        textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> arg0,
-                                Boolean arg1, Boolean arg2) {
-                if (!arg2) {
-                    commitEdit(getValue(textField.getText()));
-                }
-            }
-        });
+    protected abstract void setFieldValue(S item);
+
+    private void createField() {
+        if (field != null) {
+            return;
+        }
+        field = createFieldInternal();
     }
 
-    private String getString() {
-        return getShowValue(getItem());
+    protected abstract TField createFieldInternal();
+
+    protected T getRecord() {
+        return (T)getTableView().getItems().get(getIndex());
     }
-
-    protected abstract S getValue(String s);
-
-    protected abstract String getShowValue(S s);
 }

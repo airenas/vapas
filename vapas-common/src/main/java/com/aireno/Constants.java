@@ -9,4 +9,7 @@ package com.aireno;
  */
 public class Constants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String LOOKUP_TIEKEJAS = "tiekejas";
+    public static final String LOOKUP_IMONE = "imone";
+
 }

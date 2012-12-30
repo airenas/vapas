@@ -2,16 +2,17 @@ package com.aireno.vapas.gui.base;
 
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.controls.EditingCell;
+import com.panemu.tiwulfx.form.DateControl;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import org.apache.commons.lang.StringUtils;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,41 +25,43 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class DateFieldDefinition<T> extends EditFieldDefinition<T, Date> {
-    public DateFieldDefinition(String name, int size, Callback<TableColumn.CellDataFeatures<T, Date>, ObservableValue<Date>> valueFactory, EventHandler<TableColumn.CellEditEvent<T, Date>> cellEditEventEventHandler) {
-        super(name, size, valueFactory, cellEditEventEventHandler);
+    public DateFieldDefinition(String name, int size,
+                               Callback<TableColumn.CellDataFeatures<T, Date>, ObservableValue<Date>> valueFactory,
+                               EditFieldDefinition.ChangeEvent<T, Date> editEventHandler) {
+        super(name, size, valueFactory, editEventHandler);
     }
 
     @Override
     protected TableCell createCell() {
-        return new DateCell();
+        DateEditingCell result = new DateEditingCell(editEventHandler);
+        return result;
     }
 }
 
+class DateEditingCell<T> extends EditingCell<T, Date, DateControl> {
 
-
-class DateCell<T> extends EditingCell<T, Date> {
-
-    @Override
-    protected Date getValue(String s) {
-        if (StringUtils.isEmpty(s))
-            return null;
-
-        DateFormat formatter ;
-        Date date ;
-        formatter = new SimpleDateFormat(Constants.DATE_FORMAT);
-        try {
-            date = (Date)formatter.parse(s);
-        } catch (ParseException e) {
-            throw  new RuntimeException(e);
-        }
-        return date;
+    protected DateEditingCell(EditFieldDefinition.ChangeEvent<T, Date> editEventHandler) {
+        super(editEventHandler);
     }
 
     @Override
-    protected String getShowValue(Date item) {
-        if (item == null)
-            return "";
-        return new SimpleDateFormat(Constants.DATE_FORMAT).format(item);
+    protected void setFieldValue(Date item) {
+        field.setValue(item);
+    }
+
+    @Override
+    protected DateControl createFieldInternal() {
+        DateControl field = new DateControl();
+        field.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        field.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
+
+        field.getInputComponent().selectedDateProperty().addListener(new ChangeListener<Date>() {
+            @Override
+            public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+                editEventHandler.handle(getRecord(), date2);
+            }
+        });
+        return field;
     }
 }
 

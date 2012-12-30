@@ -1,9 +1,11 @@
 package com.aireno.vapas.gui.base;
 
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
 import javafx.util.Callback;
 
 
@@ -16,25 +18,48 @@ import javafx.util.Callback;
  */
 public class LongFieldDefinition<T> extends EditFieldDefinition<T, Long> {
     public LongFieldDefinition(String name, int size, Callback<TableColumn.CellDataFeatures<T, Long>,
-            ObservableValue<Long>> valueFactory, EventHandler<TableColumn.CellEditEvent<T, Long>> cellEditEventEventHandler) {
-        super(name, size, valueFactory, cellEditEventEventHandler);
+            ObservableValue<Long>> valueFactory, ChangeEvent<T, Long> editEventHandler) {
+        super(name, size, valueFactory, editEventHandler);
     }
 
     @Override
     protected TableCell createCell() {
-        return new LongCell();
+        return new LongCell(editEventHandler);
     }
 }
 
-class LongCell<T> extends com.aireno.vapas.gui.controls.EditingCell<T, Long> {
+class LongCell<T> extends com.aireno.vapas.gui.controls.EditingCell<T, Long, TextField> {
 
-    @Override
+    protected LongCell(EditFieldDefinition.ChangeEvent<T, Long> editEventHandler) {
+        super(editEventHandler);
+    }
+
     protected Long getValue(String s) {
         return Long.parseLong(s);
     }
 
     @Override
-    protected String getShowValue(Long aLong) {
-        return aLong.toString();
+    protected void setFieldValue(Long item) {
+        if (item == null) {
+            field.setText(null);
+        } else {
+            field.setText(item.toString());
+        }
+    }
+
+    @Override
+    protected TextField createFieldInternal() {
+        TextField textField = new TextField();
+        textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
+        textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0,
+                                Boolean arg1, Boolean arg2) {
+                if (!arg2 && field != null) {
+                    editEventHandler.handle(getRecord(), getValue(field.getText()));
+                }
+            }
+        });
+        return textField;
     }
 }

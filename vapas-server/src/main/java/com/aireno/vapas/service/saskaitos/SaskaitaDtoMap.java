@@ -25,6 +25,11 @@ public class SaskaitaDtoMap {
         dto.setArSaskaita(item.isArSaskaita());
         dto.setNumeris(item.getNumeris());
         dto.setData(item.getData());
+        if (item.getStatusas() == SaskaitaStatusas.Pildoma) {
+            dto.setStatusas("Pildoma");
+        } else {
+            dto.setStatusas("Patvirtinta");
+        }
         return dto;
     }
 

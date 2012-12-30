@@ -1,7 +1,6 @@
 package com.aireno.vapas.gui.controls;
 
 import com.aireno.base.LookupDto;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,6 +26,7 @@ import java.util.List;
 public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
     private ObservableList<T> items;
     private String typed;
+    private boolean changing = false;
 
     private class KeyHandler implements EventHandler<KeyEvent> {
 
@@ -41,8 +41,7 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
             // handle non alphanumeric keys like backspace, delete etc
             if (event.getCode() == KeyCode.BACK_SPACE && typed.length() > 0)
                 typed = typed.substring(0, typed.length() - 1);
-            if (event.getCode() == KeyCode.TAB)
-            {
+            if (event.getCode() == KeyCode.TAB) {
                 System.out.println("tab");
                 hide();
             }
@@ -59,6 +58,9 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
                     @Override
                     public void changed(ObservableValue<? extends String> observable,
                                         String oldValue, String newValue) {
+                        if (changing) {
+                            return;
+                        }
                         System.out.println("old " + oldValue);
                         System.out.println("new " + newValue);
                         final TextField editor = getEditor();
@@ -87,23 +89,35 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
                 });
     }
 
-    public void setData(ObservableList<T> items) {
-        setItems(items);
-        this.items = items;
-        setOnKeyReleased(new KeyHandler());
-        setConverter(new StringConverter<T>() {
-            @Override
-            public String toString(T t) {
-                if (t == null)
-                    return null;
-                return t.getPavadinimas();
-            }
+    public void setData(List<T> items) {
+        changing = true;
 
-            @Override
-            public T fromString(String s) {
-                return getItem(s);
+        try {
+            ObservableList<T> data =
+                    FXCollections.observableArrayList();
+            data.clear();
+            for (T v : items) {
+                data.add(v);
             }
-        });
+            setItems(data);
+            this.items = data;
+            setOnKeyReleased(new KeyHandler());
+            setConverter(new StringConverter<T>() {
+                @Override
+                public String toString(T t) {
+                    if (t == null)
+                        return null;
+                    return t.getPavadinimas();
+                }
+
+                @Override
+                public T fromString(String s) {
+                    return getItem(s);
+                }
+            });
+        } finally {
+            changing = false;
+        }
     }
 
 
@@ -112,7 +126,7 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
             return null;
         for (T item : items) {
             if (item.getPavadinimas().toLowerCase().equals(s.toLowerCase())) {
-                return  item;
+                return item;
             }
         }
         return null;
@@ -131,7 +145,7 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
         }
     }
 
-   private void filterItems(String filter) {
+    private void filterItems(String filter) {
         List<T> filteredItems = new ArrayList<T>();
         for (T item : items) {
             if (item.getPavadinimas().toLowerCase().startsWith(filter.toLowerCase())) {

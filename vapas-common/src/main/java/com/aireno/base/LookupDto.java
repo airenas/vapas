@@ -10,4 +10,7 @@ package com.aireno.base;
 public interface LookupDto {
     long getId();
     String getPavadinimas();
+
+    void setId(long id);
+    void setPavadinimas(String pavadinimas);
 }

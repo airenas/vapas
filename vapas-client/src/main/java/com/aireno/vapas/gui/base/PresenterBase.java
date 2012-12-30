@@ -4,11 +4,17 @@ package com.aireno.vapas.gui.base;
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.Processor;
 import com.aireno.vapas.gui.main.MainPresenter;
+import com.aireno.vapas.service.LookupService;
+import com.aireno.vapas.service.SaskaitaService;
 import jfxtras.labs.dialogs.DialogFX;
 
 public abstract class PresenterBase implements GuiPresenter {
     GuiPresenter from;
     protected long id;
+
+    public LookupService getLookupService() {
+        return ApplicationContextProvider.getProvider().getBean(LookupService.class);
+    }
 
     public void show(String presenter) {
         getMainPresenter().show(presenter);
