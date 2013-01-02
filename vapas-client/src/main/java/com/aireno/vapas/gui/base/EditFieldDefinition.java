@@ -44,7 +44,15 @@ public abstract class EditFieldDefinition<T, S> extends FieldDefinition<T, S> {
     protected abstract TableCell createCell();
 
     public interface ChangeEvent<T, S> {
-        void handle(T item, S value);
+        void handle(ChangeEventParam<T, S> param);
+
+        public class ChangeEventParam<T, S>
+        {
+            public T item;
+            public S value;
+            public TableView<T> tableView;
+            public int index;
+        }
     }
 }
 

@@ -21,7 +21,9 @@ public class SaskaitaDtoMap {
         SaskaitaDto dto = new SaskaitaDto();
         dto.setId(item.getId());
         dto.setImoneId(item.getImoneId());
-        dto.setTiekejasId(item.getTiekejasId());
+        if (item.getTiekejasId() != null) {
+            dto.setTiekejasId(item.getTiekejasId());
+        }
         dto.setArSaskaita(item.isArSaskaita());
         dto.setNumeris(item.getNumeris());
         dto.setData(item.getData());
@@ -36,12 +38,19 @@ public class SaskaitaDtoMap {
     public void fromDto(Saskaita item, SaskaitaDto dto) {
         item.setData(dto.getData());
         item.setImoneId(dto.getImoneId());
-        item.setTiekejasId(dto.getTiekejasId());
+        item.setTiekejasId(valueOrNull(dto.getTiekejasId()));
         item.setArSaskaita(dto.isArSaskaita());
         item.setNumeris(dto.getNumeris());
         item.setData(dto.getData());
         if (0 == item.getId())
             item.setStatusas(SaskaitaStatusas.Pildoma);
+    }
+
+    protected Long valueOrNull(Long value)
+    {
+        if (value != 0)
+            return value;
+        return null;
     }
 
     public SaskaitaListDto toListDto(SaskaitaList item) {

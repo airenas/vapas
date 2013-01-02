@@ -49,7 +49,7 @@ create table Imones (
         arSaskaita bit not null,
         numeris varchar(100) not null,
         imoneId bigint not null,
-        tiekejasId bigint not null,
+        tiekejasId bigint null,
         data timestamp not null,
         sumaSuPvm numeric not null,
         sumaBePvm numeric not null,

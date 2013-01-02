@@ -8,6 +8,13 @@ package com.aireno.base;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class DtoBase {
+    protected DtoBase(DtoBase copy) {
+        id = copy.id;
+    }
+
+    protected DtoBase() {
+    }
+
     public long getId() {
         return id;
     }

@@ -17,7 +17,7 @@
         <property name="arSaskaita" type="boolean" not-null="true" />
         <property name="numeris" type="string" length="100" not-null="true" unique="true"/>
         <property name="imoneId" type="long" length="100" not-null="true"/>
-        <property name="tiekejasId" type="long" not-null="true" unique="false"/>
+        <property name="tiekejasId" type="long" not-null="false" unique="false"/>
         <property name="data" type="timestamp" length="100" not-null="true" unique="false"/>
         <property name="sumaSuPvm" type="big_decimal" not-null="true" unique="false"/>
         <property name="sumaBePvm" type="big_decimal"  not-null="true" unique="false"/>

@@ -58,7 +58,7 @@ class DateEditingCell<T> extends EditingCell<T, Date, DateControl> {
         field.getInputComponent().selectedDateProperty().addListener(new ChangeListener<Date>() {
             @Override
             public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
-                editEventHandler.handle(getRecord(), date2);
+                onChangedTo(date2);
             }
         });
         return field;

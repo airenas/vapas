@@ -60,7 +60,7 @@ class DecimalCell<T> extends com.aireno.vapas.gui.controls.EditingCell<T, BigDec
             public void changed(ObservableValue<? extends Boolean> arg0,
                                 Boolean arg1, Boolean arg2) {
                 if (!arg2 && field != null) {
-                    editEventHandler.handle(getRecord(), getValue(field.getText()));
+                    onChangedTo(getValue(field.getText()));
                 }
             }
         });

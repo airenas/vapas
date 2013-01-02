@@ -1,38 +1,40 @@
 package com.aireno.vapas.gui.nurasymai;
 
 import com.aireno.base.ApplicationContextProvider;
-import com.aireno.dto.ImoneDto;
+import com.aireno.base.LookupDto;
 import com.aireno.dto.NurasymasDto;
 import com.aireno.dto.NurasymoPrekeDto;
+import com.aireno.utils.ADateUtils;
+import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
-import com.aireno.vapas.gui.controls.DateControl;
+import com.aireno.vapas.gui.controls.FilterLookup;
+import com.aireno.vapas.service.LookupService;
 import com.aireno.vapas.service.NurasymasService;
+import com.panemu.tiwulfx.form.DateControl;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import jfxtras.labs.scene.control.CalendarTextField;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
-import com.mytdev.javafx.scene.control.AutoCompleteTextField;
 
-public class NurasymasPresenter extends PresenterBase implements Initializable, GuiPresenter {
+public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implements Initializable, GuiPresenter {
     @FXML
     private Node root;
     @FXML
@@ -41,11 +43,19 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
     @FXML
     private TextField numeris;
     @FXML
-    private CalendarTextField data;
+    private DateControl data;
     @FXML
-    private AutoCompleteTextField imone;
+    private FilterLookup<LookupDto> imone;
     @FXML
     private TableView<NurasymoPrekeDto> prekes;
+    @FXML
+    private Button bSaugoti;
+    @FXML
+    private Button bTvirtinti;
+    @FXML
+    private Button bPridetiPreke;
+    @FXML
+    private Button bAtaskaita;
 
     ObservableList<NurasymoPrekeDto> prekesList;
 
@@ -61,58 +71,56 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
     }
 
     @Override
-    public boolean init() {
-        prekesList = FXCollections.observableArrayList();
-        data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
-        ObservableList data1 = FXCollections.observableArrayList();
-        String[] s = new String[]{"apple","ball","cat","doll","elephant",
-                "fight","georgeous","height","ice","jug",
-                "aplogize","bank","call","done","ego",
-                "finger","giant","hollow","internet","jumbo",
-                "kilo","lion","for","length","primary","stage",
-                "scene","zoo","jumble","auto","text",
-                "root","box","items","hip-hop","himalaya","nepal",
-                "kathmandu","kirtipur","everest","buddha","epic","hotel"};
+    public boolean init() throws Exception {
+        initializing = true;
 
-        for(int j=0; j<s.length; j++){
-            data1.add(s[j]);
-        }
-        imone.setItems(data1);
-        if (id > 0) {
-            try {
-                NurasymasDto dto = getService().gauti(id);
-                this.setText("Gauta");
-                numeris.setText(dto.getNumeris());
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(dto.getData());
-                data.setValue(cal);
-                imone.setText(Long.toString(dto.getImoneId()));
-                for (NurasymoPrekeDto i : dto.getPrekes())
-                    prekesList.add(i);
-                for (int i = 0; i < 10; i++)
-                    prekesList.add(new NurasymoPrekeDto());
+        try {
+            prekesList = FXCollections.observableArrayList();
+            data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+            data.getInputComponent().selectedDateProperty()
+                    .addListener(new ChangeListener<Date>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+                            update();
+                        }
+                    });
+            imone.setData(getLookupService().
+                    sarasas(new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
+            imone.valueProperty().addListener(new ChangeListener<LookupDto>() {
+                @Override
+                public void changed(ObservableValue<? extends LookupDto> observableValue, LookupDto lookupDto, LookupDto lookupDto2) {
+                    update();
+                }
+            });
+            if (id > 0) {
+                try {
+                    item = getService().gauti(id);
+                    this.setText("Gauta");
+                    numeris.setText(item.getNumeris());
+                    data.setValue(item.getData());
+                    imone.setValueId(item.getImoneId());
+                    for (NurasymoPrekeDto i : item.getPrekes())
+                        prekesList.add(new NurasymoPrekeDto(i));
 
-            } catch (Exception e) {
-                this.setText(e.getLocalizedMessage());
-                return false;
+                } catch (Exception e) {
+                    this.setText(e.getLocalizedMessage());
+                    return false;
+                }
+            } else {
+                item = new NurasymasDto();
+                numeris.setText("");
+                data.setValue(Calendar.getInstance().getTime());
+                imone.setValueId(0);
             }
-        } else {
-            numeris.setText("");
-            data.setValue(Calendar.getInstance());
-            imone.setText("1");
-            for (int i = 0; i < 10; i++)
-                prekesList.add(new NurasymoPrekeDto());
+            MListDefinition def = new MListDefinition();
+            prekes.setEditable(true);
+            def.InitTable(prekes);
+            prekes.setItems(prekesList);
+        } finally {
+            initializing = false;
         }
-        MListDefinition def = new MListDefinition();
-        prekes.setEditable(true);
-        def.InitTable(prekes);
-        prekes.setItems(prekesList);
 
         return true;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    private String dateToString(Date data) {
-        return new SimpleDateFormat(Constants.DATE_FORMAT).format(data);
     }
 
     @Override
@@ -120,38 +128,39 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
         return bPane;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    DateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT);
-
-    public void saugoti(ActionEvent event) throws ParseException {
-        try {
-            NurasymasDto dto = new NurasymasDto();
-            dto.setNumeris(numeris.getText());
-            dto.setData(data.getValue().getTime());
-            dto.setImoneId(Long.valueOf(imone.getText()));
-            dto.setId(id);
-            dto.getPrekes().clear();
-            for (NurasymoPrekeDto item : prekesList) {
-                if (StringUtils.isNotEmpty(item.getSerija())) {
-                    dto.getPrekes().add(item);
-                }
+    @Override
+    protected void saugotiInt() throws Exception {
+        NurasymasDto dto = new NurasymasDto();
+        dto.setNumeris(numeris.getText());
+        dto.setData(data.getValue());
+        dto.setImoneId(imone.getValueId());
+        dto.setId(id);
+        dto.getPrekes().clear();
+        for (NurasymoPrekeDto item : prekesList) {
+            if (StringUtils.isNotEmpty(item.getSerija())) {
+                dto.getPrekes().add(item);
             }
-
-            getService().saugoti(dto);
-            this.setText("Išsaugota");
-        } catch (Exception e) {
-            this.setError("Klaida saugant: ", e);
         }
 
-    }
-
-    public void iseiti(ActionEvent event) {
-        this.goBack();
+        item = getService().saugoti(dto);
+        initializing = true;
+        try {
+            prekesList.clear();
+            for (NurasymoPrekeDto i : item.getPrekes())
+                prekesList.add(new NurasymoPrekeDto(i));
+            this.setText("Išsaugota");
+        } finally {
+            initializing = false;
+        }
+        update();
     }
 
     public void tvirtinti(ActionEvent event) {
         try {
             getService().tvirtinti(id);
             this.setText("Patvirtinta");
+            item = getService().gauti(getId());
+            update();
         } catch (Exception e) {
             this.setError("Klaida tvirtinant: ", e);
         }
@@ -159,47 +168,118 @@ public class NurasymasPresenter extends PresenterBase implements Initializable, 
 
     public void generuotiAtaskaita(ActionEvent event) {
         try {
-            getService().generuotiAtaskaita(id);
+            getService().generuotiAtaskaita(getId());
             this.setText("Sugeneruota");
         } catch (Exception e) {
-            this.setError("Klaida tvirtinant: ", e);
+            this.setError("Klaida generuojant ataskaita: ", e);
         }
     }
 
     class MListDefinition extends ListDefinition<NurasymoPrekeDto> {
         MListDefinition() {
-            /*fields.add(new LongFieldDefinition<NurasymoPrekeDto>("Prekė", 50, new PropertyValueFactory<NurasymoPrekeDto, Long>("prekeId"),
-                    new EventHandler<TableColumn.CellEditEvent<NurasymoPrekeDto, Long>>() {
-                        @Override
-                        public void handle(TableColumn.CellEditEvent<NurasymoPrekeDto, Long> t) {
-                            ((NurasymoPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setPrekeId(t.getNewValue());
-                        }
-                    }));
+            fields.add(new LookupFieldDefinitionCB<NurasymoPrekeDto, LookupDto>("Prekė", 150,
+                    new PropertyValueFactory<NurasymoPrekeDto, Long>("prekeId"),
+                    new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, Long>() {
 
-            fields.add(new TextFieldDefinition("Serija", 100, new PropertyValueFactory<NurasymoPrekeDto, String>("serija"),
-                    new EventHandler<TableColumn.CellEditEvent<NurasymoPrekeDto, String>>() {
                         @Override
-                        public void handle(TableColumn.CellEditEvent<NurasymoPrekeDto, String> t) {
-                            ((NurasymoPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setSerija(t.getNewValue());
+                        public void handle(ChangeEventParam<NurasymoPrekeDto, Long> param) {
+                            if (initializing) {
+                                return;
+                            }
+                            if (param.item.getPrekeId() != param.value) {
+                                param.item.setPrekeId(param.value);
+                                param.item.setSerija("");
+                                update();
+                            }
                         }
-                    }));
-            fields.add(new DecimalFieldDefinition<NurasymoPrekeDto>("Kiekis", 100, new PropertyValueFactory<NurasymoPrekeDto, BigDecimal>("kiekis"),
-                    new EventHandler<TableColumn.CellEditEvent<NurasymoPrekeDto, BigDecimal>>() {
+                    }
+                    , new LookupFieldDefinitionCB.DataProvider<LookupDto>() {
+
+                @Override
+                public List<LookupDto> getItems() throws Exception {
+                    return getLookupService().sarasas(new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_PREKE));
+                }
+            }
+            ));
+
+            fields.add(new TextFieldDefinition("Serija", 100, new PropertyValueFactory<NurasymoPrekeDto, BigDecimal>("serija"),
+                    new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, String>() {
                         @Override
-                        public void handle(TableColumn.CellEditEvent<NurasymoPrekeDto, BigDecimal> t) {
-                            ((NurasymoPrekeDto) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())
-                            ).setKiekis(t.getNewValue());
+                        public void handle(ChangeEventParam<NurasymoPrekeDto, String> param) {
+                            param.item.setSerija(param.value);
+                            update();
                         }
-                    }));*/
+                    })
+            );
+            fields.add(new DecimalFieldDefinition<NurasymoPrekeDto>("Kiekis", 100,
+                    new PropertyValueFactory<NurasymoPrekeDto, BigDecimal>("kiekis"),
+                    new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, BigDecimal>() {
+                        @Override
+                        public void handle(ChangeEventParam<NurasymoPrekeDto, BigDecimal> param) {
+                            param.item.setKiekis(param.value);
+                            update();
+                        }
+                    })
+            );
         }
     }
 
+    @Override
+    public void updateControls() {
+        boolean pakeista = pakeista();
+        bSaugoti.setDisable(!pakeista || StringUtils.equals(item.getStatusas(), "Patvirtinta"));
+        bTvirtinti.setDisable(pakeista || StringUtils.equals(item.getStatusas(), "Patvirtinta"));
+        bPridetiPreke.setDisable(StringUtils.equals(item.getStatusas(), "Patvirtinta"));
+        bAtaskaita.setDisable(pakeista || !StringUtils.equals(item.getStatusas(), "Patvirtinta"));
+    }
+
     public String getTitle() {
-        return "Nurašymas";
+        return "Nurašymas " + (getId() == 0 ? "naujas" : numeris.getText());
+    }
+
+    @Override
+    protected boolean pakeista() {
+
+        if (!StringUtils.equals(StringUtils.defaultString(item.getNumeris()), numeris.getText()))
+            return true;
+        if (item.getImoneId() != imone.getValueId())
+            return true;
+        if (!ADateUtils.equalDate(item.getData(), data.getValue()))
+            return true;
+        for (NurasymoPrekeDto dto : prekesList) {
+            if (pakeistaPreke(dto, item.getPrekes())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean pakeistaPreke(NurasymoPrekeDto dto, List<NurasymoPrekeDto> prekes) {
+        NurasymoPrekeDto preke = raskPreke(prekes, dto.getId());
+        if (preke == null)
+            return true;
+        if (!StringUtils.equals(dto.getSerija(), preke.getSerija()))
+            return true;
+        if (dto.getPrekeId() != preke.getPrekeId())
+            return true;
+        if (!ANumberUtils.equal(dto.getKiekis(), preke.getKiekis()))
+            return true;
+        return false;
+
+    }
+
+    private NurasymoPrekeDto raskPreke(List<NurasymoPrekeDto> prekes, long id) {
+        if (prekes == null)
+            return null;
+        for (NurasymoPrekeDto dto : prekes) {
+            if (dto.getId() == id) {
+                return dto;
+            }
+        }
+        return null;
+    }
+
+    public void pridetiPreke() {
+        prekesList.add(new NurasymoPrekeDto());
     }
 }

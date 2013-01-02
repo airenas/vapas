@@ -105,7 +105,8 @@ public class PrekesListPresenter extends PresenterBase implements Initializable,
 
     class MListDefinition extends ListDefinition<PrekeListDto> {
         MListDefinition(EventHandler onClick) {
-            fields.add(new FieldDefinition<PrekeListDto, String>("Pavadinimas", 200, new PropertyValueFactory<PrekeListDto, String>("pavadinimas"))
+            fields.add(new FieldDefinition<PrekeListDto,
+                    String>("Pavadinimas", 200, new PropertyValueFactory<PrekeListDto, String>("pavadinimas"))
                     .addCellFactory(new GenericCellFactory<PrekeListDto, String>(onClick)));
 
             fields.add(new FieldDefinition<PrekeListDto, String>("Mat. vienetas", 200, new PropertyValueFactory<PrekeListDto, String>("matVienetas"))

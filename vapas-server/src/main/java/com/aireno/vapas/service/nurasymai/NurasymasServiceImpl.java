@@ -43,6 +43,12 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
             @Override
             protected List<NurasymasListDto> processInt(String[] request) throws Exception {
                 List<NurasymasList> result = getSession().createQuery("from NurasymasList").list();
+                Collections.sort(result, new Comparator<NurasymasList>() {
+                    @Override
+                    public int compare(NurasymasList o1, NurasymasList o2) {
+                        return o2.getData().compareTo(o1.getData());
+                    }
+                });
                 NurasymasDtoMap mapper = getMapper();
                 List<NurasymasListDto> res = new ArrayList<NurasymasListDto>();
                 for (NurasymasList item : result) {

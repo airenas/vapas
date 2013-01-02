@@ -10,8 +10,7 @@ import com.aireno.vapas.service.persistance.*;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,6 +30,14 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
             @Override
             protected List<SaskaitaListDto> processInt(String[] request) throws Exception {
                 List<SaskaitaList> result = getSession().createQuery("from SaskaitaList").list();
+
+                Collections.sort(result, new Comparator<SaskaitaList>() {
+                    @Override
+                    public int compare(SaskaitaList o1, SaskaitaList o2) {
+                        return o2.getData().compareTo(o1.getData());
+                    }
+                });
+
                 SaskaitaDtoMap mapper = getMapper();
                 List<SaskaitaListDto> res = new ArrayList<SaskaitaListDto>();
                 for (SaskaitaList item : result) {
@@ -71,9 +78,12 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
 
                 getAssertor().isNotNull(dto, "Nėra įrašo");
                 getAssertor().isNotNullStr(dto.getNumeris(), "Nėra sąsk. numerio");
-                getAssertor().isTrue(dto.getTiekejasId() > 0, "Nėra tiekėjo");
+                //getAssertor().isTrue(dto.getTiekejasId() > 0, "Nėra tiekėjo");
                 getAssertor().isTrue(dto.getImoneId() > 0, "Nėra įmonės");
                 getAssertor().isTrue(dto.getData() != null, "Nėra datos");
+                getAssertor().isTrue(validateUnique("from Saskaita c where c.id != ?1 and numeris = ?2",
+                        dto.getNumeris(), dto.getId(), getSession()), "Tokia sąskaita '%s' jau yra", dto.getNumeris());
+
                 Saskaita item = new Saskaita();
                 if (dto.getId() > 0) {
                     String queryString = "from Saskaita c where c.id = ?1";

@@ -2,18 +2,21 @@ package com.aireno.vapas.gui.nurasymai;
 
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.dto.NurasymasListDto;
+import com.aireno.dto.SaskaitaListDto;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
 import com.aireno.vapas.service.NurasymasService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
 import java.util.Date;
@@ -46,7 +49,14 @@ public class NurasymasListPresenter extends PresenterBase implements Initializab
 
     @Override
     public boolean init() throws GuiException {
-        MListDefinition def = new MListDefinition();
+        MListDefinition def = new MListDefinition(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount() > 1) {
+                    redaguoti(null);
+                }
+            }
+        });
         def.InitTable(resultsList);
         data = FXCollections.observableArrayList();
         resultsList.setItems(data);
@@ -93,11 +103,15 @@ public class NurasymasListPresenter extends PresenterBase implements Initializab
     }
 
     class MListDefinition extends ListDefinition<NurasymasListDto> {
-        MListDefinition() {
-            fields.add(new FieldDefinition<NurasymasListDto, String>("Nr", 200, new PropertyValueFactory<NurasymasListDto, String>("numeris")));
-            fields.add(new FieldDefinition<NurasymasListDto, String>("Įmonė", 200, new PropertyValueFactory<NurasymasListDto, String>("imone")));
-            fields.add(new FieldDefinition<NurasymasListDto, Date>("Data", 100, new PropertyValueFactory<NurasymasListDto, Date>("data")));
-            fields.add(new FieldDefinition<NurasymasListDto, String>("Statusas", 70, new PropertyValueFactory<NurasymasListDto, String>("statusas")));
+        MListDefinition(EventHandler onClick) {
+            fields.add(new FieldDefinition<NurasymasListDto, String>("Nr", 200, new PropertyValueFactory<NurasymasListDto, String>("numeris"))
+                    .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<NurasymasListDto, String>("Įmonė", 200, new PropertyValueFactory<NurasymasListDto, String>("imone"))
+                    .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<NurasymasListDto, Date>("Data", 100, new PropertyValueFactory<NurasymasListDto, Date>("data"))
+                    .addCellFactory(new GenericCellFactory<NurasymasListDto, Date>(onClick)));
+            fields.add(new FieldDefinition<NurasymasListDto, String>("Statusas", 70, new PropertyValueFactory<NurasymasListDto, String>("statusas"))
+                    .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
         }
     }
 }

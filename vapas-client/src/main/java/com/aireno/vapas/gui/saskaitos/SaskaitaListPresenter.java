@@ -2,6 +2,7 @@ package com.aireno.vapas.gui.saskaitos;
 
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.dto.ImoneDto;
+import com.aireno.dto.PrekeListDto;
 import com.aireno.dto.SaskaitaListDto;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
@@ -10,12 +11,14 @@ import com.aireno.vapas.service.SaskaitaService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -48,7 +51,14 @@ public class SaskaitaListPresenter extends PresenterBase implements Initializabl
 
     @Override
     public boolean init() throws GuiException {
-        MListDefinition def = new MListDefinition();
+        MListDefinition def = new MListDefinition(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount() > 1) {
+                    redaguoti(null);
+                }
+            }
+        });
         def.InitTable(resultsList);
         data = FXCollections.observableArrayList();
         resultsList.setItems(data);
@@ -100,13 +110,19 @@ public class SaskaitaListPresenter extends PresenterBase implements Initializabl
 
    class MListDefinition extends ListDefinition<SaskaitaListDto>
    {
-       MListDefinition() {
-           fields.add(new FieldDefinition<SaskaitaListDto, String>("Nr", 200, new PropertyValueFactory<SaskaitaListDto,String>("numeris")));
-           fields.add(new FieldDefinition<SaskaitaListDto, String>("Tiekėjas", 200, new PropertyValueFactory<SaskaitaListDto,String>("tiekejas")));
-           fields.add(new FieldDefinition<SaskaitaListDto, String>("Įmonė", 200, new PropertyValueFactory<SaskaitaListDto,String>("imone")));
-           fields.add(new FieldDefinition<SaskaitaListDto, Date>("Data", 100, new PropertyValueFactory<SaskaitaListDto,Date>("data")));
-           fields.add(new FieldDefinition<SaskaitaListDto, BigDecimal>("Suma", 50, new PropertyValueFactory<SaskaitaListDto,BigDecimal>("suma")));
-           fields.add(new FieldDefinition<SaskaitaListDto, String>("Statusas", 70, new PropertyValueFactory<SaskaitaListDto,String>("statusas")));
+       MListDefinition(EventHandler onClick) {
+           fields.add(new FieldDefinition<SaskaitaListDto, String>("Nr", 200, new PropertyValueFactory<SaskaitaListDto,String>("numeris"))
+                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, String>(onClick)));
+           fields.add(new FieldDefinition<SaskaitaListDto, String>("Tiekėjas", 200, new PropertyValueFactory<SaskaitaListDto,String>("tiekejas"))
+                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, String>(onClick)));
+           fields.add(new FieldDefinition<SaskaitaListDto, String>("Įmonė", 200, new PropertyValueFactory<SaskaitaListDto,String>("imone"))
+                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, String>(onClick)));
+           fields.add(new FieldDefinition<SaskaitaListDto, Date>("Data", 100, new PropertyValueFactory<SaskaitaListDto,Date>("data"))
+                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, Date>(onClick)));
+           fields.add(new FieldDefinition<SaskaitaListDto, BigDecimal>("Suma", 50, new PropertyValueFactory<SaskaitaListDto,BigDecimal>("suma"))
+                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, BigDecimal>(onClick)));
+           fields.add(new FieldDefinition<SaskaitaListDto, String>("Statusas", 70, new PropertyValueFactory<SaskaitaListDto,String>("statusas"))
+                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, String>(onClick)));
        }
    }
 }

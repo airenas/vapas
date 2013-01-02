@@ -1,6 +1,12 @@
 package com.aireno.dto;
 
 import com.aireno.base.DtoBase;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,24 +19,44 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class NurasymoPrekeDto extends DtoBase {
-    private String serija;
-    private long prekeId;
-    private BigDecimal kiekis;
-    private long matVienetasId;
-    public String getSerija() {
+    private final SimpleStringProperty serija = new SimpleStringProperty();
+    private final SimpleLongProperty prekeId = new SimpleLongProperty();
+
+    public SimpleStringProperty serijaProperty() {
         return serija;
     }
 
-    public void setSerija(String serija) {
-        this.serija = serija;
-    }
-
-    public long getPrekeId() {
+    public SimpleLongProperty prekeIdProperty() {
         return prekeId;
     }
 
+    private BigDecimal kiekis;
+    private long matVienetasId;
+
+    public NurasymoPrekeDto() {
+    }
+
+    public NurasymoPrekeDto(NurasymoPrekeDto copy) {
+        super(copy);
+        serija.set(copy.serija.get());
+        prekeId.set(copy.prekeId.get());
+        kiekis = copy.kiekis;
+    }
+
+    public String getSerija() {
+        return serija.get();
+    }
+
+    public void setSerija(String serija) {
+        this.serija.set(serija);
+    }
+
+    public long getPrekeId() {
+        return prekeId.get();
+    }
+
     public void setPrekeId(long prekeId) {
-        this.prekeId = prekeId;
+        this.prekeId.set(prekeId);
     }
 
     public BigDecimal getKiekis() {

@@ -5,7 +5,7 @@ import com.aireno.vapas.service.base.EntityBase;
 import java.io.Serializable;
 
 
-public class Preke extends EntityBase implements Serializable
+public class Preke extends EntityBase implements Serializable, LookupEntityDto
 {
     public long getMatVienetasId() {
         return matVienetasId;

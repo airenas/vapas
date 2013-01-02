@@ -37,6 +37,10 @@ public class LookupServiceImpl extends ServiceBase implements LookupService {
                 {
                     result = getLookups(getSession(), Tiekejas.class);
                 }
+                else if (StringUtils.equals(request.getKodas(), Constants.LOOKUP_PREKE))
+                {
+                    result = getLookups(getSession(), Preke.class);
+                }
                 else
                  throw getAssertor().newException("Nežinomas lookup tipas '%s'", request.getKodas());
 

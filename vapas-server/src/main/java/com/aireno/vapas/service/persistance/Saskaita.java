@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 public class Saskaita extends EntityBase implements Serializable {
-    private long tiekejasId;
+    private Long tiekejasId;
     private long imoneId;
     private Date data;
     private SaskaitaStatusas statusas;
@@ -28,11 +28,11 @@ public class Saskaita extends EntityBase implements Serializable {
         this.numeris = numeris;
     }
 
-    public long getTiekejasId() {
+    public Long getTiekejasId() {
         return tiekejasId;
     }
 
-    public void setTiekejasId(long tiekejasId) {
+    public void setTiekejasId(Long tiekejasId) {
         this.tiekejasId = tiekejasId;
     }
 

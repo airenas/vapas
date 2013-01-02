@@ -17,7 +17,7 @@ import javafx.util.Callback;
  */
 public class TextFieldDefinition<T> extends EditFieldDefinition<T, String> {
     public TextFieldDefinition(String name, int size, Callback<TableColumn.CellDataFeatures<T, String>, ObservableValue<String>> valueFactory,
-                               ChangeEvent<T, String> editEventHandler) {
+                                    ChangeEvent<T, String> editEventHandler) {
         super(name, size, valueFactory, editEventHandler);
     }
 
@@ -47,7 +47,7 @@ class TextCell<T> extends com.aireno.vapas.gui.controls.EditingCell<T, String, T
                                 Boolean arg1, Boolean arg2) {
                 if (!arg2) {
                     if (field != null) {
-                        editEventHandler.handle(getRecord(), field.getText());
+                        onChangedTo(field.getText());
                     }
                 }
             }

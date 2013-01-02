@@ -23,7 +23,7 @@ import java.util.List;
  * Time: 20.39
  * To change this template use File | Settings | File Templates.
  */
-public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
+public class StringFilterLookup<T extends LookupDto> extends ComboBox<T> {
     private ObservableList<T> items;
     private String typed;
     private boolean changing = false;
@@ -50,9 +50,8 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
 
     }
 
-    public FilterLookup() {
+    public StringFilterLookup() {
         super();
-        //setOnKeyReleased(new KeyHandler());
         getEditor().textProperty()
                 .addListener(new ChangeListener<String>() {
                     @Override
@@ -72,17 +71,6 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
                             if (getItems().size() == 1) {
                                 final T onlyOption = getItems().get(0);
                                 final String current = editor.getText();
-//                                if (onlyOption.getPavadinimas().length() > current.length()) {
-//                                    editor.setText(onlyOption.getPavadinimas());
-//                                    // Not quite sure why this only works using
-//                                    // Platform.runLater(...)
-//                                    Platform.runLater(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            editor.selectRange(current.length(), onlyOption.getPavadinimas().length());
-//                                        }
-//                                    });
-//                                }
                             }
                         }
                     }
@@ -137,7 +125,7 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
         try {
             setValue(null);
             typed = "";
-            java.util.List<T> items = this.getItems();
+            List<T> items = this.getItems();
             for (T item : items) {
                 if (item.getId() == id) {
                     typed = item.getPavadinimas();

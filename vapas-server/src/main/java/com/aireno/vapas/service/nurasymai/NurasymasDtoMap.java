@@ -26,8 +26,11 @@ public class NurasymasDtoMap {
         item.setImoneId(dto.getImoneId());
         item.setNumeris(dto.getNumeris());
         item.setData(dto.getData());
-        if (0 == item.getId())
-            item.setStatusas(SaskaitaStatusas.Pildoma);
+        if (item.getStatusas() == SaskaitaStatusas.Patvirtinta) {
+            dto.setStatusas("Patvirtinta");
+        } else {
+            dto.setStatusas("Pildoma");
+        }
     }
 
     public NurasymasListDto toListDto(NurasymasList item) {

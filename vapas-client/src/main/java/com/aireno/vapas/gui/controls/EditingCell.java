@@ -18,7 +18,7 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class EditingCell<T, S, TField extends Node> extends TableCell<T, S> {
-
+    protected boolean initialization = false;
     public EditFieldDefinition.ChangeEvent<T, S> getEditEventHandler() {
         return editEventHandler;
     }
@@ -43,23 +43,51 @@ public abstract class EditingCell<T, S, TField extends Node> extends TableCell<T
         {
             return;
         }
-        createField();
-        setGraphic(field);
-        setFieldValue(item);
+
+        if (field != null)
+        {
+            initialization = true;
+        }
+
+        try {
+            try {
+                createField();
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            setGraphic(field);
+            setFieldValue(item);
+        } finally {
+            initialization = false;
+        }
     }
 
     protected abstract void setFieldValue(S item);
 
-    private void createField() {
+    private void createField() throws Exception {
         if (field != null) {
             return;
         }
         field = createFieldInternal();
     }
 
-    protected abstract TField createFieldInternal();
+    protected abstract TField createFieldInternal() throws Exception;
 
     protected T getRecord() {
         return (T)getTableView().getItems().get(getIndex());
+    }
+
+    protected void onChangedTo(S value) {
+        if (initialization)
+        {
+            return;
+        }
+        EditFieldDefinition.ChangeEvent.ChangeEventParam<T, S> param =
+                new EditFieldDefinition.ChangeEvent.ChangeEventParam<T, S>();
+        param.tableView = getTableView();
+        param.item = (T)param.tableView.getItems().get(getIndex());
+        param.value = value;
+        param.index = getIndex();
+        editEventHandler.handle(param);
     }
 }

@@ -81,11 +81,4 @@ public class PrekeServiceImpl extends ServiceBase implements PrekeService {
         }.process(dto);
 
     }
-
-    private boolean validateUnique(String s, String pavadinimas, long id, Session session) {
-        List<Preke> list =  session.createQuery(s)
-                .setParameter("1", id).setParameter("2", pavadinimas).setFetchSize(1).list();
-        return list.size() == 0;
-
-    }
 }
