@@ -4,11 +4,13 @@ import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.LookupDto;
 import com.aireno.dto.NurasymasDto;
 import com.aireno.dto.NurasymoPrekeDto;
+import com.aireno.dto.StringLookupItemDto;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
 import com.aireno.vapas.gui.controls.FilterLookup;
+import com.aireno.vapas.gui.controls.StringFilterLookup;
 import com.aireno.vapas.service.LookupService;
 import com.aireno.vapas.service.NurasymasService;
 import com.panemu.tiwulfx.form.DateControl;
@@ -29,10 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implements Initializable, GuiPresenter {
     @FXML
@@ -202,15 +201,23 @@ public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implem
             }
             ));
 
-            fields.add(new TextFieldDefinition("Serija", 100, new PropertyValueFactory<NurasymoPrekeDto, BigDecimal>("serija"),
+            fields.add(new StringLookupFieldDefinitionCB("Serija", 100, new PropertyValueFactory<NurasymoPrekeDto, String>("serija"),
                     new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, String>() {
                         @Override
                         public void handle(ChangeEventParam<NurasymoPrekeDto, String> param) {
                             param.item.setSerija(param.value);
                             update();
                         }
-                    })
-            );
+                    },
+                    new StringLookupFieldDefinitionCB.DataProvider<NurasymoPrekeDto>() {
+
+                        @Override
+                        public List<StringLookupItemDto> getDataList(NurasymoPrekeDto item, String sId) throws Exception {
+                            List<StringLookupItemDto> result = getService().sarasasLaisvuPrekiuSeriju(new NurasymasService.LaisvuSerijuRequest(item.getPrekeId(), imone.getValueId()));
+                            return result;
+                        }
+                    }
+            ));
             fields.add(new DecimalFieldDefinition<NurasymoPrekeDto>("Kiekis", 100,
                     new PropertyValueFactory<NurasymoPrekeDto, BigDecimal>("kiekis"),
                     new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, BigDecimal>() {

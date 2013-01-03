@@ -4,6 +4,7 @@ import com.aireno.Constants;
 import com.aireno.dto.NurasymasDto;
 import com.aireno.dto.NurasymasListDto;
 import com.aireno.dto.NurasymoPrekeDto;
+import com.aireno.dto.StringLookupItemDto;
 import com.aireno.vapas.service.NurasymasService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.ServiceBase;
@@ -300,6 +301,48 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                 return true;
             }
         }.process(id);
+    }
+
+    @Override
+    public List<StringLookupItemDto> sarasasLaisvuPrekiuSeriju(LaisvuSerijuRequest req) throws Exception {
+        return new ProcessorBase<LaisvuSerijuRequest, List<StringLookupItemDto>>() {
+            @Override
+            protected List<StringLookupItemDto> processInt(LaisvuSerijuRequest req) throws Exception {
+                String queryString = "from Likutis c where c.prekeId = ?1 and c.imoneId = ?2";
+                List<Likutis> list = getSession().createQuery(queryString)
+                        .setParameter("1", req.prekeId).setParameter("2", req.imoneId).list();
+                List<StringLookupItemDto> result = new ArrayList<>();
+                HashMap<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+                // formuojame
+                for (Likutis item : list) {
+                    String serija = item.getSerija();
+                    BigDecimal kiek = new BigDecimal(0);
+                    if (map.containsKey(serija)) {
+                        kiek = map.get(serija);
+                    }
+
+                    if (item.isArSaskaita()) {
+                        kiek = kiek.add(item.getKiekis());
+                    } else {
+                        kiek = kiek.subtract(item.getKiekis());
+                    }
+                    map.put(serija, kiek);
+                }
+
+                for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
+                    String key = entry.getKey();
+                    BigDecimal value = entry.getValue();
+                    if (value.compareTo(new BigDecimal(0)) > 0) {
+                        StringLookupItemDto dto = new StringLookupItemDto(key);
+                        dto.setPavadinimas(String.format("%s %s", key, value.toString()));
+                        result.add(dto);
+                    }
+                }
+                return result;
+
+
+            }
+        }.process(req);
     }
 
     private <T> T gautiIrasa(long id, Class<T> tClass, Session session) throws Exception {

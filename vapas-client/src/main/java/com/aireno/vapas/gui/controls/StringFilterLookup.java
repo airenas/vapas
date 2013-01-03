@@ -1,10 +1,10 @@
 package com.aireno.vapas.gui.controls;
 
-import com.aireno.base.LookupDto;
+import com.aireno.dto.StringLookupItemDto;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.SingleSelectionModel;
@@ -12,8 +12,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
+import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,14 +23,14 @@ import java.util.List;
  * Time: 20.39
  * To change this template use File | Settings | File Templates.
  */
-public class StringFilterLookup<T extends LookupDto> extends ComboBox<T> {
-    private ObservableList<T> items;
-    private String typed;
+public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
     private boolean changing = false;
+    private boolean needReloadList = true;
+    private DataProvider provider;
 
     private class KeyHandler implements EventHandler<KeyEvent> {
 
-        private SingleSelectionModel<T> sm;
+        private SingleSelectionModel<StringLookupItemDto> sm;
 
         public KeyHandler() {
             sm = getSelectionModel();
@@ -38,20 +38,28 @@ public class StringFilterLookup<T extends LookupDto> extends ComboBox<T> {
 
         @Override
         public void handle(KeyEvent event) {
-            // handle non alphanumeric keys like backspace, delete etc
-            if (event.getCode() == KeyCode.BACK_SPACE && typed.length() > 0)
-                typed = typed.substring(0, typed.length() - 1);
             if (event.getCode() == KeyCode.TAB) {
                 System.out.println("tab");
                 hide();
             }
-            System.out.println(typed);
         }
-
     }
 
     public StringFilterLookup() {
         super();
+        setOnShowing(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                if (needReloadList) {
+                    try {
+                        setItems(FXCollections.observableArrayList(provider.getDataList(getStringValue())));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+                needReloadList = false;
+            }
+        });
         getEditor().textProperty()
                 .addListener(new ChangeListener<String>() {
                     @Override
@@ -63,43 +71,48 @@ public class StringFilterLookup<T extends LookupDto> extends ComboBox<T> {
                         System.out.println("old " + oldValue);
                         System.out.println("new " + newValue);
                         final TextField editor = getEditor();
-                        final T selected = getSelectionModel()
+                        final StringLookupItemDto selected = getSelectionModel()
                                 .getSelectedItem();
-                        if (selected == null || !selected.getPavadinimas().equals(editor.getText())) {
-                            filterItems(newValue);
+                        if (selected == null || !selected.getId().equals(editor.getText())) {
+                            //filterItems(newValue);
                             show();
                             if (getItems().size() == 1) {
-                                final T onlyOption = getItems().get(0);
+                                final StringLookupItemDto onlyOption = getItems().get(0);
                                 final String current = editor.getText();
                             }
+                            StringLookupItemDto option = trySelectItem(editor.getText());
+                            setValue(option);
                         }
                     }
                 });
     }
 
-    public void setData(List<T> items) {
-        changing = true;
-
-        try {
-            ObservableList<T> data =
-                    FXCollections.observableArrayList();
-            data.clear();
-            for (T v : items) {
-                data.add(v);
+    private StringLookupItemDto trySelectItem(String s) {
+        if (s == null)
+            return null;
+        for (StringLookupItemDto item : getItems()) {
+            if (StringUtils.startsWith(item.getId().toLowerCase(), s.toLowerCase())) {
+                return item;
             }
-            setItems(data);
-            this.items = data;
+        }
+        return null;
+    }
+
+    public void setProvider(DataProvider provider) {
+        changing = true;
+        this.provider = provider;
+        try {
             setOnKeyReleased(new KeyHandler());
-            setConverter(new StringConverter<T>() {
+            setConverter(new StringConverter<StringLookupItemDto>() {
                 @Override
-                public String toString(T t) {
+                public String toString(StringLookupItemDto t) {
                     if (t == null)
                         return null;
-                    return t.getPavadinimas();
+                    return t.getId();
                 }
 
                 @Override
-                public T fromString(String s) {
+                public StringLookupItemDto fromString(String s) {
                     return getItem(s);
                 }
             });
@@ -108,11 +121,15 @@ public class StringFilterLookup<T extends LookupDto> extends ComboBox<T> {
         }
     }
 
+    public interface DataProvider {
+        List<StringLookupItemDto> getDataList(String sId) throws Exception;
+    }
 
-    private T getItem(String s) {
+
+    private StringLookupItemDto getItem(String s) {
         if (s == null)
             return null;
-        for (T item : items) {
+        for (StringLookupItemDto item : getItems()) {
             if (item.getPavadinimas().toLowerCase().equals(s.toLowerCase())) {
                 return item;
             }
@@ -120,38 +137,30 @@ public class StringFilterLookup<T extends LookupDto> extends ComboBox<T> {
         return null;
     }
 
-    public void setValueId(long id) {
+    public void setStringValue(String id, boolean needReloadList) {
         changing = true;
+        this.needReloadList = needReloadList;
         try {
             setValue(null);
-            typed = "";
-            List<T> items = this.getItems();
-            for (T item : items) {
+            List<StringLookupItemDto> items = this.getItems();
+            for (StringLookupItemDto item : items) {
                 if (item.getId() == id) {
-                    typed = item.getPavadinimas();
                     setValue(item);
                     return;
                 }
             }
+            StringLookupItemDto item = new StringLookupItemDto(id);
+            setValue(item);
+
         } finally {
             changing = false;
         }
     }
 
-    private void filterItems(String filter) {
-        List<T> filteredItems = new ArrayList<T>();
-        for (T item : items) {
-            if (item.getPavadinimas().toLowerCase().startsWith(filter.toLowerCase())) {
-                filteredItems.add(item);
-            }
-        }
-        setItems(FXCollections.observableArrayList(filteredItems));
-    }
-
-    public long getValueId() {
-        T result = getValue();
+    public String getStringValue() {
+        StringLookupItemDto result = getValue();
         if (result == null) {
-            return 0;
+            return null;
         }
         return result.getId();
     }
