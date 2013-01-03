@@ -58,7 +58,7 @@
             <artifactId>javafx</artifactId>
             <version>2.2</version>
             <scope>system</scope>
-            <systemPath>c:/Program Files/Java/jdk1.7.0_09/jre/lib/jfxrt.jar</systemPath>
+            <systemPath>${jdk.path}/jre/lib/jfxrt.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -66,12 +66,10 @@
             <artifactId>javafx-runtime</artifactId>
             <scope>system</scope>
             <version>2.1.1</version>
-            <systemPath>c:/Program Files/Java/jdk1.7.0_09/jre/lib/jfxrt.jar</systemPath>
+            <systemPath>${jdk.path}/jre/lib/jfxrt.jar</systemPath>
         </dependency>
 
-
         <!-- Spring and supporting toolkits -->
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>

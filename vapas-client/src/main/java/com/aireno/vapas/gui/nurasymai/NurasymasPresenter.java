@@ -134,7 +134,7 @@ public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implem
         dto.setNumeris(numeris.getText());
         dto.setData(data.getValue());
         dto.setImoneId(imone.getValueId());
-        dto.setId(id);
+        dto.setId(getId());
         dto.getPrekes().clear();
         for (NurasymoPrekeDto item : prekesList) {
             if (StringUtils.isNotEmpty(item.getSerija())) {
