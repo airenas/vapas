@@ -21,7 +21,7 @@
         <repository>
             <id>VapasTarget</id>
             <name>com.aireno</name>
-            <url>file://e:/test</url>
+            <url>file://{distribution.repo}</url>
         </repository>
     </distributionManagement>
 
@@ -48,6 +48,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jdk.path>c:/glassfish3/jdk7</jdk.path>
+        <jdk.path>c:\Program Files\Java\jdk1.7.0_09</jdk.path>
+        <distribution.repo>d:/test</distribution.repo>
     </properties>
 </project>
