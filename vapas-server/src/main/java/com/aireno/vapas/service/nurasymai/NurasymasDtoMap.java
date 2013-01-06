@@ -18,6 +18,11 @@ public class NurasymasDtoMap {
         dto.setImoneId(item.getImoneId());
         dto.setNumeris(item.getNumeris());
         dto.setData(item.getData());
+        if (item.getStatusasNotNull() == SaskaitaStatusas.Pildoma) {
+            dto.setStatusas("Pildoma");
+        } else {
+            dto.setStatusas("Patvirtinta");
+        }
         return dto;
     }
 
@@ -26,11 +31,6 @@ public class NurasymasDtoMap {
         item.setImoneId(dto.getImoneId());
         item.setNumeris(dto.getNumeris());
         item.setData(dto.getData());
-        if (item.getStatusas() == SaskaitaStatusas.Patvirtinta) {
-            dto.setStatusas("Patvirtinta");
-        } else {
-            dto.setStatusas("Pildoma");
-        }
     }
 
     public NurasymasListDto toListDto(NurasymasList item) {
@@ -39,7 +39,7 @@ public class NurasymasDtoMap {
 
         dto.setNumeris(item.getNumeris());
         dto.setImone(item.getImone());
-        if (item.getStatusas() == SaskaitaStatusas.Pildoma) {
+        if (item.getStatusasNotNull() == SaskaitaStatusas.Pildoma) {
             dto.setStatusas("Pildoma");
         } else {
             dto.setStatusas("Patvirtinta");

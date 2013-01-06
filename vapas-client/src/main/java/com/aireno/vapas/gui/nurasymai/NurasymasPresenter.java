@@ -156,7 +156,7 @@ public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implem
 
     public void tvirtinti(ActionEvent event) {
         try {
-            getService().tvirtinti(id);
+            getService().tvirtinti(getId());
             this.setText("Patvirtinta");
             item = getService().gauti(getId());
             update();
@@ -187,7 +187,7 @@ public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implem
                             }
                             if (param.item.getPrekeId() != param.value) {
                                 param.item.setPrekeId(param.value);
-                                param.item.setSerija("");
+                                param.item.setSerija(null);
                                 update();
                             }
                         }

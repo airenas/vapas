@@ -1,8 +1,8 @@
 package com.aireno.vapas.gui.base;
 
+import com.aireno.utils.ANumberUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
@@ -10,6 +10,7 @@ import javafx.util.Callback;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 
 
 /**
@@ -36,19 +37,15 @@ class DecimalCell<T> extends com.aireno.vapas.gui.controls.EditingCell<T, BigDec
         super(editEventHandler);
     }
 
-    protected BigDecimal getValue(String s) {
+    protected BigDecimal getValue(String s) throws ParseException {
         if (StringUtils.isEmpty(s))
             return null;
-        return new BigDecimal(s);
+        return ANumberUtils.StringToDecimal(s);
     }
 
     @Override
     protected void setFieldValue(BigDecimal item) {
-        if (item == null) {
-            field.setText(null);
-        } else {
-            field.setText(item.toString());
-        }
+        field.setText(ANumberUtils.DecimalToString(item));
     }
 
     @Override
@@ -60,7 +57,11 @@ class DecimalCell<T> extends com.aireno.vapas.gui.controls.EditingCell<T, BigDec
             public void changed(ObservableValue<? extends Boolean> arg0,
                                 Boolean arg1, Boolean arg2) {
                 if (!arg2 && field != null) {
-                    onChangedTo(getValue(field.getText()));
+                    try {
+                        onChangedTo(getValue(field.getText()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
                 }
             }
         });

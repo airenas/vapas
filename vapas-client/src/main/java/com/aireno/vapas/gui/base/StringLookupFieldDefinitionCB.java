@@ -57,7 +57,7 @@ class StringLookupCellCB<T extends LookupDto> extends EditingCell<T, String, Str
         if (item == null) {
             field.setStringValue(null, true);
         } else {
-            field.setStringValue(item, true);
+            field.setStringValue(item);
         }
     }
 

@@ -5,6 +5,7 @@ import com.aireno.dto.NurasymasDto;
 import com.aireno.dto.NurasymasListDto;
 import com.aireno.dto.NurasymoPrekeDto;
 import com.aireno.dto.StringLookupItemDto;
+import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.NurasymasService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.ServiceBase;
@@ -23,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -198,7 +200,7 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                 getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
 
                 item = list.get(0);
-                getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Nurašymas jau patvirtintas. Negalima saugoti");
+                getAssertor().isFalse(item.getStatusasNotNull() == SaskaitaStatusas.Patvirtinta, "Nurašymas jau patvirtintas. Negalima saugoti");
                 item.setStatusas(SaskaitaStatusas.Patvirtinta);
                 getSession().save(item);
 
@@ -218,8 +220,10 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                     for (Likutis itemL : listL) {
                         suma += itemL.getKiekis().doubleValue();
                     }
+
                     getAssertor().isFalse(itemP.getKiekis().doubleValue() > suma, "Nėra pajamuota prekių su serija "
-                            + itemP.getSerija() + ". Reikia " + itemP.getKiekis() + " yra " + suma);
+                            + itemP.getSerija() + ". Reikia " + ANumberUtils.DecimalToString(itemP.getKiekis()) + " yra " +
+                            ANumberUtils.DecimalToString(suma));
 
                     Likutis l = new Likutis();
                     l.setArSaskaita(false);
@@ -253,7 +257,7 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                 getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
 
                 item = list.get(0);
-                getAssertor().isTrue(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Nurašymas dar nepatvirtintas.");
+                getAssertor().isTrue(item.getStatusasNotNull() == SaskaitaStatusas.Patvirtinta, "Nurašymas dar nepatvirtintas.");
 
                 // saugom prekes
                 String queryStringP = "from NurasymoPreke c where c.nurasymasId = ?1";
@@ -286,7 +290,8 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                     repl1.put("{PAV}", preke.getPavadinimas());
                     repl1.put("{SERIJA}", itemP.getSerija());
                     repl1.put("{MATVNT}", mvienetas.getKodas());
-                    repl1.put("{KIEKIS}", itemP.getKiekis().toString());
+                    DecimalFormat format = new DecimalFormat( "0.00" );
+                    repl1.put("{KIEKIS}", format.format(itemP.getKiekis()));
 
                     i++;
                     textToAdd.add(repl1);
@@ -321,11 +326,11 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                         kiek = map.get(serija);
                     }
 
-                    if (item.isArSaskaita()) {
+                   // if (item.isArSaskaita()) {
                         kiek = kiek.add(item.getKiekis());
-                    } else {
-                        kiek = kiek.subtract(item.getKiekis());
-                    }
+                    // else {
+                    //    kiek = kiek.subtract(item.getKiekis());
+                   // }
                     map.put(serija, kiek);
                 }
 
@@ -334,7 +339,7 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                     BigDecimal value = entry.getValue();
                     if (value.compareTo(new BigDecimal(0)) > 0) {
                         StringLookupItemDto dto = new StringLookupItemDto(key);
-                        dto.setPavadinimas(String.format("%s %s", key, value.toString()));
+                        dto.setPavadinimas(String.format("%s (%s)", key, ANumberUtils.DecimalToString(value)));
                         result.add(dto);
                     }
                 }

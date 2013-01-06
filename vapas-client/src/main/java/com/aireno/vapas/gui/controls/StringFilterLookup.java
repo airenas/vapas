@@ -6,11 +6,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.apache.commons.lang.StringUtils;
 
@@ -88,7 +87,7 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
     }
 
     private StringLookupItemDto trySelectItem(String s) {
-        if (s == null)
+        if (StringUtils.isEmpty(s))
             return null;
         for (StringLookupItemDto item : getItems()) {
             if (StringUtils.startsWith(item.getId().toLowerCase(), s.toLowerCase())) {
@@ -103,6 +102,27 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
         this.provider = provider;
         try {
             setOnKeyReleased(new KeyHandler());
+            setCellFactory(new Callback<ListView<StringLookupItemDto>, ListCell<StringLookupItemDto>>() {
+                @Override
+                public ListCell<StringLookupItemDto> call(ListView<StringLookupItemDto> p) {
+                    return new ListCell<StringLookupItemDto>() {
+                        {
+                            setContentDisplay(ContentDisplay.TEXT_ONLY);
+                        }
+
+                        @Override
+                        protected void updateItem(StringLookupItemDto item, boolean empty) {
+                            super.updateItem(item, empty);
+
+                            if (item == null || empty) {
+                                setText(null);
+                            } else {
+                                setText(item.getPavadinimas());
+                            }
+                        }
+                    };
+                }
+            });
             setConverter(new StringConverter<StringLookupItemDto>() {
                 @Override
                 public String toString(StringLookupItemDto t) {
@@ -130,7 +150,7 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
         if (s == null)
             return null;
         for (StringLookupItemDto item : getItems()) {
-            if (item.getPavadinimas().toLowerCase().equals(s.toLowerCase())) {
+            if (StringUtils.equalsIgnoreCase(item.getId(), s) ||StringUtils.equalsIgnoreCase(item.getPavadinimas(), s)) {
                 return item;
             }
         }
@@ -141,7 +161,6 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
         changing = true;
         this.needReloadList = needReloadList;
         try {
-            setValue(null);
             List<StringLookupItemDto> items = this.getItems();
             for (StringLookupItemDto item : items) {
                 if (item.getId() == id) {
@@ -149,6 +168,32 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
                     return;
                 }
             }
+            StringLookupItemDto item = new StringLookupItemDto(id);
+            setValue(item);
+
+        } finally {
+            changing = false;
+        }
+    }
+
+    public void setStringValue(String id) {
+        changing = true;
+        try {
+            if (StringUtils.isEmpty(id)) {
+                setValue(null);
+                return;
+            }
+
+            List<StringLookupItemDto> items = this.getItems();
+            for (StringLookupItemDto item : items) {
+                if (StringUtils.equals(item.getId(), id)) {
+                    if (getValue() != item) {
+                        setValue(item);
+                    }
+                    return;
+                }
+            }
+
             StringLookupItemDto item = new StringLookupItemDto(id);
             setValue(item);
 

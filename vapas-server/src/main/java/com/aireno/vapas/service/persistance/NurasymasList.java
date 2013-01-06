@@ -3,16 +3,15 @@ package com.aireno.vapas.service.persistance;
 import com.aireno.vapas.service.base.EntityBase;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 
-public class NurasymasList extends EntityBase implements Serializable
-{
+public class NurasymasList extends EntityBase implements Serializable {
     private String imone;
     private SaskaitaStatusas statusas;
     private String numeris;
     private Date data;
+    private SaskaitaStatusas statusasNotNull;
 
     public String getImone() {
         return imone;
@@ -44,5 +43,12 @@ public class NurasymasList extends EntityBase implements Serializable
 
     public void setData(Date data) {
         this.data = data;
+    }
+
+    public SaskaitaStatusas getStatusasNotNull() {
+        if (statusas == null) {
+            return SaskaitaStatusas.Pildoma;
+        }
+        return statusas;
     }
 }
