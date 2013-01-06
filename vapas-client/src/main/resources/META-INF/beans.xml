@@ -82,6 +82,16 @@
         <constructor-arg type="java.lang.String" value="/fxml/nurasymai/nurasymas.fxml" />
     </bean>
 
+    <bean id="GyvunoRusisListPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane" lazy-init="true">
+        <constructor-arg type="java.lang.String" value="/fxml/gydymozurnalas/gyvunoRusisList.fxml" />
+    </bean>
+
+    <bean id="GyvunoRusisPresenter" factory-bean="myFactoryBean"
+          factory-method="createPane" lazy-init="true">
+        <constructor-arg type="java.lang.String" value="/fxml/gydymozurnalas/gyvunoRusis.fxml" />
+    </bean>
+
     <bean id="MatavimoVienetaiListReq"
           class="com.aireno.vapas.service.matavimoVienetai.MatavimoVienetaiListPr"/>
     <bean id="MatavimoVienetasSaveReq"
@@ -103,6 +113,8 @@
           class="com.aireno.vapas.service.nurasymai.NurasymasServiceImpl" lazy-init="true"/>
     <bean id="LookupService"
           class="com.aireno.vapas.service.lookups.LookupServiceImpl" lazy-init="true"/>
+    <bean id="GydymoZurnalasService"
+          class="com.aireno.vapas.service.gydymozurnalas.GydymoZurnalasServiceImpl" lazy-init="true"/>
 
 
     <!-- Database Setup -->

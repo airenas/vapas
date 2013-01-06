@@ -42,7 +42,7 @@
         <mapping resource="hbm/LikutisList.hbm.xml"/>
         <mapping resource="hbm/Nurasymas.hbm.xml"/>
         <mapping resource="hbm/NurasymasList.hbm.xml"/>
-        <mapping resource="hbm/NurasymasPreke.hbm.xml"/>
+        <mapping resource="hbm/GyvunoRusis.hbm.xml"/>
 
     </session-factory>
 

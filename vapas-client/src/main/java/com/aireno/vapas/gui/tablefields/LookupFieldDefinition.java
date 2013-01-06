@@ -1,7 +1,8 @@
-package com.aireno.vapas.gui.base;
+package com.aireno.vapas.gui.tablefields;
 
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.LookupDto;
+import com.aireno.vapas.gui.base.EditFieldDefinition;
 import com.aireno.vapas.service.LookupService;
 import com.panemu.tiwulfx.common.TableData;
 import com.panemu.tiwulfx.control.LookupFieldController;

@@ -2,7 +2,6 @@ package com.aireno.vapas.gui.saskaitos;
 
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.LookupDto;
-import com.aireno.dto.NurasymoPrekeDto;
 import com.aireno.dto.SaskaitaDto;
 import com.aireno.dto.SaskaitosPrekeDto;
 import com.aireno.utils.ADateUtils;
@@ -10,6 +9,10 @@ import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
 import com.aireno.vapas.gui.controls.FilterLookup;
+import com.aireno.vapas.gui.tablefields.DateFieldDefinition;
+import com.aireno.vapas.gui.tablefields.DecimalFieldDefinition;
+import com.aireno.vapas.gui.tablefields.LookupFieldDefinitionCB;
+import com.aireno.vapas.gui.tablefields.TextFieldDefinition;
 import com.aireno.vapas.service.LookupService;
 import com.aireno.vapas.service.SaskaitaService;
 import com.panemu.tiwulfx.form.DateControl;

@@ -1,4 +1,4 @@
-package com.aireno.vapas.gui.nurasymai;
+package com.aireno.vapas.gui.gydymozurnalas;
 
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.LookupDto;
@@ -8,7 +8,10 @@ import com.aireno.dto.StringLookupItemDto;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.gui.Constants;
-import com.aireno.vapas.gui.base.*;
+import com.aireno.vapas.gui.base.EditFieldDefinition;
+import com.aireno.vapas.gui.base.EntityPresenterBase;
+import com.aireno.vapas.gui.base.GuiPresenter;
+import com.aireno.vapas.gui.base.ListDefinition;
 import com.aireno.vapas.gui.controls.FilterLookup;
 import com.aireno.vapas.gui.tablefields.DecimalFieldDefinition;
 import com.aireno.vapas.gui.tablefields.LookupFieldDefinitionCB;
@@ -33,9 +36,12 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implements Initializable, GuiPresenter {
+public class GydymoZurnalasPresenter extends EntityPresenterBase<NurasymasDto> implements Initializable, GuiPresenter {
     @FXML
     private Node root;
     @FXML

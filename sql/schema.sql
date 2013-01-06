@@ -147,6 +147,14 @@ create table Nurasymai (
  -- drop view vNurasymai
 create view vNurasymai as 
 select n.Id, n.numeris, n.STATUSAS, n.DATA, i.PAVADINIMAS as imone
-	from NURASYMAI n 	left join imones i on n.IMONEID = i.id;  
+	from NURASYMAI n 	left join imones i on n.IMONEID = i.id; 
+
+	     --drop table GyvunuRusys
+create table GyvunuRusys (
+        Id bigint not null,
+        pavadinimas varchar(100) not null,
+        primary key (Id),
+        unique (pavadinimas)
+    );
 
 		

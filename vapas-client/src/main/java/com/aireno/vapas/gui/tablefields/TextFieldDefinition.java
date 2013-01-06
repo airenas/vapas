@@ -1,5 +1,6 @@
-package com.aireno.vapas.gui.base;
+package com.aireno.vapas.gui.tablefields;
 
+import com.aireno.vapas.gui.base.EditFieldDefinition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;

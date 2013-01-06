@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="623.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.main.MainPresenter">
+<AnchorPane id="AnchorPane" fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-Infinity" prefWidth="-Infinity" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.main.MainPresenter">
   <children>
     <AnchorPane id="buttonArea" prefHeight="450.0" prefWidth="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>

@@ -24,5 +24,11 @@ public class Constants {
     public static final String NURASYMASLIST_PRESENTER = "NurasymasListPresenter";
     public static final String NURASYMAS_PRESENTER = "NurasymasPresenter";
 
+    public static final String GYVUNORUSISLIST_PRESENTER = "GyvunoRusisListPresenter";
+    public static final String GYVUNORUSIS_PRESENTER = "GyvunoRusisPresenter";
+
+    public static final String GYDYMOZURNALASLIST_PRESENTER = "GydymoZurnalasListPresenter";
+    public static final String GYDYMOZURNALAS_PRESENTER = "GydymoZurnalasPresenter";
+
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 }

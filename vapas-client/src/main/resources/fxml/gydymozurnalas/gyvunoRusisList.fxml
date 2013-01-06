@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane id="BorderPane" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.gydymozurnalas.GyvunoRusisListPresenter">
+  <center>
+    <AnchorPane fx:id="root" prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER">
+      <children>
+        <TableView fx:id="resultsList" prefHeight="400.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <Pane layoutX="250.0" layoutY="200.0" prefHeight="200.0" prefWidth="200.0" />
+      </children>
+      <BorderPane.margin>
+        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+      </BorderPane.margin>
+    </AnchorPane>
+  </center>
+  <right>
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="400.0" prefWidth="99.99990000000253" spacing="10.0">
+      <children>
+        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#naujas" text="Naujas" />
+        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#redaguoti" text="Redaguoti" />
+      </children>
+    </VBox>
+  </right>
+</BorderPane>

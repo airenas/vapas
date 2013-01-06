@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.gydymozurnalas.GyvunoRusisPresenter">
+  <center>
+    <AnchorPane fx:id="root" prefHeight="200.0" prefWidth="200.0">
+      <children>
+        <Label layoutX="36.0" layoutY="41.0" text="Rūšis" />
+        <TextField fx:id="pavadinimas" onKeyReleased="#update" prefWidth="339.0" AnchorPane.leftAnchor="133.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="38.0" />
+      </children>
+    </AnchorPane>
+  </center>
+  <right>
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+      <children>
+        <Button fx:id="bSaugoti" contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
+        <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />
+      </children>
+    </VBox>
+  </right>
+</BorderPane>

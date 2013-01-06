@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!--
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.aireno.vapas.service.persistance">
+
+    <class name="GyvunoRusis" table="GyvunuRusys">
+        <id name="id" column="Id">
+            <generator class="increment"/>
+        </id>
+        <property name="pavadinimas" type="string" length="100" not-null="true"/>
+    </class>
+
+</hibernate-mapping>

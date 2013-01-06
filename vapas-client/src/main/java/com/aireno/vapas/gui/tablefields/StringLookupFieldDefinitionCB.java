@@ -1,9 +1,9 @@
-package com.aireno.vapas.gui.base;
+package com.aireno.vapas.gui.tablefields;
 
 import com.aireno.base.LookupDto;
 import com.aireno.dto.StringLookupItemDto;
+import com.aireno.vapas.gui.base.EditFieldDefinition;
 import com.aireno.vapas.gui.controls.EditingCell;
-import com.aireno.vapas.gui.controls.FilterLookup;
 import com.aireno.vapas.gui.controls.StringFilterLookup;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

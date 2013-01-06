@@ -1,14 +1,11 @@
-package com.aireno.vapas.gui.base;
+package com.aireno.vapas.gui.tablefields;
 
 import com.aireno.vapas.gui.Constants;
+import com.aireno.vapas.gui.base.EditFieldDefinition;
 import com.aireno.vapas.gui.controls.EditingCell;
 import com.panemu.tiwulfx.form.DateControl;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;

@@ -55,6 +55,16 @@ public class MainPanePresenter implements GuiPresenter {
         mainPresenter.show(Constants.SASKAITALIST_PRESENTER);
     }
 
+    public void showGyvunuRusys() {
+        MainPresenter mainPresenter = getMainPresenter();
+        mainPresenter.show(Constants.GYVUNORUSISLIST_PRESENTER);
+    }
+
+    public void showGydymoZurnalas() {
+        MainPresenter mainPresenter = getMainPresenter();
+        mainPresenter.show(Constants.GYDYMOZURNALASLIST_PRESENTER);
+    }
+
 
     public Node getButtonView() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
