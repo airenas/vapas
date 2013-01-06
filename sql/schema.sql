@@ -157,4 +157,47 @@ create table GyvunuRusys (
         unique (pavadinimas)
     );
 
+	
+	create table GydomuGyvunuZurnalas (
+        Id bigint not null,
+        eilesNumeris bigint,
+        imoneId bigint not null,
+        laikytojas varchar(200) not null,
+        registracijosData timestamp not null,
+        pirmuPozymiuData timestamp,
+        diagnoze varchar(500),
+        gyvunuSarasas varchar(500),
+        gydymas varchar(500),
+        primary key (Id),
+		FOREIGN KEY (imoneId) REFERENCES IMONES(Id)
+    );
+	
+	create table ZurnaloGyvunai (
+        Id bigint not null,
+        zurnaloId bigint not null,
+        gyvunoRusisId bigint not null,
+        numeris varchar(400),
+        amzius varchar(100),
+        primary key (Id),
+		FOREIGN KEY (zurnaloId) REFERENCES GydomuGyvunuZurnalas(Id)
+    );
+
+    create table ZurnaloVaistai (
+        Id bigint not null,
+        zurnaloId bigint not null,
+        prekeId bigint not null,
+        receptas varchar(400),
+        matavimoVienetasId bigint not null,
+        kiekis numeric not null,
+        primary key (Id),
+		FOREIGN KEY (zurnaloId) REFERENCES GydomuGyvunuZurnalas(Id),
+		FOREIGN KEY (prekeId) REFERENCES Prekes(Id),
+		FOREIGN KEY (matavimoVienetasId) REFERENCES MatavimoVienetas(Id)
+    );
+	
+create view vGydomuGyvunuZurnalas as 
+select n.Id, n.eilesNumeris, n.laikytojas, n.registracijosData, n.gyvunuSarasas, n.gydymas, i.PAVADINIMAS as imone
+	from GydomuGyvunuZurnalas n left join imones i on n.IMONEID = i.id; 
+
+
 		

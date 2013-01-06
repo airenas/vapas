@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 
-public class ZurnaloGydymoEiga extends EntityBase implements Serializable {
+public class ZurnaloVaistas extends EntityBase implements Serializable {
     private long zurnaloId;
     private long prekeId;
     private BigDecimal kiekis;

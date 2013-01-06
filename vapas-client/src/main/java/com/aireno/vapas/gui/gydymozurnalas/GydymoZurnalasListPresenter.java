@@ -1,28 +1,25 @@
 package com.aireno.vapas.gui.gydymozurnalas;
 
 import com.aireno.base.ApplicationContextProvider;
-import com.aireno.dto.NurasymasListDto;
+import com.aireno.dto.GydomuGyvunuZurnalasListDto;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
-import com.aireno.vapas.service.NurasymasService;
+import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
 
-public class GydymoZurnalasListPresenter extends PresenterBase implements Initializable, GuiPresenter {
+public class GydymoZurnalasListPresenter extends PresenterBase {
     @FXML
     private Node root;
     @FXML
@@ -30,16 +27,12 @@ public class GydymoZurnalasListPresenter extends PresenterBase implements Initia
     @FXML
     private TextField searchField;
     @FXML
-    private TableView<NurasymasListDto> resultsList;
+    private TableView<GydomuGyvunuZurnalasListDto> resultsList;
 
+    ObservableList<GydomuGyvunuZurnalasListDto> data;
 
-    ObservableList<NurasymasListDto> data;
-
-    public NurasymasService getService() {
-        return ApplicationContextProvider.getProvider().getBean(NurasymasService.class);
-    }
-
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public GydomuGyvunuZurnalasService getService() {
+        return ApplicationContextProvider.getProvider().getBean(GydomuGyvunuZurnalasService.class);
     }
 
     public Node getView() {
@@ -64,7 +57,7 @@ public class GydymoZurnalasListPresenter extends PresenterBase implements Initia
     }
 
     public String getTitle() {
-        return "Nurašymai";
+        return "Gydomų gyvūnų žurnalas";
     }
 
     @Override
@@ -74,9 +67,9 @@ public class GydymoZurnalasListPresenter extends PresenterBase implements Initia
 
     public void search(ActionEvent event) throws GuiException {
         try {
-            List<NurasymasListDto> items = getService().sarasas(null);
+            List<GydomuGyvunuZurnalasListDto> items = getService().sarasas(null);
             data.clear();
-            for (NurasymasListDto v : items) {
+            for (GydomuGyvunuZurnalasListDto v : items) {
                 data.add(v);
             }
         } catch (Exception e) {
@@ -85,32 +78,36 @@ public class GydymoZurnalasListPresenter extends PresenterBase implements Initia
     }
 
     public void naujas(ActionEvent event) {
-        show(Constants.NURASYMAS_PRESENTER, 0);
+        show(Constants.GYDYMOZURNALAS_PRESENTER, 0);
     }
 
     public void redaguoti(ActionEvent event) {
-        NurasymasListDto item = resultsList.getSelectionModel().getSelectedItem();
+        GydomuGyvunuZurnalasListDto item = resultsList.getSelectionModel().getSelectedItem();
         if (item == null) {
             this.setText("Parinkite įrašą");
             return;
         }
-        show(Constants.NURASYMAS_PRESENTER, item.getId());
+        show(Constants.GYDYMOZURNALAS_PRESENTER, item.getId());
     }
 
     public void trinti(ActionEvent event) {
 
     }
 
-    class MListDefinition extends ListDefinition<NurasymasListDto> {
+    class MListDefinition extends ListDefinition<GydomuGyvunuZurnalasListDto> {
         MListDefinition(EventHandler onClick) {
-            fields.add(new FieldDefinition<NurasymasListDto, String>("Nr", 200, new PropertyValueFactory<NurasymasListDto, String>("numeris"))
-                    .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
-            fields.add(new FieldDefinition<NurasymasListDto, String>("Įmonė", 200, new PropertyValueFactory<NurasymasListDto, String>("imone"))
-                    .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
-            fields.add(new FieldDefinition<NurasymasListDto, Date>("Data", 100, new PropertyValueFactory<NurasymasListDto, Date>("data"))
-                    .addCellFactory(new GenericCellFactory<NurasymasListDto, Date>(onClick)));
-            fields.add(new FieldDefinition<NurasymasListDto, String>("Statusas", 70, new PropertyValueFactory<NurasymasListDto, String>("statusas"))
-                    .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, Date>("Data", 200,
+                    new PropertyValueFactory<GydomuGyvunuZurnalasListDto, Date>("registracijosData"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, Date>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Laikytojas", 200, new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("laikytojas"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Gyvūnai", 200, new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("gyvunuSarasas"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Vaistai", 200, new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("vaistai"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Įmonė", 100,
+                    new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("imone"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
         }
     }
 }

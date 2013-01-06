@@ -17,7 +17,7 @@ import com.aireno.vapas.gui.controls.FilterLookup;
 import com.aireno.vapas.gui.tablefields.DecimalFieldDefinition;
 import com.aireno.vapas.gui.tablefields.LookupFieldDefinitionCB;
 import com.aireno.vapas.gui.tablefields.StringLookupFieldDefinitionCB;
-import com.aireno.vapas.service.GydymoZurnalasService;
+import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.LookupService;
 import com.aireno.vapas.service.NurasymasService;
 import com.panemu.tiwulfx.form.DateControl;
@@ -58,8 +58,8 @@ public class GyvunoRusisPresenter extends EntityPresenterBase<LookupItemDto> {
         return root;
     }
 
-    public GydymoZurnalasService getService() {
-        return ApplicationContextProvider.getProvider().getBean(GydymoZurnalasService.class);
+    public GydomuGyvunuZurnalasService getService() {
+        return ApplicationContextProvider.getProvider().getBean(GydomuGyvunuZurnalasService.class);
     }
 
     @Override

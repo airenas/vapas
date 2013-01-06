@@ -3,7 +3,9 @@ package com.aireno.vapas.gui;
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.vapas.gui.main.MainPresenter;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class MainApp extends Application
@@ -25,7 +27,16 @@ public class MainApp extends Application
         scene.getStylesheets().add("styles.css");
         scene.getStylesheets().add("/jfxtras/labs/internal/scene/control/CalendarTextField.css");
         stage.setScene(scene);
-        //stage.setTitle("Vaistų apskaita - VApas");
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        stage.setX(bounds.getMinX());
+        stage.setY(bounds.getMinY());
+        stage.setWidth(bounds.getWidth());
+        stage.setHeight(bounds.getHeight());
+
+
         stage.show();
     }
 }

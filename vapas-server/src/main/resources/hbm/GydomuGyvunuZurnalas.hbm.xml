@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<!--
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.aireno.vapas.service.persistance">
+
+    <class name="GydomuGyvunuZurnalas" table="GydomuGyvunuZurnalas">
+        <id name="id" column="Id">
+            <generator class="increment"/>
+        </id>
+
+        <property name="eilesNumeris" type="long"/>
+        <property name="imoneId" type="long" not-null="true" unique="false"/>
+        <property name="laikytojas" type="string" length="200" not-null="true" unique="false"/>
+        <property name="registracijosData" type="timestamp" length="100" not-null="true" unique="false"/>
+        <property name="pirmuPozymiuData" type="timestamp" length="100" not-null="false" unique="false"/>
+
+        <property name="diagnoze" type="string" length="500" unique="false"/>
+        <property name="gyvunuSarasas" type="string" length="500" unique="false"/>
+        <property name="gydymas" type="string" length="500" unique="false"/>
+    </class>
+
+</hibernate-mapping>

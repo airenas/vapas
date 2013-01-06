@@ -22,13 +22,19 @@ public abstract class ProcessorBase<RequestBase, ResponseBase>
     Session session;
 
 
-    
+    Repository repo;
+
+    public Repository getRepo() {
+        return repo;
+    }
+
     @Override
     public ResponseBase process(RequestBase request) throws Exception{
         ResponseBase result = null;
         SessionFactory sessionFactory = VapasSessionFactory.getSessionFactory();
         session = sessionFactory.openSession();
         session.beginTransaction();
+        repo = new Repository(session);
         try
         {
             result = processInt(request);

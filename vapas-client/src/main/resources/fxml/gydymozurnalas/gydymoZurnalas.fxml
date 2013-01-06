@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.aireno.vapas.gui.controls.StringFilterLookup?>
 <?import com.aireno.vapas.gui.controls.FilterLookup?>
 <?import com.panemu.tiwulfx.form.DateControl?>
 <?import java.lang.*?>
@@ -8,35 +9,37 @@
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-client/1.0/vapas-client-1.0.jar?>
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-common/1.0/vapas-common-1.0.jar?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.nurasymai.NurasymasPresenter">
-  <left>
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.gydymozurnalas.GydymoZurnalasPresenter">
+  <center>
     <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="499.9999000000025">
       <children>
-        <Label layoutX="280.0" layoutY="16.0" text="Data" />
-        <Label layoutX="29.0" layoutY="16.0" text="Numeris" />
-        <TextField id="numeris" fx:id="numeris" prefWidth="124.0"
-                   onKeyReleased="#update" AnchorPane.leftAnchor="112.0" AnchorPane.topAnchor="13.0" />
-        <DateControl id="data" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5"
-                     AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="13.0" />
-        <Label layoutX="29.0" layoutY="43.0" text="Įmonė" />
-        <FilterLookup fx:id="imone" editable="true" layoutY="43.0" prefHeight="21.0" prefWidth="388.0000999999975"
-                      AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="41.5" />
-        <Button fx:id="bPridetiPreke" layoutX="12.0" layoutY="69.0" mnemonicParsing="false" onAction="#pridetiPreke" prefWidth="100.0" text="Pridėti prekę" />
-        <AnchorPane prefHeight="215.0" prefWidth="485.9999000000025" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="171.0">
-          <children>
-            <TableView fx:id="prekes" prefHeight="296.0" prefWidth="486.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-81.0">
-              <columns>
-                <TableColumn prefWidth="75.0" text="Column X" />
-                <TableColumn prefWidth="75.0" text="Column X" />
-              </columns>
-            </TableView>
-          </children>
-        </AnchorPane>
+        <Label layoutX="17.0" layoutY="16.0" text="Data" />
+        <Label layoutX="20.0" layoutY="43.0" text="Laikytojas" />
+        <Label layoutX="285.0" layoutY="16.0" text="Įmonė" />
+        <Label layoutX="20.0" layoutY="74.0" text="Diagnozė" />
+        <DateControl fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="84.0" AnchorPane.topAnchor="14.0" />
+        <FilterLookup fx:id="imone" onKeyReleased="#update" prefWidth="151.0" AnchorPane.leftAnchor="335.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="13.0" />
+        <StringFilterLookup fx:id="laikytojas" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.25" AnchorPane.leftAnchor="83.75" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="43.0" />
+        <StringFilterLookup fx:id="diagnoze" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.0" AnchorPane.leftAnchor="84.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="74.0" />
+        <Button fx:id="bPridetiGyvuna" mnemonicParsing="false" onAction="#pridetiPreke" prefWidth="100.0" text="Pridėti gyvūną" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="104.0" />
+        <TableView fx:id="gyvunai" prefHeight="125.0" prefWidth="486.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="125.0">
+          <columns>
+            <TableColumn prefWidth="75.0" text="Column X" />
+            <TableColumn prefWidth="75.0" text="Column X" />
+          </columns>
+        </TableView>
+        <Button id="" mnemonicParsing="false" onAction="#pridetiPreke" prefWidth="100.0" text="Pridėti prekę" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="250.0" />
+        <TableView fx:id="prekes" prefHeight="125.0" prefWidth="485.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="271.0">
+          <columns>
+            <TableColumn prefWidth="75.0" text="Column X" />
+            <TableColumn prefWidth="75.0" text="Column X" />
+          </columns>
+        </TableView>
       </children>
     </AnchorPane>
-  </left>
+  </center>
   <right>
-    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="368.0" prefWidth="100.00009999999747" spacing="10.0" BorderPane.alignment="CENTER">
       <children>
         <Button fx:id="bSaugoti" contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
         <Button fx:id="bTvirtinti" mnemonicParsing="false" onAction="#tvirtinti" text="Tvirtinti" />

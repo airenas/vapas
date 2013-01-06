@@ -41,9 +41,13 @@
         <mapping resource="hbm/Likutis.hbm.xml"/>
         <mapping resource="hbm/LikutisList.hbm.xml"/>
         <mapping resource="hbm/Nurasymas.hbm.xml"/>
+        <mapping resource="hbm/NurasymoPreke.hbm.xml"/>
         <mapping resource="hbm/NurasymasList.hbm.xml"/>
         <mapping resource="hbm/GyvunoRusis.hbm.xml"/>
-
+        <mapping resource="hbm/GydomuGyvunuZurnalasList.hbm.xml"/>
+        <mapping resource="hbm/GydomuGyvunuZurnalas.hbm.xml"/>
+        <mapping resource="hbm/ZurnaloGyvunas.hbm.xml"/>
+        <mapping resource="hbm/ZurnaloVaistas.hbm.xml"/>
     </session-factory>
 
 </hibernate-configuration>

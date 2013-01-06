@@ -1,19 +1,23 @@
-package com.aireno.vapas.service.persistance;
+package com.aireno.dto;
 
-import com.aireno.vapas.service.base.EntityBase;
+import com.aireno.base.DtoBase;
 
-import java.io.Serializable;
-import java.lang.String;
 import java.util.Date;
 
-
-public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable {
+/**
+ * Created with IntelliJ IDEA.
+ * User: Airenas
+ * Date: 12.11.17
+ * Time: 16.25
+ * To change this template use File | Settings | File Templates.
+ */
+public class GydomuGyvunuZurnalasListDto extends DtoBase {
     private long eilesNumeris;
     private String imone;
     private String laikytojas;
     private Date registracijosData;
     private String gyvunuSarasas;
-    private String gydymas;
+    private String vaistai;
 
     public long getEilesNumeris() {
         return eilesNumeris;
@@ -55,11 +59,11 @@ public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable
         this.gyvunuSarasas = gyvunuSarasas;
     }
 
-    public String getGydymas() {
-        return gydymas;
+    public String getVaistai() {
+        return vaistai;
     }
 
-    public void setGydymas(String gydymas) {
-        this.gydymas = gydymas;
+    public void setVaistai(String vaistai) {
+        this.vaistai = vaistai;
     }
 }

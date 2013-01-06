@@ -1,17 +1,25 @@
-package com.aireno.vapas.service.persistance;
+package com.aireno.dto;
 
-import com.aireno.vapas.service.base.EntityBase;
+import com.aireno.base.DtoBase;
 
-import java.io.Serializable;
-import java.lang.String;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-
-public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable {
+/**
+ * Created with IntelliJ IDEA.
+ * User: Airenas
+ * Date: 12.11.17
+ * Time: 16.25
+ * To change this template use File | Settings | File Templates.
+ */
+public class GydomuGyvunuZurnalasDto extends DtoBase {
     private long eilesNumeris;
-    private String imone;
+    private long imoneId;
     private String laikytojas;
     private Date registracijosData;
+    private Date pirmuPozymiuData;
+    private String diagnoze;
     private String gyvunuSarasas;
     private String gydymas;
 
@@ -23,12 +31,12 @@ public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable
         this.eilesNumeris = eilesNumeris;
     }
 
-    public String getImone() {
-        return imone;
+    public long getImoneId() {
+        return imoneId;
     }
 
-    public void setImone(String imone) {
-        this.imone = imone;
+    public void setImoneId(long imoneId) {
+        this.imoneId = imoneId;
     }
 
     public String getLaikytojas() {
@@ -45,6 +53,22 @@ public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable
 
     public void setRegistracijosData(Date registracijosData) {
         this.registracijosData = registracijosData;
+    }
+
+    public Date getPirmuPozymiuData() {
+        return pirmuPozymiuData;
+    }
+
+    public void setPirmuPozymiuData(Date pirmuPozymiuData) {
+        this.pirmuPozymiuData = pirmuPozymiuData;
+    }
+
+    public String getDiagnoze() {
+        return diagnoze;
+    }
+
+    public void setDiagnoze(String diagnoze) {
+        this.diagnoze = diagnoze;
     }
 
     public String getGyvunuSarasas() {

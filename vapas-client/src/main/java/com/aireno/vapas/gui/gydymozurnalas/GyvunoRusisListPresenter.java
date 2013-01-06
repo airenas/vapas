@@ -5,7 +5,7 @@ import com.aireno.base.LookupDto;
 import com.aireno.dto.NurasymasListDto;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
-import com.aireno.vapas.service.GydymoZurnalasService;
+import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -35,8 +35,8 @@ public class GyvunoRusisListPresenter extends PresenterBase implements Initializ
 
     ObservableList<LookupDto> data;
 
-    public GydymoZurnalasService getService() {
-        return ApplicationContextProvider.getProvider().getBean(GydymoZurnalasService.class);
+    public GydomuGyvunuZurnalasService getService() {
+        return ApplicationContextProvider.getProvider().getBean(GydomuGyvunuZurnalasService.class);
     }
 
     public void initialize(URL url, ResourceBundle resourceBundle) {

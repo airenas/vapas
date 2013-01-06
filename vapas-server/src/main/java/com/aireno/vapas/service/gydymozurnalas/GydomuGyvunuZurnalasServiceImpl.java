@@ -4,7 +4,7 @@ import com.aireno.Constants;
 import com.aireno.base.LookupDto;
 import com.aireno.dto.*;
 import com.aireno.utils.ANumberUtils;
-import com.aireno.vapas.service.GydymoZurnalasService;
+import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.NurasymasService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.ServiceBase;
@@ -34,31 +34,51 @@ import java.util.*;
  * Time: 19.41
  * To change this template use File | Settings | File Templates.
  */
-public class GydymoZurnalasServiceImpl extends ServiceBase implements GydymoZurnalasService {
-/*    @Override
-    public List<NurasymasListDto> sarasas(String[] keywords) throws Exception {
-        return new ProcessorBase<String[], List<NurasymasListDto>>() {
+public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements GydomuGyvunuZurnalasService {
+    @Override
+    public List<GydomuGyvunuZurnalasListDto> sarasas(String[] keywords) throws Exception {
+        return new ProcessorBase<String[], List<GydomuGyvunuZurnalasListDto>>() {
             @Override
-            protected List<NurasymasListDto> processInt(String[] request) throws Exception {
-                List<NurasymasList> result = getSession().createQuery("from NurasymasList").list();
-                Collections.sort(result, new Comparator<NurasymasList>() {
+            protected List<GydomuGyvunuZurnalasListDto> processInt(String[] request) throws Exception {
+                List<GydomuGyvunuZurnalasList> result = getSession().createQuery("from GydomuGyvunuZurnalasList").list();
+                Collections.sort(result, new Comparator<GydomuGyvunuZurnalasList>() {
                     @Override
-                    public int compare(NurasymasList o1, NurasymasList o2) {
-                        return o2.getData().compareTo(o1.getData());
+                    public int compare(GydomuGyvunuZurnalasList o1, GydomuGyvunuZurnalasList o2) {
+                        return o2.getRegistracijosData().compareTo(o1.getRegistracijosData());
                     }
                 });
-                NurasymasDtoMap mapper = getMapper();
-                List<NurasymasListDto> res = new ArrayList<NurasymasListDto>();
-                for (NurasymasList item : result) {
+                GydomuGyvunuZurnalasDtoMap mapper = getMapper();
+                List<GydomuGyvunuZurnalasListDto> res = new ArrayList<GydomuGyvunuZurnalasListDto>();
+                for (GydomuGyvunuZurnalasList item : result) {
                     res.add(mapper.toListDto(item));
                 }
                 return res;
             }
         }.process(keywords);
-    }*/
+    }
 
-    NurasymasDtoMap getMapper() {
-        return new NurasymasDtoMap();
+    @Override
+    public List<StringLookupItemDto> sarasasLaikytoju(String[] keywords) throws Exception {
+        return new ProcessorBase<String[], List<StringLookupItemDto>>() {
+            @Override
+            protected List<StringLookupItemDto> processInt(String[] request) throws Exception {
+                List<String> result = getSession().createQuery("select laikytojas from GydomuGyvunuZurnalas").
+                        list();
+                Collections.sort(result);
+                GydomuGyvunuZurnalasDtoMap mapper = getMapper();
+                List<StringLookupItemDto> res = new ArrayList<StringLookupItemDto>();
+                for (String item : result) {
+                    StringLookupItemDto dto = new StringLookupItemDto(item);
+                    dto.setPavadinimas(item);
+                    res.add(dto);
+                }
+                return res;
+            }
+        }.process(keywords);
+    }
+
+    GydomuGyvunuZurnalasDtoMap getMapper() {
+        return new GydomuGyvunuZurnalasDtoMap();
     }
 
     @Override
@@ -86,51 +106,35 @@ public class GydymoZurnalasServiceImpl extends ServiceBase implements GydymoZurn
     }
 
     @Override
-    public NurasymasDto gauti(Long id) throws Exception {
-        return new ProcessorBase<Long, NurasymasDto>() {
+    public GydomuGyvunuZurnalasDto gauti(Long id) throws Exception {
+        return new ProcessorBase<Long, GydomuGyvunuZurnalasDto>() {
             @Override
-            protected NurasymasDto processInt(Long id) throws Exception {
-                String queryString = "from Nurasymas c where c.id = ?1";
-                List<Nurasymas> list = getSession().createQuery(queryString)
-                        .setParameter("1", id).list();
-                getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-                Nurasymas item = list.get(0);
-                NurasymasDto result = getMapper().toDto(item);
-                queryString = "from NurasymoPreke c where c.nurasymasId = ?1";
-                List<NurasymoPreke> listP = getSession().createQuery(queryString)
-                        .setParameter("1", id).list();
-                for (NurasymoPreke itemP : listP) {
-                    result.getPrekes().add(getMapper().toPrekeDto(itemP));
-                }
+            protected GydomuGyvunuZurnalasDto processInt(Long id) throws Exception {
+                GydomuGyvunuZurnalas item = getRepo().get(id, GydomuGyvunuZurnalas.class);
+                GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
                 return result;
             }
         }.process(id);
     }
 
     @Override
-    public NurasymasDto saugoti(NurasymasDto dto) throws Exception {
-        return new ProcessorBase<NurasymasDto, NurasymasDto>() {
+    public GydomuGyvunuZurnalasDto saugoti(GydomuGyvunuZurnalasDto dto) throws Exception {
+        return new ProcessorBase<GydomuGyvunuZurnalasDto, GydomuGyvunuZurnalasDto>() {
             @Override
-            protected NurasymasDto processInt(NurasymasDto dto) throws Exception {
+            protected GydomuGyvunuZurnalasDto processInt(GydomuGyvunuZurnalasDto dto) throws Exception {
 
                 getAssertor().isNotNull(dto, "Nėra įrašo");
-                getAssertor().isNotNullStr(dto.getNumeris(), "Nėra nurašymo numerio");
+                //getAssertor().isNotNullStr(dto.getNumeris(), "Nėra nurašymo numerio");
                 getAssertor().isTrue(dto.getImoneId() > 0, "Nėra įmonės");
-                getAssertor().isTrue(dto.getData() != null, "Nėra datos");
-                Nurasymas item = new Nurasymas();
+                ///getAssertor().isTrue(dto.getData() != null, "Nėra datos");
+                GydomuGyvunuZurnalas item = new GydomuGyvunuZurnalas();
                 if (dto.getId() > 0) {
-                    String queryString = "from Nurasymas c where c.id = ?1";
-                    List<Nurasymas> list = getSession().createQuery(queryString)
-                            .setParameter("1", dto.getId()).list();
-                    getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-
-                    item = list.get(0);
-                    getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Nurasymas jau patvirtintas. Negalima saugoti");
+                    item =  getRepo().get(dto.getId(), GydomuGyvunuZurnalas.class);
                 }
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
                 // saugom prekes
-                String queryString = "from NurasymoPreke c where c.nurasymasId = ?1";
+               /* String queryString = "from NurasymoPreke c where c.nurasymasId = ?1";
                 List<NurasymoPreke> listP = getSession().createQuery(queryString)
                         .setParameter("1", item.getId()).list();
 
@@ -157,12 +161,10 @@ public class GydymoZurnalasServiceImpl extends ServiceBase implements GydymoZurn
                 }
                 for (NurasymoPreke itemP : listP) {
                     getSession().delete(itemP);
-                }
+                }*/
 
-                NurasymasDto result = getMapper().toDto(item);
-                for (NurasymoPreke itemP : newP) {
-                    result.getPrekes().add(getMapper().toPrekeDto(itemP));
-                }
+                GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
+
                 return result;
             }
         }.process(dto);
@@ -207,128 +209,6 @@ public class GydymoZurnalasServiceImpl extends ServiceBase implements GydymoZurn
             listP.remove(result);
         }
         return result;
-    }
-
-
-    @Override
-    public Boolean tvirtinti(Long id) throws Exception {
-        return new ProcessorBase<Long, Boolean>() {
-            @Override
-            protected Boolean processInt(Long id) throws Exception {
-                Nurasymas item;
-                getAssertor().isTrue(id > 0, "Nėra id");
-                String queryString = "from Nurasymas c where c.id = ?1";
-                List<Nurasymas> list = getSession().createQuery(queryString)
-                        .setParameter("1", id).list();
-                getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-
-                item = list.get(0);
-                getAssertor().isFalse(item.getStatusasNotNull() == SaskaitaStatusas.Patvirtinta, "Nurašymas jau patvirtintas. Negalima saugoti");
-                item.setStatusas(SaskaitaStatusas.Patvirtinta);
-                getSession().save(item);
-
-                // saugom prekes
-                String queryStringP = "from NurasymoPreke c where c.nurasymasId = ?1";
-                List<NurasymoPreke> listP = getSession().createQuery(queryStringP)
-                        .setParameter("1", item.getId()).list();
-
-                getAssertor().isTrue(listP.size() > 0, "Nėra prekių");
-
-                for (NurasymoPreke itemP : listP) {
-                    queryStringP = "from Likutis c where c.serija = ?1 and prekeid = ?2 and imoneId = ?3";
-                    List<Likutis> listL = getSession().createQuery(queryStringP)
-                            .setParameter("1", itemP.getSerija()).setParameter("2", itemP.getPrekeId())
-                            .setParameter("3", item.getImoneId()).list();
-                    double suma = 0;
-                    for (Likutis itemL : listL) {
-                        suma += itemL.getKiekis().doubleValue();
-                    }
-
-                    getAssertor().isFalse(itemP.getKiekis().doubleValue() > suma, "Nėra pajamuota prekių su serija "
-                            + itemP.getSerija() + ". Reikia " + ANumberUtils.DecimalToString(itemP.getKiekis()) + " yra " +
-                            ANumberUtils.DecimalToString(suma));
-
-                    Likutis l = new Likutis();
-                    l.setArSaskaita(false);
-                    l.setData(item.getData());
-                    l.setDokumentas(item.getNumeris());
-                    l.setIrasoId(itemP.getId());
-                    l.setKiekis(new BigDecimal(0).subtract(itemP.getKiekis()));
-                    l.setMatavimoVienetasId(itemP.getMatavimoVienetasId());
-                    l.setPrekeId(itemP.getPrekeId());
-                    l.setSerija(itemP.getSerija());
-                    l.setImoneId(item.getImoneId());
-
-                    getSession().save(l);
-                }
-
-                return true;
-            }
-        }.process(id);
-    }
-
-    @Override
-    public Boolean generuotiAtaskaita(long id) throws Exception {
-        return new ProcessorBase<Long, Boolean>() {
-            @Override
-            protected Boolean processInt(Long id) throws Exception {
-                Nurasymas item;
-                getAssertor().isTrue(id > 0, "Nėra id");
-                String queryString = "from Nurasymas c where c.id = ?1";
-                List<Nurasymas> list = getSession().createQuery(queryString)
-                        .setParameter("1", id).list();
-                getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-
-                item = list.get(0);
-                getAssertor().isTrue(item.getStatusasNotNull() == SaskaitaStatusas.Patvirtinta, "Nurašymas dar nepatvirtintas.");
-
-                // saugom prekes
-                String queryStringP = "from NurasymoPreke c where c.nurasymasId = ?1";
-                List<NurasymoPreke> listP = getSession().createQuery(queryStringP)
-                        .setParameter("1", item.getId()).list();
-
-                getAssertor().isTrue(listP.size() > 0, "Nėra prekių");
-
-                WordprocessingMLPackage template = getTemplate("template/nurasymas.docx");
-
-                String toAdd = new SimpleDateFormat(Constants.DATE_FORMAT).format(new Date());
-                replacePlaceholder(template, toAdd, "{DATA}");
-                replacePlaceholder(template, item.getNumeris(), "{NUMERIS}");
-                replacePlaceholder(template, gautiImone(item.getImoneId(), getSession()).getPavadinimas()
-                        , "{IMONE}");
-                replacePlaceholder(template, new SimpleDateFormat("yyyy").format(item.getData()), "{METAI}");
-                replacePlaceholder(template, new SimpleDateFormat("MM").format(item.getData()), "{MENUO}");
-
-                List<Map<String, String>> textToAdd = new ArrayList<Map<String, String>>();
-
-                int i = 1;
-                for (NurasymoPreke itemP : listP) {
-
-                    Map<String, String> repl1 = new HashMap<String, String>();
-                    repl1.put("{NR}", Integer.toString(i));
-                    Preke preke = gautiIrasa(itemP.getPrekeId(),
-                            Preke.class, getSession());
-                    MatavimoVienetas mvienetas = gautiIrasa(preke.getMatVienetasId(),
-                            MatavimoVienetas.class, getSession());
-                    repl1.put("{PAV}", preke.getPavadinimas());
-                    repl1.put("{SERIJA}", itemP.getSerija());
-                    repl1.put("{MATVNT}", mvienetas.getKodas());
-                    DecimalFormat format = new DecimalFormat( "0.00" );
-                    repl1.put("{KIEKIS}", format.format(itemP.getKiekis()));
-
-                    i++;
-                    textToAdd.add(repl1);
-                }
-
-                replaceTable(new String[]{"{NR}", "{PAV}", "{SERIJA}", "{MATVNT}", "{KIEKIS}"},
-                        textToAdd, template);
-
-                writeDocxToStream(template, "documents/nurasymas_" + Long.toString(item.getId()) + ".docx");
-
-
-                return true;
-            }
-        }.process(id);
     }
 
     @Override
@@ -409,11 +289,7 @@ public class GydymoZurnalasServiceImpl extends ServiceBase implements GydymoZurn
         return new ProcessorBase<Long, LookupItemDto>() {
             @Override
             protected LookupItemDto processInt(Long id) throws Exception {
-                String queryString = "from GyvunoRusis c where c.id = ?1";
-                List<GyvunoRusis> list = getSession().createQuery(queryString)
-                        .setParameter("1", id).list();
-                getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-                GyvunoRusis item = list.get(0);
+                GyvunoRusis item = getRepo().get(id, GyvunoRusis.class);
                 LookupItemDto result = new LookupItemDto();
                 result.setId(item.getId());
                 result.setPavadinimas(item.getPavadinimas());

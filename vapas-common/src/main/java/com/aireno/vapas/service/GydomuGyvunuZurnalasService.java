@@ -1,29 +1,26 @@
 package com.aireno.vapas.service;
 
 import com.aireno.base.LookupDto;
-import com.aireno.dto.LookupItemDto;
-import com.aireno.dto.NurasymasDto;
-import com.aireno.dto.NurasymasListDto;
-import com.aireno.dto.StringLookupItemDto;
+import com.aireno.dto.*;
 
 import java.util.List;
 
-public interface GydymoZurnalasService {
+public interface GydomuGyvunuZurnalasService {
     List<LookupDto> gyvunoRusys(String[] keywords) throws Exception;
 
-    NurasymasDto gauti(Long id) throws Exception;
+    GydomuGyvunuZurnalasDto gauti(Long id) throws Exception;
 
-    NurasymasDto saugoti(NurasymasDto updatedContact) throws Exception;
-
-    Boolean tvirtinti(Long id) throws Exception;
-
-    Boolean generuotiAtaskaita(long id) throws Exception;
+    GydomuGyvunuZurnalasDto saugoti(GydomuGyvunuZurnalasDto updatedContact) throws Exception;
 
     List<StringLookupItemDto> sarasasLaisvuPrekiuSeriju(LaisvuSerijuRequest req) throws Exception;
 
     LookupItemDto saugotiGyvunoRusi(LookupItemDto dto) throws Exception;
 
     LookupItemDto gautiGyvunoRusi(long id) throws Exception;
+
+    List<GydomuGyvunuZurnalasListDto> sarasas(String[] keywords) throws Exception;
+
+    List<StringLookupItemDto> sarasasLaikytoju(String[] keywords) throws Exception;
 
     public class LaisvuSerijuRequest {
         public long prekeId;

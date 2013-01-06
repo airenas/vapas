@@ -70,8 +70,12 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
                         System.out.println("old " + oldValue);
                         System.out.println("new " + newValue);
                         final TextField editor = getEditor();
-                        final StringLookupItemDto selected = getSelectionModel()
-                                .getSelectedItem();
+                        StringLookupItemDto selected = null;
+                        Object selectedO = getSelectionModel().getSelectedItem();
+                        if (selectedO instanceof StringLookupItemDto)
+                        {
+                            selected = (StringLookupItemDto)selectedO;
+                        }
                         if (selected == null || !selected.getId().equals(editor.getText())) {
                             //filterItems(newValue);
                             show();

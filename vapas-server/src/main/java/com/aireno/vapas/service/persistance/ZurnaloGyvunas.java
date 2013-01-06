@@ -7,7 +7,7 @@ import java.lang.String;
 import java.math.BigDecimal;
 
 
-public class ZurnaloGyvunai extends EntityBase implements Serializable
+public class ZurnaloGyvunas extends EntityBase implements Serializable
 {
     private long zurnaloId;
     private long gyvunoRusisId;
