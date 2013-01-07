@@ -3,9 +3,9 @@ package com.aireno.vapas.gui.gydymozurnalas;
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.LookupDto;
 import com.aireno.dto.GydomuGyvunuZurnalasDto;
-import com.aireno.dto.NurasymasDto;
 import com.aireno.dto.NurasymoPrekeDto;
 import com.aireno.dto.StringLookupItemDto;
+import com.aireno.dto.ZurnaloVaistasDto;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.gui.Constants;
@@ -20,7 +20,6 @@ import com.aireno.vapas.gui.tablefields.LookupFieldDefinitionCB;
 import com.aireno.vapas.gui.tablefields.StringLookupFieldDefinitionCB;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.LookupService;
-import com.aireno.vapas.service.NurasymasService;
 import com.panemu.tiwulfx.form.DateControl;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -38,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -60,7 +58,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
     @FXML
     private TableView<NurasymoPrekeDto> gyvunai;
     @FXML
-    private TableView<NurasymoPrekeDto> prekes;
+    private TableView<ZurnaloVaistasGui> prekes;
     @FXML
     private Button bSaugoti;
     @FXML
@@ -70,7 +68,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
     @FXML
     private Button bAtaskaita;
 
-    ObservableList<NurasymoPrekeDto> prekesList;
+    ObservableList<ZurnaloVaistasGui> prekesList;
 
     ObservableList<NurasymoPrekeDto> gyvunaiList;
 
@@ -96,6 +94,9 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                     .addListener(new ChangeListener<Date>() {
                         @Override
                         public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+                            if (initializing) {
+                                return;
+                            }
                             update();
                         }
                     });
@@ -105,6 +106,9 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
             imone.valueProperty().addListener(new ChangeListener<LookupDto>() {
                 @Override
                 public void changed(ObservableValue<? extends LookupDto> observableValue, LookupDto lookupDto, LookupDto lookupDto2) {
+                    if (initializing) {
+                        return;
+                    }
                     update();
 
                 }
@@ -115,26 +119,56 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                     return getService().sarasasLaikytoju(null);
                 }
             });
+            laikytojas.valueProperty().addListener(new ChangeListener<StringLookupItemDto>() {
+                @Override
+                public void changed(ObservableValue<? extends StringLookupItemDto> observableValue,
+                                    StringLookupItemDto lookupDto, StringLookupItemDto lookupDto2) {
+                    if (initializing) {
+                        return;
+                    }
+                    update();
+
+                }
+            });
+            laikytojas.setAllowNewItem(true);
+            diagnoze.setAllowNewItem(true);
+            diagnoze.setProvider(new StringFilterLookup.DataProvider() {
+                @Override
+                public List<StringLookupItemDto> getDataList(String sId) throws Exception {
+                    return getService().sarasasDiagnozes(null);
+                }
+            });
+            diagnoze.valueProperty().addListener(new ChangeListener<StringLookupItemDto>() {
+                @Override
+                public void changed(ObservableValue<? extends StringLookupItemDto> observableValue,
+                                    StringLookupItemDto lookupDto, StringLookupItemDto lookupDto2) {
+                    if (initializing) {
+                        return;
+                    }
+                    update();
+
+                }
+            });
             if (id > 0) {
                 try {
                     item = getService().gauti(id);
                     this.setText("Gauta");
-                    //.setText(item.getNumeris());
-                    data.setValue(item.getRegistracijosData());
-                    imone.setValueId(item.getImoneId());
-                    /*for (NurasymoPrekeDto i : item.getPrekes())
-                        prekesList.add(new NurasymoPrekeDto(i));*/
-
                 } catch (Exception e) {
                     this.setText(e.getLocalizedMessage());
                     return false;
                 }
             } else {
                 item = new GydomuGyvunuZurnalasDto();
-                //numeris.setText("");
-                data.setValue(Calendar.getInstance().getTime());
-                imone.setValueId(0);
             }
+            data.setValue(item.getRegistracijosData());
+            imone.setValueId(item.getImoneId());
+            diagnoze.setStringValue(item.getDiagnoze());
+            laikytojas.setStringValue(item.getLaikytojas());
+            prekesList.clear();
+            for (ZurnaloVaistasDto i : item.getVaistai()) {
+                prekesList.add(new ZurnaloVaistasGui(i));
+            }
+
             MListDefinition def = new MListDefinition();
             prekes.setEditable(true);
             def.InitTable(prekes);
@@ -157,21 +191,24 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
         //dto.setNumeris(numeris.getText());
         dto.setRegistracijosData(data.getValue());
         dto.setImoneId(imone.getValueId());
+        dto.setLaikytojas(laikytojas.getStringValue());
+        dto.setDiagnoze(diagnoze.getStringValue());
         dto.setId(getId());
-        /*dto.getPrekes().clear();
-        for (NurasymoPrekeDto item : prekesList) {
-            if (StringUtils.isNotEmpty(item.getSerija())) {
-                dto.getPrekes().add(item);
+        dto.getVaistai().clear();
+        for (ZurnaloVaistasGui item : prekesList) {
+            if (item.getPrekeId() > 0) {
+                dto.getVaistai().add(item.toDto());
             }
-        }*/
+        }
 
         item = getService().saugoti(dto);
         initializing = true;
         try {
-           /* prekesList.clear();
-            for (NurasymoPrekeDto i : item.getPrekes())
-                prekesList.add(new NurasymoPrekeDto(i));
-            this.setText("Išsaugota");*/
+            prekesList.clear();
+            for (ZurnaloVaistasDto i : item.getVaistai()) {
+                prekesList.add(new ZurnaloVaistasGui(i));
+            }
+            this.setText("Išsaugota");
         } finally {
             initializing = false;
         }
@@ -191,27 +228,28 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
 
     public void generuotiAtaskaita(ActionEvent event) {
         try {
-           // getService().generuotiAtaskaita(getId());
+            // getService().generuotiAtaskaita(getId());
             this.setText("Sugeneruota");
         } catch (Exception e) {
             this.setError("Klaida generuojant ataskaita: ", e);
         }
     }
 
-    class MListDefinition extends ListDefinition<NurasymoPrekeDto> {
+    class MListDefinition extends ListDefinition<ZurnaloVaistasGui> {
         MListDefinition() {
-            fields.add(new LookupFieldDefinitionCB<NurasymoPrekeDto, LookupDto>("Prekė", 150,
-                    new PropertyValueFactory<NurasymoPrekeDto, Long>("prekeId"),
-                    new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, Long>() {
+            fields.add(new LookupFieldDefinitionCB<ZurnaloVaistasGui, LookupDto>("Prekė", 150,
+                    new PropertyValueFactory<ZurnaloVaistasGui, Long>("prekeId"),
+                    new EditFieldDefinition.ChangeEvent<ZurnaloVaistasGui, Long>() {
 
                         @Override
-                        public void handle(ChangeEventParam<NurasymoPrekeDto, Long> param) {
+                        public void handle(ChangeEventParam<ZurnaloVaistasGui, Long> param) {
                             if (initializing) {
                                 return;
                             }
                             if (param.item.getPrekeId() != param.value) {
                                 param.item.setPrekeId(param.value);
-                                param.item.setSerija(null);
+                                param.item.setReceptas(null);
+                                // param.item.setMatavimoVienetasId(getLookupService().gautiPrekesMatavimoVieneta(param.value));
                                 update();
                             }
                         }
@@ -225,33 +263,35 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
             }
             ));
 
-/*            fields.add(new StringLookupFieldDefinitionCB("Serija", 100, new PropertyValueFactory<NurasymoPrekeDto, String>("serija"),
-                    new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, String>() {
+            fields.add(new DecimalFieldDefinition<ZurnaloVaistasGui>("Kiekis", 100,
+                    new PropertyValueFactory<ZurnaloVaistasGui, BigDecimal>("kiekis"),
+                    new EditFieldDefinition.ChangeEvent<ZurnaloVaistasGui, BigDecimal>() {
                         @Override
-                        public void handle(ChangeEventParam<NurasymoPrekeDto, String> param) {
-                            param.item.setSerija(param.value);
-                            update();
-                        }
-                    },
-                    new StringLookupFieldDefinitionCB.DataProvider<NurasymoPrekeDto>() {
-
-                        @Override
-                        public List<StringLookupItemDto> getDataList(NurasymoPrekeDto item, String sId) throws Exception {
-                            List<StringLookupItemDto> result = getService().sarasasLaisvuPrekiuSeriju(new NurasymasService.LaisvuSerijuRequest(item.getPrekeId(), imone.getValueId()));
-                            return result;
-                        }
-                    }
-            ));*/
-            fields.add(new DecimalFieldDefinition<NurasymoPrekeDto>("Kiekis", 100,
-                    new PropertyValueFactory<NurasymoPrekeDto, BigDecimal>("kiekis"),
-                    new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, BigDecimal>() {
-                        @Override
-                        public void handle(ChangeEventParam<NurasymoPrekeDto, BigDecimal> param) {
+                        public void handle(ChangeEventParam<ZurnaloVaistasGui, BigDecimal> param) {
                             param.item.setKiekis(param.value);
                             update();
                         }
                     })
             );
+
+            fields.add(new StringLookupFieldDefinitionCB("Receptas", 400, new PropertyValueFactory<ZurnaloVaistasGui, String>("receptas"),
+                    new EditFieldDefinition.ChangeEvent<ZurnaloVaistasGui, String>() {
+                        @Override
+                        public void handle(ChangeEventParam<ZurnaloVaistasGui, String> param) {
+                            param.item.setReceptas(param.value);
+                            update();
+                        }
+                    },
+                    new StringLookupFieldDefinitionCB.DataProvider<ZurnaloVaistasGui>() {
+
+                        @Override
+                        public List<StringLookupItemDto> getDataList(ZurnaloVaistasGui item, String sId) throws Exception {
+                            List<StringLookupItemDto> result = getService()
+                                    .sarasasReceptai(new GydomuGyvunuZurnalasService.ReceptaiRequest(item.getPrekeId()));
+                            return result;
+                        }
+                    }
+            ));
         }
     }
 
@@ -312,6 +352,10 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
     }
 
     public void pridetiPreke() {
-        prekesList.add(new NurasymoPrekeDto());
+        prekesList.add(new ZurnaloVaistasGui());
+    }
+
+    public void pridetiGyvuna() {
+        //prekesList.add(new ZurnaloVaistasGui());
     }
 }

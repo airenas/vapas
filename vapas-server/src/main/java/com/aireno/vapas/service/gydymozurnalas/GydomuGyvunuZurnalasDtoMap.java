@@ -23,6 +23,8 @@ public class GydomuGyvunuZurnalasDtoMap {
 
     public void fromDto(GydomuGyvunuZurnalas item, GydomuGyvunuZurnalasDto dto) {
         item.setLaikytojas(dto.getLaikytojas());
+        item.setDiagnoze(dto.getDiagnoze());
+        item.setRegistracijosData(dto.getRegistracijosData());
         item.setImoneId(dto.getImoneId());
     }
 

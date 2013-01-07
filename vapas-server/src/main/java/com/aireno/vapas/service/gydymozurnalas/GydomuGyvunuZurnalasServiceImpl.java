@@ -1,11 +1,8 @@
 package com.aireno.vapas.service.gydymozurnalas;
 
-import com.aireno.Constants;
 import com.aireno.base.LookupDto;
 import com.aireno.dto.*;
-import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
-import com.aireno.vapas.service.NurasymasService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.persistance.*;
@@ -22,9 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -63,6 +57,26 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
             @Override
             protected List<StringLookupItemDto> processInt(String[] request) throws Exception {
                 List<String> result = getSession().createQuery("select laikytojas from GydomuGyvunuZurnalas").
+                        list();
+                Collections.sort(result);
+                GydomuGyvunuZurnalasDtoMap mapper = getMapper();
+                List<StringLookupItemDto> res = new ArrayList<StringLookupItemDto>();
+                for (String item : result) {
+                    StringLookupItemDto dto = new StringLookupItemDto(item);
+                    dto.setPavadinimas(item);
+                    res.add(dto);
+                }
+                return res;
+            }
+        }.process(keywords);
+    }
+
+    @Override
+    public List<StringLookupItemDto> sarasasDiagnozes(String[] keywords) throws Exception {
+        return new ProcessorBase<String[], List<StringLookupItemDto>>() {
+            @Override
+            protected List<StringLookupItemDto> processInt(String[] request) throws Exception {
+                List<String> result = getSession().createQuery("select diagnoze from GydomuGyvunuZurnalas").
                         list();
                 Collections.sort(result);
                 GydomuGyvunuZurnalasDtoMap mapper = getMapper();
@@ -124,12 +138,13 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
             protected GydomuGyvunuZurnalasDto processInt(GydomuGyvunuZurnalasDto dto) throws Exception {
 
                 getAssertor().isNotNull(dto, "Nėra įrašo");
-                //getAssertor().isNotNullStr(dto.getNumeris(), "Nėra nurašymo numerio");
                 getAssertor().isTrue(dto.getImoneId() > 0, "Nėra įmonės");
-                ///getAssertor().isTrue(dto.getData() != null, "Nėra datos");
+                getAssertor().isNotNullStr(dto.getLaikytojas(), "Nėra laikytojo");
+                getAssertor().isNotNullStr(dto.getDiagnoze(), "Nėra diagnozės");
+                getAssertor().isTrue(dto.getRegistracijosData() != null, "Nėra datos");
                 GydomuGyvunuZurnalas item = new GydomuGyvunuZurnalas();
                 if (dto.getId() > 0) {
-                    item =  getRepo().get(dto.getId(), GydomuGyvunuZurnalas.class);
+                    item = getRepo().get(dto.getId(), GydomuGyvunuZurnalas.class);
                 }
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
@@ -212,43 +227,21 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
     }
 
     @Override
-    public List<StringLookupItemDto> sarasasLaisvuPrekiuSeriju(LaisvuSerijuRequest req) throws Exception {
-        return new ProcessorBase<LaisvuSerijuRequest, List<StringLookupItemDto>>() {
+    public List<StringLookupItemDto> sarasasReceptai(ReceptaiRequest req) throws Exception {
+        return new ProcessorBase<ReceptaiRequest, List<StringLookupItemDto>>() {
             @Override
-            protected List<StringLookupItemDto> processInt(LaisvuSerijuRequest req) throws Exception {
-                String queryString = "from Likutis c where c.prekeId = ?1 and c.imoneId = ?2";
-                List<Likutis> list = getSession().createQuery(queryString)
-                        .setParameter("1", req.prekeId).setParameter("2", req.imoneId).list();
-                List<StringLookupItemDto> result = new ArrayList<>();
-                HashMap<String, BigDecimal> map = new HashMap<String, BigDecimal>();
-                // formuojame
-                for (Likutis item : list) {
-                    String serija = item.getSerija();
-                    BigDecimal kiek = new BigDecimal(0);
-                    if (map.containsKey(serija)) {
-                        kiek = map.get(serija);
-                    }
-
-                   // if (item.isArSaskaita()) {
-                        kiek = kiek.add(item.getKiekis());
-                    // else {
-                    //    kiek = kiek.subtract(item.getKiekis());
-                   // }
-                    map.put(serija, kiek);
+            protected List<StringLookupItemDto> processInt(ReceptaiRequest req) throws Exception {
+                List<String> result = getSession().createQuery("select c.receptas from ZurnaloVaistas c " +
+                        "where c.prekeId = ?1").setParameter("1", req.prekeId).
+                        list();
+                Collections.sort(result);
+                List<StringLookupItemDto> res = new ArrayList<StringLookupItemDto>();
+                for (String item : result) {
+                    StringLookupItemDto dto = new StringLookupItemDto(item);
+                    dto.setPavadinimas(item);
+                    res.add(dto);
                 }
-
-                for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
-                    String key = entry.getKey();
-                    BigDecimal value = entry.getValue();
-                    if (value.compareTo(new BigDecimal(0)) > 0) {
-                        StringLookupItemDto dto = new StringLookupItemDto(key);
-                        dto.setPavadinimas(String.format("%s (%s)", key, ANumberUtils.DecimalToString(value)));
-                        result.add(dto);
-                    }
-                }
-                return result;
-
-
+                return res;
             }
         }.process(req);
     }

@@ -22,6 +22,23 @@ public class GydomuGyvunuZurnalasDto extends DtoBase {
     private String diagnoze;
     private String gyvunuSarasas;
     private String gydymas;
+    private List<ZurnaloVaistasDto> vaistai;
+    private List<ZurnaloGyvunasDto> gyvunai;
+
+    public List<ZurnaloVaistasDto> getVaistai() {
+        if (vaistai == null) {
+            vaistai = new ArrayList<ZurnaloVaistasDto>();
+        }
+        return vaistai;
+    }
+
+    public List<ZurnaloGyvunasDto> getGyvunai() {
+        if (gyvunai == null) {
+            gyvunai = new ArrayList<ZurnaloGyvunasDto>();
+        }
+        return gyvunai;
+    }
+
 
     public long getEilesNumeris() {
         return eilesNumeris;

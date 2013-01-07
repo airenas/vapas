@@ -12,7 +12,7 @@ public interface GydomuGyvunuZurnalasService {
 
     GydomuGyvunuZurnalasDto saugoti(GydomuGyvunuZurnalasDto updatedContact) throws Exception;
 
-    List<StringLookupItemDto> sarasasLaisvuPrekiuSeriju(LaisvuSerijuRequest req) throws Exception;
+    List<StringLookupItemDto> sarasasReceptai(ReceptaiRequest req) throws Exception;
 
     LookupItemDto saugotiGyvunoRusi(LookupItemDto dto) throws Exception;
 
@@ -22,13 +22,14 @@ public interface GydomuGyvunuZurnalasService {
 
     List<StringLookupItemDto> sarasasLaikytoju(String[] keywords) throws Exception;
 
-    public class LaisvuSerijuRequest {
-        public long prekeId;
-        public long imoneId;
+    List<StringLookupItemDto> sarasasDiagnozes(String[] keywords) throws Exception;
 
-        public LaisvuSerijuRequest(long prekeId, long imoneId) {
+    public class ReceptaiRequest {
+        public long prekeId;
+
+        public ReceptaiRequest(long prekeId) {
             this.prekeId = prekeId;
-            this.imoneId = imoneId;
+
         }
     }
 }

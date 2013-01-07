@@ -25,7 +25,17 @@ import java.util.List;
 public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
     private boolean changing = false;
     private boolean needReloadList = true;
+    private boolean allowNewItem = false;
+    private boolean addedFake = false;
     private DataProvider provider;
+
+    public boolean isAllowNewItem() {
+        return allowNewItem;
+    }
+
+    public void setAllowNewItem(boolean allowNewItem) {
+        this.allowNewItem = allowNewItem;
+    }
 
     private class KeyHandler implements EventHandler<KeyEvent> {
 
@@ -52,6 +62,22 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
                 if (needReloadList) {
                     try {
                         setItems(FXCollections.observableArrayList(provider.getDataList(getStringValue())));
+                        addedFake = false;
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+                addedFake = false;
+                needReloadList = false;
+            }
+        });
+        setOnHiding(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                if (allowNewItem && getValue() != null && !getItems().contains(getValue())) {
+                    try {
+                        getItems().add(getValue());
+                        addedFake = true;
                     } catch (Exception e) {
                         throw new RuntimeException(e);  //To change body of catch statement use File | Settings | File Templates.
                     }
@@ -98,6 +124,13 @@ public class StringFilterLookup extends ComboBox<StringLookupItemDto> {
                 return item;
             }
         }
+
+        if (allowNewItem)
+        {
+            StringLookupItemDto item = new StringLookupItemDto(s);
+            return item;
+        }
+
         return null;
     }
 
