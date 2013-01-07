@@ -5,6 +5,7 @@ import com.aireno.vapas.gui.main.MainPresenter;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -18,6 +19,9 @@ public class MainApp extends Application
     public void start(Stage stage) throws Exception
     {
         ApplicationContextProvider.init();
+
+        Image ico = new Image("images/Dog.png");
+        stage.getIcons().add(ico);
 
         MainPresenter mainPresenter = ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
         mainPresenter.setStage(stage);
