@@ -23,6 +23,11 @@
         <property name="serija" type="string" length="100" not-null="false"/>
         <property name="data" type="timestamp" not-null="true"/>
         <property name="arSaskaita" type="boolean" not-null="true" />
+        <property name="zurnaloId" type="long" not-null="false"/>
+        <property name="zurnaloVaistoId" type="long" not-null="false"/>
+        <property name="saskaitosId" type="long" not-null="false"/>
+        <property name="saskaitosPrekesId" type="long" not-null="false"/>
+        <property name="pirminisId" type="long" not-null="false"/>
     </class>
 
 </hibernate-mapping>

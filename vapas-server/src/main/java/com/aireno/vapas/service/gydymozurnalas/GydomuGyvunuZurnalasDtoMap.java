@@ -40,20 +40,20 @@ public class GydomuGyvunuZurnalasDtoMap {
         return dto;
     }
 
-    public NurasymoPrekeDto toPrekeDto(NurasymoPreke itemP) {
-        NurasymoPrekeDto dto = new NurasymoPrekeDto();
+    public ZurnaloVaistasDto toPrekeDto(ZurnaloVaistas itemP) {
+        ZurnaloVaistasDto dto = new ZurnaloVaistasDto();
         dto.setId(itemP.getId());
-        dto.setSerija(itemP.getSerija());
+        dto.setReceptas(itemP.getReceptas());
         dto.setPrekeId(itemP.getPrekeId());
         dto.setKiekis(itemP.getKiekis());
         return dto;
     }
 
-    public void fromPrekeDto(NurasymoPreke itemP, NurasymoPrekeDto itemPDto, Nurasymas item) {
+    public void fromPrekeDto(ZurnaloVaistas itemP, ZurnaloVaistasDto itemPDto, GydomuGyvunuZurnalas item) {
         itemP.setId(itemP.getId());
-        itemP.setSerija(itemPDto.getSerija());
+        itemP.setReceptas(itemPDto.getReceptas());
         itemP.setPrekeId(itemPDto.getPrekeId());
         itemP.setKiekis(itemPDto.getKiekis());
-        itemP.setNurasymasId(item.getId());
+        itemP.setZurnaloId(item.getId());
     }
 }

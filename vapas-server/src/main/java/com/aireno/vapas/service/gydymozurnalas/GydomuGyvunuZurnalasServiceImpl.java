@@ -124,8 +124,13 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
         return new ProcessorBase<Long, GydomuGyvunuZurnalasDto>() {
             @Override
             protected GydomuGyvunuZurnalasDto processInt(Long id) throws Exception {
-                GydomuGyvunuZurnalas item = getRepo().get(id, GydomuGyvunuZurnalas.class);
+                GydomuGyvunuZurnalas item = getRepo().get(GydomuGyvunuZurnalas.class, id);
                 GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
+                List<ZurnaloVaistas> vaistai = getRepo().getList(ZurnaloVaistas.class, "zurnaloId", id);
+                result.getVaistai().clear();
+                for (ZurnaloVaistas itemP : vaistai) {
+                    result.getVaistai().add(getMapper().toPrekeDto(itemP));
+                }
                 return result;
             }
         }.process(id);
@@ -144,42 +149,38 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 getAssertor().isTrue(dto.getRegistracijosData() != null, "Nėra datos");
                 GydomuGyvunuZurnalas item = new GydomuGyvunuZurnalas();
                 if (dto.getId() > 0) {
-                    item = getRepo().get(dto.getId(), GydomuGyvunuZurnalas.class);
+                    item = getRepo().get(GydomuGyvunuZurnalas.class, dto.getId());
                 }
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
-                // saugom prekes
-               /* String queryString = "from NurasymoPreke c where c.nurasymasId = ?1";
-                List<NurasymoPreke> listP = getSession().createQuery(queryString)
-                        .setParameter("1", item.getId()).list();
 
-                List<NurasymoPreke> newP = new ArrayList<NurasymoPreke>();
-                List<NurasymoPreke> updatedP = new ArrayList<NurasymoPreke>();
-                for (NurasymoPrekeDto itemPDto : dto.getPrekes()) {
-                    NurasymoPreke itemP = raskPaimkPreke(listP, itemPDto);
-                    if (itemP == null) {
-                        itemP = new NurasymoPreke();
-                    }
-                    getAssertor().isNotNullStr(itemPDto.getSerija(), "Nėra serijos");
+                // trinam likucius
+                getRepo().deleteList(Likutis.class, "zurnaloId", item.getId());
+                // trinam prekes
+                getRepo().deleteList(ZurnaloVaistas.class, "zurnaloId", item.getId());
+                List<ZurnaloVaistas> vaistai = new ArrayList<>();
+                // saugom prekes
+                for (ZurnaloVaistasDto itemPDto : dto.getVaistai()) {
+                    ZurnaloVaistas itemP = new ZurnaloVaistas();
+
+                    getAssertor().isNotNullStr(itemPDto.getReceptas(), "Nėra recepto");
                     getAssertor().isTrue(itemPDto.getKiekis().doubleValue() > 0, "Nėra kiekio");
                     getAssertor().isTrue(itemPDto.getPrekeId() > 0, "Nėra prekės");
 
                     getMapper().fromPrekeDto(itemP, itemPDto, item);
                     if (itemP.getMatavimoVienetasId() == 0) {
                         MatavimoVienetas mv = gautiMatavimoVieneta(itemP.getPrekeId(), getSession());
-                        itemP.setMatavimoVienetasId(mv.getId());
-                        itemP.setMatavimoVienetas(mv.getKodas());
-                    }
+                        itemP.setMatavimoVienetasId(mv.getId());                    }
 
                     getSession().save(itemP);
-                    newP.add(itemP);
+                    vaistai.add(itemP);
                 }
-                for (NurasymoPreke itemP : listP) {
-                    getSession().delete(itemP);
-                }*/
 
                 GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
-
+                result.getVaistai().clear();
+                for (ZurnaloVaistas itemP : vaistai) {
+                    result.getVaistai().add(getMapper().toPrekeDto(itemP));
+                }
                 return result;
             }
         }.process(dto);
@@ -282,7 +283,7 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
         return new ProcessorBase<Long, LookupItemDto>() {
             @Override
             protected LookupItemDto processInt(Long id) throws Exception {
-                GyvunoRusis item = getRepo().get(id, GyvunoRusis.class);
+                GyvunoRusis item = getRepo().get(GyvunoRusis.class, id);
                 LookupItemDto result = new LookupItemDto();
                 result.setId(item.getId());
                 result.setPavadinimas(item.getPavadinimas());

@@ -87,38 +87,6 @@ select s.Id, s.arSaskaita, s.numeris, s.SUMASUPVM, s.STATUSAS, s.DATA, i.PAVADIN
 	from saskaitos s 	left join imones i on s.IMONEID = i.id
 					left join TIEKEJAI t on s.TIEKEJASID = t.id;
 
---drop table likuciai
-create table Likuciai (
-        Id bigint not null,
-        dokumentas varchar(100) not null,
-        irasoId bigint,
-        prekeId bigint not null,
-        imoneId bigint not null,
-        matavimoVienetasId bigint not null,
-        kiekis numeric not null,
-        galiojaIki timestamp,
-        serija varchar(100),
-        data timestamp not null,
-        arSaskaita bit not null,
-        primary key (Id),
-		FOREIGN KEY (matavimoVienetasId) REFERENCES MatavimoVienetas(Id),
-        FOREIGN KEY (prekeId) REFERENCES Prekes(Id) ,
-        FOREIGN KEY (imoneId) REFERENCES Imones(Id)
-    );
-
-    -- drop view vLikuciaiInt
-    -- select * from vLikuciaiInt
-create view vLikuciaiInt as 
-select l.PREKEID, min(l.MATAVIMOVIENETASID) as MATAVIMOVIENETASID, l.IMONEID, sum(l.KIEKIS) as kiekis, max(l.DATA) as data, min(l.id) as id, sum(Case When l.KIEKIS > 0 Then l.KIEKIS Else 0 End) as pajamuota
-	from likuciai l group by l.prekeid, l.imoneid;
-
-  -- drop view vLikuciai
-    -- select * from vLikuciai
-create view vLikuciai as 
-select l.Id, l.kiekis, l.PAJAMUOTA, l.DATA, i.PAVADINIMAS as imone, mv.KODAS as matavimovienetas, p.PAVADINIMAS as preke
-	from vLikuciaiInt l left join imones i on l.IMONEID = i.id
-					left join Prekes p on l.PREKEID = p.id
-					left join MATAVIMOVIENETAS mv on mv.id = l.MATAVIMOVIENETASID;
 
 
 create table Nurasymai (
@@ -199,5 +167,47 @@ create view vGydomuGyvunuZurnalas as
 select n.Id, n.eilesNumeris, n.laikytojas, n.registracijosData, n.gyvunuSarasas, n.gydymas, i.PAVADINIMAS as imone
 	from GydomuGyvunuZurnalas n left join imones i on n.IMONEID = i.id; 
 
+--drop table likuciai
+create table Likuciai (
+        Id bigint not null,
+        dokumentas varchar(100) not null,
+        irasoId bigint,
+        prekeId bigint not null,
+        imoneId bigint not null,
+        matavimoVienetasId bigint not null,
+        kiekis numeric not null,
+        galiojaIki timestamp,
+        serija varchar(100),
+        data timestamp not null,
+        arSaskaita bit not null,
+        zurnaloId bigint null,
+        zurnaloVaistoId bigint null,
+        saskaitosId bigint null,
+        saskaitosPrekesId bigint null,
+        pirminisId bigint null,
+        primary key (Id),
+	   FOREIGN KEY (matavimoVienetasId) REFERENCES MatavimoVienetas(Id),
+        FOREIGN KEY (prekeId) REFERENCES Prekes(Id) ,
+        FOREIGN KEY (imoneId) REFERENCES Imones(Id) ,
+        FOREIGN KEY (zurnaloId) REFERENCES GydomuGyvunuZurnalas(Id) ,
+        FOREIGN KEY (zurnaloVaistoId) REFERENCES ZurnaloVaistai(Id) ,
+        FOREIGN KEY (saskaitosId) REFERENCES SASKAITOS (ID),
+        FOREIGN KEY (saskaitosPrekesId) REFERENCES SASKAITOSPREKES(ID),
+        FOREIGN KEY (pirminisId) REFERENCES Likuciai(ID)
+    );
+
+    -- drop view vLikuciaiInt
+    -- select * from vLikuciaiInt
+create view vLikuciaiInt as 
+select l.PREKEID, min(l.MATAVIMOVIENETASID) as MATAVIMOVIENETASID, l.IMONEID, sum(l.KIEKIS) as kiekis, max(l.DATA) as data, min(l.id) as id, sum(Case When l.KIEKIS > 0 Then l.KIEKIS Else 0 End) as pajamuota
+	from likuciai l group by l.prekeid, l.imoneid;
+
+  -- drop view vLikuciai
+    -- select * from vLikuciai
+create view vLikuciai as 
+select l.Id, l.kiekis, l.PAJAMUOTA, l.DATA, i.PAVADINIMAS as imone, mv.KODAS as matavimovienetas, p.PAVADINIMAS as preke
+	from vLikuciaiInt l left join imones i on l.IMONEID = i.id
+					left join Prekes p on l.PREKEID = p.id
+					left join MATAVIMOVIENETAS mv on mv.id = l.MATAVIMOVIENETASID;
 
 		

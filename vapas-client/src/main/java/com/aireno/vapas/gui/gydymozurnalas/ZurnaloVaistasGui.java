@@ -112,6 +112,10 @@ public class ZurnaloVaistasGui extends DtoBase {
         result.setPrekeId(getPrekeId());
         result.setMatavimoVienetasId(getMatavimoVienetasId());
         result.setReceptas(getReceptas());
+        if (StringUtils.isEmpty(result.getReceptas())) {
+            result.setReceptas("receptas");
+        }
+
         result.setId(getId());
         return result;
     }

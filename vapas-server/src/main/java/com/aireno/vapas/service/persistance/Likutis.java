@@ -19,6 +19,11 @@ public class Likutis extends EntityBase implements Serializable {
     private long irasoId;
     private long imoneId;
     private boolean arSaskaita;
+    private long zurnaloId;
+    private long zurnaloVaistoId;
+    private long saskaitosId;
+    private long saskaitosPrekesId;
+    private long pirminisId;
 
     public boolean isArSaskaita() {
         return arSaskaita;
@@ -98,5 +103,45 @@ public class Likutis extends EntityBase implements Serializable {
 
     public void setImoneId(long imoneId) {
         this.imoneId = imoneId;
+    }
+
+    public long getZurnaloId() {
+        return zurnaloId;
+    }
+
+    public void setZurnaloId(long zurnaloId) {
+        this.zurnaloId = zurnaloId;
+    }
+
+    public long getZurnaloVaistoId() {
+        return zurnaloVaistoId;
+    }
+
+    public void setZurnaloVaistoId(long zurnaloVaistoId) {
+        this.zurnaloVaistoId = zurnaloVaistoId;
+    }
+
+    public long getSaskaitosId() {
+        return saskaitosId;
+    }
+
+    public void setSaskaitosId(long saskaitosId) {
+        this.saskaitosId = saskaitosId;
+    }
+
+    public long getSaskaitosPrekesId() {
+        return saskaitosPrekesId;
+    }
+
+    public void setSaskaitosPrekesId(long saskaitosPrekesId) {
+        this.saskaitosPrekesId = saskaitosPrekesId;
+    }
+
+    public long getPirminisId() {
+        return pirminisId;
+    }
+
+    public void setPirminisId(long pirminisId) {
+        this.pirminisId = pirminisId;
     }
 }
