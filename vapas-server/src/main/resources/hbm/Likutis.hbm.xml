@@ -14,7 +14,6 @@
             <generator class="increment"/>
         </id>
         <property name="dokumentas" type="string" length="100" not-null="true" unique="false"/>
-        <property name="irasoId" type="long" not-null="false"/>
         <property name="prekeId" type="long" not-null="true"/>
         <property name="imoneId" type="long" not-null="true"/>
         <property name="matavimoVienetasId" type="long" not-null="true"/>

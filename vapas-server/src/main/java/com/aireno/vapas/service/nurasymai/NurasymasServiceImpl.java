@@ -229,7 +229,7 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                     l.setArSaskaita(false);
                     l.setData(item.getData());
                     l.setDokumentas(item.getNumeris());
-                    l.setIrasoId(itemP.getId());
+                    //l.setIrasoId(itemP.getId());
                     l.setKiekis(new BigDecimal(0).subtract(itemP.getKiekis()));
                     l.setMatavimoVienetasId(itemP.getMatavimoVienetasId());
                     l.setPrekeId(itemP.getPrekeId());

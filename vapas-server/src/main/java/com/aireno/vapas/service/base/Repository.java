@@ -35,6 +35,11 @@ public class Repository {
         return list;
     }
 
+    public <T> Query prepareQuery(Class<T> tClass, String filterFields) throws Exception {
+        String queryString = "from " + tClass.getSimpleName() + " where " + filterFields;
+        return getSession().createQuery(queryString);
+    }
+
     public <T> int deleteList(Class<T> tClass, String filterField, long filterId) throws Exception {
         String queryString = "delete from " + tClass.getSimpleName() + " c where c."
                 + filterField + " = ?1";

@@ -4,6 +4,7 @@ import com.aireno.base.LookupDto;
 import com.aireno.dto.*;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.base.ProcessorBase;
+import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.persistance.*;
 import org.apache.commons.lang.StringUtils;
@@ -154,8 +155,6 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
 
-                // trinam likucius
-                getRepo().deleteList(Likutis.class, "zurnaloId", item.getId());
                 // trinam prekes
                 getRepo().deleteList(ZurnaloVaistas.class, "zurnaloId", item.getId());
                 List<ZurnaloVaistas> vaistai = new ArrayList<>();
@@ -176,6 +175,13 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                     vaistai.add(itemP);
                 }
 
+                // perkuriame likuti
+                // trinam likucius
+                getRepo().deleteList(Likutis.class, "zurnaloId", item.getId());
+                for (ZurnaloVaistas itemP : vaistai) {
+                    issaugotiPanaudojima(item, itemP, getRepo());
+                }
+
                 GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
                 result.getVaistai().clear();
                 for (ZurnaloVaistas itemP : vaistai) {
@@ -184,6 +190,13 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 return result;
             }
         }.process(dto);
+
+    }
+
+    private void issaugotiPanaudojima(GydomuGyvunuZurnalas item, ZurnaloVaistas itemP, Repository repo) throws Exception {
+         List<Likutis> likuciai = repo.prepareQuery(Likutis.class, "prekeId = ?1 and imoneId = ?2")
+                 .setParameter("1", itemP.getPrekeId()).setParameter("2", item.getImoneId()).list();
+
 
     }
 

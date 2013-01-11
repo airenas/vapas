@@ -197,7 +197,7 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
                     l.setData(item.getData());
                     l.setDokumentas(item.getNumeris());
                     l.setGaliojaIki(itemP.getGaliojaIki());
-                    l.setIrasoId(itemP.getId());
+                    //l.setIrasoId(itemP.getId());
                     l.setKiekis(itemP.getKiekis());
                     l.setMatavimoVienetasId(itemP.getMatavimoVienetasId());
                     l.setPrekeId(itemP.getPrekeId());

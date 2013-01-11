@@ -16,14 +16,13 @@ public class Likutis extends EntityBase implements Serializable {
     private Date galiojaIki;
     private Date data;
     private String dokumentas;
-    private long irasoId;
     private long imoneId;
     private boolean arSaskaita;
-    private long zurnaloId;
-    private long zurnaloVaistoId;
-    private long saskaitosId;
-    private long saskaitosPrekesId;
-    private long pirminisId;
+    private Long zurnaloId;
+    private Long zurnaloVaistoId;
+    private Long saskaitosId;
+    private Long saskaitosPrekesId;
+    private Long pirminisId;
 
     public boolean isArSaskaita() {
         return arSaskaita;
@@ -55,14 +54,6 @@ public class Likutis extends EntityBase implements Serializable {
 
     public void setDokumentas(String dokumentas) {
         this.dokumentas = dokumentas;
-    }
-
-    public long getIrasoId() {
-        return irasoId;
-    }
-
-    public void setIrasoId(long irasoId) {
-        this.irasoId = irasoId;
     }
 
     public long getPrekeId() {
@@ -105,43 +96,43 @@ public class Likutis extends EntityBase implements Serializable {
         this.imoneId = imoneId;
     }
 
-    public long getZurnaloId() {
+    public Long getZurnaloId() {
         return zurnaloId;
     }
 
-    public void setZurnaloId(long zurnaloId) {
+    public void setZurnaloId(Long zurnaloId) {
         this.zurnaloId = zurnaloId;
     }
 
-    public long getZurnaloVaistoId() {
+    public Long getZurnaloVaistoId() {
         return zurnaloVaistoId;
     }
 
-    public void setZurnaloVaistoId(long zurnaloVaistoId) {
+    public void setZurnaloVaistoId(Long zurnaloVaistoId) {
         this.zurnaloVaistoId = zurnaloVaistoId;
     }
 
-    public long getSaskaitosId() {
+    public Long getSaskaitosId() {
         return saskaitosId;
     }
 
-    public void setSaskaitosId(long saskaitosId) {
+    public void setSaskaitosId(Long saskaitosId) {
         this.saskaitosId = saskaitosId;
     }
 
-    public long getSaskaitosPrekesId() {
+    public Long getSaskaitosPrekesId() {
         return saskaitosPrekesId;
     }
 
-    public void setSaskaitosPrekesId(long saskaitosPrekesId) {
+    public void setSaskaitosPrekesId(Long saskaitosPrekesId) {
         this.saskaitosPrekesId = saskaitosPrekesId;
     }
 
-    public long getPirminisId() {
+    public Long getPirminisId() {
         return pirminisId;
     }
 
-    public void setPirminisId(long pirminisId) {
+    public void setPirminisId(Long pirminisId) {
         this.pirminisId = pirminisId;
     }
 }
