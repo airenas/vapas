@@ -1,18 +1,37 @@
 package com.aireno.vapas.service.gydymozurnalas;
 
 import com.aireno.base.LookupDto;
-import com.aireno.dto.*;
+import com.aireno.dto.GydomuGyvunuZurnalasDto;
+import com.aireno.dto.GydomuGyvunuZurnalasListDto;
+import com.aireno.dto.LookupItemDto;
+import com.aireno.dto.NurasymoPrekeDto;
+import com.aireno.dto.StringLookupItemDto;
+import com.aireno.dto.ZurnaloVaistasDto;
+import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
-import com.aireno.vapas.service.persistance.*;
+import com.aireno.vapas.service.persistance.GydomuGyvunuZurnalas;
+import com.aireno.vapas.service.persistance.GydomuGyvunuZurnalasList;
+import com.aireno.vapas.service.persistance.GyvunoRusis;
+import com.aireno.vapas.service.persistance.Imone;
+import com.aireno.vapas.service.persistance.Likutis;
+import com.aireno.vapas.service.persistance.MatavimoVienetas;
+import com.aireno.vapas.service.persistance.NurasymoPreke;
+import com.aireno.vapas.service.persistance.Preke;
+import com.aireno.vapas.service.persistance.ZurnaloVaistas;
 import org.apache.commons.lang.StringUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.wml.*;
+import org.docx4j.wml.ContentAccessor;
+import org.docx4j.wml.P;
+import org.docx4j.wml.Tbl;
+import org.docx4j.wml.Text;
+import org.docx4j.wml.Tr;
 import org.hibernate.Session;
+import org.hsqldb.lib.Collection;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -20,7 +39,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.math.BigDecimal;
+import java.text.Bidi;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -102,7 +129,7 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
             @Override
             protected List<LookupDto> processInt(String[] request) throws Exception {
                 List<GyvunoRusis> result = getSession().createQuery("from GyvunoRusis").list();
-               /* Collections.sort(result, new Comparator<NurasymasList>() {
+                /* Collections.sort(result, new Comparator<NurasymasList>() {
                     @Override
                     public int compare(NurasymasList o1, NurasymasList o2) {
                         return o2.getData().compareTo(o1.getData());
@@ -169,7 +196,8 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                     getMapper().fromPrekeDto(itemP, itemPDto, item);
                     if (itemP.getMatavimoVienetasId() == 0) {
                         MatavimoVienetas mv = gautiMatavimoVieneta(itemP.getPrekeId(), getSession());
-                        itemP.setMatavimoVienetasId(mv.getId());                    }
+                        itemP.setMatavimoVienetasId(mv.getId());
+                    }
 
                     getSession().save(itemP);
                     vaistai.add(itemP);
@@ -194,10 +222,86 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
     }
 
     private void issaugotiPanaudojima(GydomuGyvunuZurnalas item, ZurnaloVaistas itemP, Repository repo) throws Exception {
-         List<Likutis> likuciai = repo.prepareQuery(Likutis.class, "prekeId = ?1 and imoneId = ?2")
-                 .setParameter("1", itemP.getPrekeId()).setParameter("2", item.getImoneId()).list();
+        List<Likutis> likuciai = repo.prepareQuery(Likutis.class, "prekeId = ?1 and imoneId = ?2")
+                .setParameter("1", itemP.getPrekeId()).setParameter("2", item.getImoneId()).list();
 
+        // surandam pajamavimus
+        List<LikutisHelper> likuciaiPajamuoti = new ArrayList<>();
+        HashMap<Long, LikutisHelper> likuciaiPajamuotiHash = new HashMap<>();
+        for (Likutis itemL : likuciai)
+        {
+            if (itemL.isArSaskaita())
+            {
+                LikutisHelper likutisHelper = new LikutisHelper(itemL);
+                likuciaiPajamuoti.add(likutisHelper);
+                likuciaiPajamuotiHash.put(itemL.getId(), likutisHelper);
+            }
+        }
 
+        // surandam panaudojimus
+        for (Likutis itemL : likuciai)
+        {
+            if (!itemL.isArSaskaita())
+            {
+                LikutisHelper likutisHelper = likuciaiPajamuotiHash.get(itemL.getPirminisId());
+                likutisHelper.panaudoti(-itemL.getKiekis().doubleValue());
+            }
+        }
+
+        // rusiuojame pagal pajamavimo data
+        Collections.sort(likuciaiPajamuoti, new Comparator<LikutisHelper>() {
+                    @Override
+                    public int compare(LikutisHelper o1, LikutisHelper o2) {
+                        return o1.likutis.getData().compareTo(o2.likutis.getData());
+                    }
+                });
+        // kuriame likucio irasus
+        double kiekis = itemP.getKiekis().doubleValue();
+        int lIndex = 0;
+        while (kiekis > 0 && likuciaiPajamuoti.size() > lIndex)
+        {
+            LikutisHelper likutisHelper = likuciaiPajamuoti.get(lIndex);
+            lIndex++;
+            if (likutisHelper.laisvasKiekis <= 0){
+                continue;
+            }
+            double pKiekis = likutisHelper.laisvasKiekis;
+            if (pKiekis > kiekis);
+            {
+                pKiekis = kiekis;
+            }
+            kiekis -= pKiekis;
+            likutisHelper.panaudoti(pKiekis);
+            // kuriame irasa
+            Likutis l = new Likutis();
+            l.setData(item.getRegistracijosData());
+            l.setImoneId(item.getImoneId());
+            l.setPrekeId(itemP.getPrekeId());
+            l.setArSaskaita(false);
+            l.setPirminisId(likutisHelper.likutis.getId());
+            l.setKiekis(new BigDecimal(-pKiekis));
+            l.setZurnaloId(item.getId());
+            l.setZurnaloVaistoId(itemP.getId());
+            l.setDokumentas(String.format("GZ: %s", item.getEilesNumeris()));
+            repo.getSession().save(l);
+        }
+        getAssertor().isTrue(kiekis <=0, "Nėra pajamuota pakankamai prekių. Reikia: " + ANumberUtils.DecimalToString(itemP.getKiekis()) + " trūksta: " +
+                            ANumberUtils.DecimalToString(kiekis));
+
+    }
+
+    private class LikutisHelper {
+        public Likutis likutis;
+        public double laisvasKiekis;
+
+        public LikutisHelper(Likutis itemL) {
+            likutis = itemL;
+            laisvasKiekis = itemL.getKiekis().doubleValue();
+        }
+
+        public void panaudoti(double v) {
+            laisvasKiekis -= v;
+        }
     }
 
     private MatavimoVienetas gautiMatavimoVieneta(long prekeId, Session session) throws Exception {

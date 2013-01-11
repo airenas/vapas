@@ -14,18 +14,6 @@ public class Assertor {
 
     }
 
-    public void isTrue(boolean item, String s) throws Exception {
-        if (item)
-            return;
-        throw newException(s);
-    }
-
-    public void isTrue(boolean item, String s, Object param) throws Exception {
-        if (item)
-            return;
-        throw newException(s, param);
-    }
-
     public void isNotNullStr(String kodas, String s) throws Exception {
         isTrue(kodas != null && kodas.length() > 0, s);
     }
@@ -38,11 +26,13 @@ public class Assertor {
         isTrue(!b, s);
     }
 
-    public Exception newException(String s, Object param) {
-        return new Exception(String.format(s, param));
+    public void isTrue(boolean item, String s, java.lang.Object... objects) throws Exception {
+        if (item)
+            return;
+        throw newException(s, objects);
     }
 
-    public Exception newException(String s) {
-        return new Exception(s);
+    public Exception newException(String s, java.lang.Object... params) {
+        return new Exception(String.format(s, params));
     }
 }

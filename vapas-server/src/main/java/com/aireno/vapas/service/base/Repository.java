@@ -23,7 +23,7 @@ public class Repository {
         String queryString = "from " + tClass.getSimpleName() + " c where c.id = ?1";
         List<T> list = getSession().createQuery(queryString)
                 .setParameter("1", id).list();
-        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
+        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas '%s' pagal id '%s'", tClass.getSimpleName(), id);
         return list.get(0);
     }
 
@@ -46,6 +46,10 @@ public class Repository {
         Query query = session.createQuery(queryString).setParameter("1", filterId);
         int rowCount = query.executeUpdate();
         return rowCount;
+    }
+
+    public <T> int delete(Class<T> tClass, long id) throws Exception {
+        return deleteList(tClass, "id", id);
     }
 
     public Assertor getAssertor() {

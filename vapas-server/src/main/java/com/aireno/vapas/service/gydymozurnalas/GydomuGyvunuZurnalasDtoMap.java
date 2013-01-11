@@ -18,6 +18,7 @@ public class GydomuGyvunuZurnalasDtoMap {
         dto.setImoneId(item.getImoneId());
         dto.setLaikytojas(item.getLaikytojas());
         dto.setDiagnoze(item.getDiagnoze());
+        dto.setRegistracijosData(item.getRegistracijosData());
         return dto;
     }
 

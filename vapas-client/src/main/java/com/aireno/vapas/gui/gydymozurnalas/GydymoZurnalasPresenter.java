@@ -159,6 +159,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                 }
             } else {
                 item = new GydomuGyvunuZurnalasDto();
+                item.setRegistracijosData(new Date());
             }
             data.setValue(item.getRegistracijosData());
             imone.setValueId(item.getImoneId());

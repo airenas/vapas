@@ -42,4 +42,11 @@ public class ANumberUtils {
         Number number = df.parse(item1);
         return new BigDecimal(number.doubleValue());
     }
+
+    public static double DefaultValue(BigDecimal kiekis) {
+        if (kiekis == null) {
+            return 0;
+        }
+        return kiekis.doubleValue();
+    }
 }

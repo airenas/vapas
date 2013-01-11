@@ -3,13 +3,16 @@ package com.aireno.vapas.service.saskaitos;
 import com.aireno.dto.SaskaitaDto;
 import com.aireno.dto.SaskaitaListDto;
 import com.aireno.dto.SaskaitosPrekeDto;
+import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.SaskaitaService;
 import com.aireno.vapas.service.base.ProcessorBase;
+import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.persistance.*;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -53,15 +56,10 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
         return new ProcessorBase<Long, SaskaitaDto>() {
             @Override
             protected SaskaitaDto processInt(Long id) throws Exception {
-                String queryString = "from Saskaita c where c.id = ?1";
-                List<Saskaita> list = getSession().createQuery(queryString)
-                        .setParameter("1", id).list();
-                getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-                Saskaita item = list.get(0);
+                Saskaita item = getRepo().get(Saskaita.class, id);
                 SaskaitaDto result = getMapper().toDto(item);
-                queryString = "from SaskaitosPreke c where c.saskaitaId = ?1";
-                List<SaskaitosPreke> listP = getSession().createQuery(queryString)
-                        .setParameter("1", id).list();
+
+                List<SaskaitosPreke> listP = getRepo().getList(SaskaitosPreke.class, "saskaitaId", id);
                 for (SaskaitosPreke itemP : listP) {
                     result.getPrekes().add(getMapper().toPrekeDto(itemP));
                 }
@@ -86,21 +84,14 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
 
                 Saskaita item = new Saskaita();
                 if (dto.getId() > 0) {
-                    String queryString = "from Saskaita c where c.id = ?1";
-                    List<Saskaita> list = getSession().createQuery(queryString)
-                            .setParameter("1", dto.getId()).list();
-                    getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-
-                    item = list.get(0);
-                    getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Sąskaita jau patvirtinta. Negalima saugoti");
+                    item = getRepo().get(Saskaita.class, dto.getId());
+//                    getAssertor().isFalse(item.getStatusas() == SaskaitaStatusas.Patvirtinta, "Sąskaita jau patvirtinta. Negalima saugoti");
                 }
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
-                // saugom prekes
-                String queryString = "from SaskaitosPreke c where c.saskaitaId = ?1";
-                List<SaskaitosPreke> listP = getSession().createQuery(queryString)
-                        .setParameter("1", item.getId()).list();
 
+                // saugom prekes
+                List<SaskaitosPreke> listP = getRepo().getList(SaskaitosPreke.class, "saskaitaId", dto.getId());
                 List<SaskaitosPreke> newP = new ArrayList<SaskaitosPreke>();
                 List<SaskaitosPreke> updatedP = new ArrayList<SaskaitosPreke>();
                 for (SaskaitosPrekeDto itemPDto : dto.getPrekes()) {
@@ -121,8 +112,11 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
 
                     getSession().save(itemP);
                     newP.add(itemP);
+                    // saugom likucius
+                    issaugotiLikucius(item, itemP, getRepo());
                 }
                 for (SaskaitosPreke itemP : listP) {
+                    istrintiLikucius(item, itemP, getRepo());
                     getSession().delete(itemP);
                 }
 
@@ -130,11 +124,77 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
                 for (SaskaitosPreke itemP : newP) {
                     result.getPrekes().add(getMapper().toPrekeDto(itemP));
                 }
+                // tvarkom likucius
+
+
                 return result;
             }
         }.process(dto);
 
     }
+
+
+    private void issaugotiLikucius(Saskaita item, SaskaitosPreke itemP, Repository repo) throws Exception {
+
+        List<Likutis> likuciai = repo.prepareQuery(Likutis.class, "saskaitosPrekesId = ?1")
+                .setParameter("1", itemP.getId()).list();
+        Likutis likutis;
+        if (likuciai.size() == 0) {
+            likutis = new Likutis();
+        } else {
+            likutis = likuciai.get(0);
+        }
+
+        // jei maziau, patikrinti ar nera daug isnaudota
+        double dabartinisKiekis = itemP.getKiekis().doubleValue();
+        double kiekis = ANumberUtils.DefaultValue(likutis.getKiekis());
+
+        if (kiekis > dabartinisKiekis)
+        {
+            List<Likutis> likuciaiPanaudota = repo.getList(Likutis.class, "pirminisId", likutis.getId());
+            double panaudota = 0;
+            for (Likutis itemL: likuciaiPanaudota)
+            {
+                panaudota += (-itemL.getKiekis().doubleValue());
+            }
+            getAssertor().isTrue(panaudota < dabartinisKiekis, "Negalima išsaugoti prekės '%s' kiekio pakeitimo į '%s', nes jau panaudota '%s'",
+                    gautiPrekesPavadinima(itemP.getPrekeId(), repo),
+                    ANumberUtils.DecimalToString(dabartinisKiekis), ANumberUtils.DecimalToString(panaudota));
+        }
+
+        // kuriame likucio irasa
+        likutis.setData(item.getData());
+        likutis.setImoneId(item.getImoneId());
+        likutis.setPrekeId(itemP.getPrekeId());
+        likutis.setArSaskaita(true);
+        likutis.setKiekis(new BigDecimal(dabartinisKiekis));
+        likutis.setSaskaitosId(item.getId());
+        likutis.setSaskaitosPrekesId(itemP.getId());
+        likutis.setDokumentas(item.getNumeris());
+        repo.getSession().save(likutis);
+    }
+
+
+    private void istrintiLikucius(Saskaita item, SaskaitosPreke itemP, Repository repo) throws Exception {
+
+        List<Likutis> likuciai = repo.prepareQuery(Likutis.class, "saskaitosPrekesId = ?1")
+                .setParameter("1", itemP.getId()).list();
+        if (likuciai.size() == 0) {
+            return;
+        }
+
+        Likutis likutis = likuciai.get(0);
+
+        // jei maziau, patikrinti ar nera isnaudota
+        List<Likutis> likuciaiPanaudota = repo.getList(Likutis.class, "pirminisId", likutis.getId());
+        getAssertor().isTrue(likuciaiPanaudota.size() == 0, "Negalima ištrinti sąskaitos prekės '%s', ji jau panaudota nurašymuose", gautiPrekesPavadinima(itemP.getPrekeId(), repo));
+        repo.delete(Likutis.class, likutis.getId());
+    }
+
+    private String gautiPrekesPavadinima(long prekeId, Repository repo) throws Exception {
+        return repo.get(Preke.class, prekeId).getPavadinimas();
+    }
+
 
     private MatavimoVienetas gautiMatavimoVieneta(long prekeId, Session session) throws Exception {
         String queryString = "from Preke c where c.id = ?1";

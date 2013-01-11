@@ -26,7 +26,7 @@ public abstract class EntityPresenterBase<T extends DtoBase> extends PresenterBa
             saugotiInt();
             update();
         } catch (Exception e) {
-            this.setText(e.getLocalizedMessage());
+            this.setText("Klaida: " + e.getLocalizedMessage());
         }
 
     }
