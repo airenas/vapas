@@ -170,6 +170,7 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
         likutis.setKiekis(new BigDecimal(dabartinisKiekis));
         likutis.setSaskaitosId(item.getId());
         likutis.setSaskaitosPrekesId(itemP.getId());
+        likutis.setMatavimoVienetasId(itemP.getMatavimoVienetasId());
         likutis.setDokumentas(item.getNumeris());
         repo.getSession().save(likutis);
     }

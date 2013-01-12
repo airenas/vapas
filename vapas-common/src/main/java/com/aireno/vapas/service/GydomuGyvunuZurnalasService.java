@@ -12,7 +12,11 @@ public interface GydomuGyvunuZurnalasService {
 
     GydomuGyvunuZurnalasDto saugoti(GydomuGyvunuZurnalasDto updatedContact) throws Exception;
 
-    List<StringLookupItemDto> sarasasReceptai(ReceptaiRequest req) throws Exception;
+    List<String> sarasasReceptai(ReceptaiRequest req) throws Exception;
+
+    List<String> sarasasNumeriai(NumeriaiRequest req) throws Exception;
+
+    List<String> sarasasAmzius(AmziusRequest req) throws Exception;
 
     LookupItemDto saugotiGyvunoRusi(LookupItemDto dto) throws Exception;
 
@@ -20,9 +24,9 @@ public interface GydomuGyvunuZurnalasService {
 
     List<GydomuGyvunuZurnalasListDto> sarasas(String[] keywords) throws Exception;
 
-    List<StringLookupItemDto> sarasasLaikytoju(String[] keywords) throws Exception;
+    List<String> sarasasLaikytoju(String[] keywords) throws Exception;
 
-    List<StringLookupItemDto> sarasasDiagnozes(String[] keywords) throws Exception;
+    List<String> sarasasDiagnozes(String[] keywords) throws Exception;
 
     public class ReceptaiRequest {
         public long prekeId;
@@ -31,5 +35,26 @@ public interface GydomuGyvunuZurnalasService {
             this.prekeId = prekeId;
 
         }
+    }
+
+    public class AmziusRequest {
+        public long gyvunoRusisId;
+
+        public AmziusRequest(long gyvunoRusisId) {
+            this.gyvunoRusisId = gyvunoRusisId;
+
+        }
+    }
+
+    public class NumeriaiRequest {
+        public String laikytojas;
+        public long gyvunoRusisId;
+
+        public NumeriaiRequest(String laikytojas, Long gyvunoRusisId) {
+            this.laikytojas = laikytojas;
+            this.gyvunoRusisId = gyvunoRusisId;
+        }
+
+
     }
 }

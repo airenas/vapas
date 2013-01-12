@@ -31,6 +31,14 @@
     -fx-skin: "com.sun.javafx.scene.control.skin.LabelSkin";
 }
 
+.autocompletetextfield {
+	-fx-skin: "com.mytdev.javafx.internal.scene.control.skin.AutoCompleteTextFieldSkin";
+}
+
+.stringnewlookup {
+	-fx-skin: "com.mytdev.javafx.internal.scene.control.skin.AutoCompleteTextFieldSkin";
+}
+
 /*.table-row-cell:selected {
 	-fx-background-color: #DCE587;
 }

@@ -48,6 +48,7 @@
         <mapping resource="hbm/GydomuGyvunuZurnalas.hbm.xml"/>
         <mapping resource="hbm/ZurnaloGyvunas.hbm.xml"/>
         <mapping resource="hbm/ZurnaloVaistas.hbm.xml"/>
+        <mapping resource="hbm/vGyvunas.hbm.xml"/>
     </session-factory>
 
 </hibernate-configuration>

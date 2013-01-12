@@ -119,10 +119,10 @@ public class SaskaitaListPresenter extends PresenterBase implements Initializabl
                    .addCellFactory(new GenericCellFactory<SaskaitaListDto, String>(onClick)));
            fields.add(new FieldDefinition<SaskaitaListDto, Date>("Data", 100, new PropertyValueFactory<SaskaitaListDto,Date>("data"))
                    .addCellFactory(new GenericCellFactory<SaskaitaListDto, Date>(onClick)));
-           fields.add(new FieldDefinition<SaskaitaListDto, BigDecimal>("Suma", 50, new PropertyValueFactory<SaskaitaListDto,BigDecimal>("suma"))
+          /* fields.add(new FieldDefinition<SaskaitaListDto, BigDecimal>("Suma", 50, new PropertyValueFactory<SaskaitaListDto,BigDecimal>("suma"))
                    .addCellFactory(new GenericCellFactory<SaskaitaListDto, BigDecimal>(onClick)));
            fields.add(new FieldDefinition<SaskaitaListDto, String>("Statusas", 70, new PropertyValueFactory<SaskaitaListDto,String>("statusas"))
-                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, String>(onClick)));
+                   .addCellFactory(new GenericCellFactory<SaskaitaListDto, String>(onClick)));*/
        }
    }
 }

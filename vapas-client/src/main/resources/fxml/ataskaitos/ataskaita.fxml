@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.aireno.vapas.gui.controls.FilterLookup?>
+<?import com.panemu.tiwulfx.form.DateControl?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-client/1.0/vapas-client-1.0.jar?>
+<?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-common/1.0/vapas-common-1.0.jar?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.ataskaitos.AtaskaitaPresenter">
+  <left>
+    <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="499.9999000000025">
+      <children>
+        <Label layoutX="280.0" layoutY="16.0" text="Data" />
+          <Label layoutX="29.0" layoutY="16.0" text="Numeris" />
+          <TextField id="numeris" fx:id="numeris" prefWidth="124.0"
+                     onKeyReleased="#update" AnchorPane.leftAnchor="112.0" AnchorPane.topAnchor="13.0" />
+        <DateControl id="data" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5"
+                     AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="13.0" />
+        <Label layoutX="29.0" layoutY="43.0" text="Įmonė" />
+        <FilterLookup fx:id="imone" editable="true" layoutY="43.0" prefHeight="21.0" prefWidth="388.0000999999975"
+                      AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="41.5" />
+      </children>
+    </AnchorPane>
+  </left>
+  <right>
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <children>
+        <Button fx:id="bNurasymai" contentDisplay="CENTER" mnemonicParsing="false" onAction="#nurasymai" text="Gen. nurašymo ataskaitą" />
+          <Button fx:id="bLikuciai" contentDisplay="CENTER" mnemonicParsing="false" onAction="#likuciai" text="Gen. likučių ataskaitą" />
+          <Button fx:id="bZurnalas" contentDisplay="CENTER" mnemonicParsing="false" onAction="#zurnalas" text="Gen. nurašymo ataslaitą" />
+        <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />
+      </children>
+    </VBox>
+  </right>
+</BorderPane>

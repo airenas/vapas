@@ -25,6 +25,11 @@ public class MainPanePresenter implements GuiPresenter {
         mainPresenter.show(Constants.MATAVIMOVIENETAILIST_PRESENTER);
     }
 
+    public void showAtaskaitos() {
+        MainPresenter mainPresenter = ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
+        mainPresenter.show(Constants.ATASKAITALIST_PRESENTER);
+    }
+
     public void showTiekejai() {
         MainPresenter mainPresenter = ApplicationContextProvider.getProvider().getBean("MainPresenter", MainPresenter.class);
         mainPresenter.show(Constants.TIEKEJAILIST_PRESENTER);

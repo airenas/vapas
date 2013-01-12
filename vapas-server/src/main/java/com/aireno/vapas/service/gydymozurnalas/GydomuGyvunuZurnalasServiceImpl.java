@@ -1,37 +1,19 @@
 package com.aireno.vapas.service.gydymozurnalas;
 
 import com.aireno.base.LookupDto;
-import com.aireno.dto.GydomuGyvunuZurnalasDto;
-import com.aireno.dto.GydomuGyvunuZurnalasListDto;
-import com.aireno.dto.LookupItemDto;
-import com.aireno.dto.NurasymoPrekeDto;
-import com.aireno.dto.StringLookupItemDto;
-import com.aireno.dto.ZurnaloVaistasDto;
+import com.aireno.dto.*;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
-import com.aireno.vapas.service.persistance.GydomuGyvunuZurnalas;
-import com.aireno.vapas.service.persistance.GydomuGyvunuZurnalasList;
-import com.aireno.vapas.service.persistance.GyvunoRusis;
-import com.aireno.vapas.service.persistance.Imone;
-import com.aireno.vapas.service.persistance.Likutis;
-import com.aireno.vapas.service.persistance.MatavimoVienetas;
-import com.aireno.vapas.service.persistance.NurasymoPreke;
-import com.aireno.vapas.service.persistance.Preke;
-import com.aireno.vapas.service.persistance.ZurnaloVaistas;
+import com.aireno.vapas.service.persistance.*;
 import org.apache.commons.lang.StringUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.wml.ContentAccessor;
-import org.docx4j.wml.P;
-import org.docx4j.wml.Tbl;
-import org.docx4j.wml.Text;
-import org.docx4j.wml.Tr;
+import org.docx4j.wml.*;
 import org.hibernate.Session;
-import org.hsqldb.lib.Collection;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -40,14 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.Bidi;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -80,18 +55,18 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
     }
 
     @Override
-    public List<StringLookupItemDto> sarasasLaikytoju(String[] keywords) throws Exception {
-        return new ProcessorBase<String[], List<StringLookupItemDto>>() {
+    public List<String> sarasasLaikytoju(String[] keywords) throws Exception {
+        return new ProcessorBase<String[], List<String>>() {
             @Override
-            protected List<StringLookupItemDto> processInt(String[] request) throws Exception {
-                List<String> result = getSession().createQuery("select laikytojas from GydomuGyvunuZurnalas").
+            protected List<String> processInt(String[] request) throws Exception {
+                List<String> result = getSession().createQuery("select distinct laikytojas from GydomuGyvunuZurnalas").
                         list();
                 Collections.sort(result);
                 GydomuGyvunuZurnalasDtoMap mapper = getMapper();
-                List<StringLookupItemDto> res = new ArrayList<StringLookupItemDto>();
+                List<String> res = new ArrayList<String>();
                 for (String item : result) {
-                    StringLookupItemDto dto = new StringLookupItemDto(item);
-                    dto.setPavadinimas(item);
+                    String dto = new String(item);
+                    //dto.setPavadinimas(item);
                     res.add(dto);
                 }
                 return res;
@@ -100,18 +75,18 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
     }
 
     @Override
-    public List<StringLookupItemDto> sarasasDiagnozes(String[] keywords) throws Exception {
-        return new ProcessorBase<String[], List<StringLookupItemDto>>() {
+    public List<String> sarasasDiagnozes(String[] keywords) throws Exception {
+        return new ProcessorBase<String[], List<String>>() {
             @Override
-            protected List<StringLookupItemDto> processInt(String[] request) throws Exception {
-                List<String> result = getSession().createQuery("select diagnoze from GydomuGyvunuZurnalas").
+            protected List<String> processInt(String[] request) throws Exception {
+                List<String> result = getSession().createQuery("select distinct diagnoze from GydomuGyvunuZurnalas").
                         list();
                 Collections.sort(result);
-                GydomuGyvunuZurnalasDtoMap mapper = getMapper();
-                List<StringLookupItemDto> res = new ArrayList<StringLookupItemDto>();
+
+                List<String> res = new ArrayList<String>();
                 for (String item : result) {
-                    StringLookupItemDto dto = new StringLookupItemDto(item);
-                    dto.setPavadinimas(item);
+                    String dto = new String(item);
+
                     res.add(dto);
                 }
                 return res;
@@ -155,9 +130,14 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 GydomuGyvunuZurnalas item = getRepo().get(GydomuGyvunuZurnalas.class, id);
                 GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
                 List<ZurnaloVaistas> vaistai = getRepo().getList(ZurnaloVaistas.class, "zurnaloId", id);
+                List<ZurnaloGyvunas> gyvunai = getRepo().getList(ZurnaloGyvunas.class, "zurnaloId", id);
                 result.getVaistai().clear();
                 for (ZurnaloVaistas itemP : vaistai) {
                     result.getVaistai().add(getMapper().toPrekeDto(itemP));
+                }
+                result.getGyvunai().clear();
+                for (ZurnaloGyvunas itemP : gyvunai) {
+                    result.getGyvunai().add(getMapper().toGyvunasDto(itemP));
                 }
                 return result;
             }
@@ -182,6 +162,25 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 getMapper().fromDto(item, dto);
                 getSession().save(item);
 
+                // trinam gyvunus
+                getRepo().deleteList(ZurnaloGyvunas.class, "zurnaloId", item.getId());
+                List<ZurnaloGyvunas> gyvunai = new ArrayList<>();
+                // saugom gyvunai
+                for (ZurnaloGyvunasDto itemPDto : dto.getGyvunai()) {
+                    ZurnaloGyvunas itemP = new ZurnaloGyvunas();
+
+                    //getAssertor().isNotNullStr(itemPDto.getNumeris(), "Nėra numerio");
+                    //getAssertor().isTrue(itemPDto.getAmzius().doubleValue() > 0, "Nėra kiekio");
+                    getAssertor().isTrue(itemPDto.getGyvunoRusisId() > 0, "Nėra gyvūno rūšies");
+
+                    getMapper().fromGyvunasDto(itemP, itemPDto, item);
+
+                    getSession().save(itemP);
+                    gyvunai.add(itemP);
+                }
+
+                // trinam likucius
+                getRepo().deleteList(Likutis.class, "zurnaloId", item.getId());
                 // trinam prekes
                 getRepo().deleteList(ZurnaloVaistas.class, "zurnaloId", item.getId());
                 List<ZurnaloVaistas> vaistai = new ArrayList<>();
@@ -204,13 +203,16 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 }
 
                 // perkuriame likuti
-                // trinam likucius
-                getRepo().deleteList(Likutis.class, "zurnaloId", item.getId());
+
                 for (ZurnaloVaistas itemP : vaistai) {
                     issaugotiPanaudojima(item, itemP, getRepo());
                 }
 
                 GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
+                result.getGyvunai().clear();
+                for (ZurnaloGyvunas itemP : gyvunai) {
+                    result.getGyvunai().add(getMapper().toGyvunasDto(itemP));
+                }
                 result.getVaistai().clear();
                 for (ZurnaloVaistas itemP : vaistai) {
                     result.getVaistai().add(getMapper().toPrekeDto(itemP));
@@ -228,10 +230,8 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
         // surandam pajamavimus
         List<LikutisHelper> likuciaiPajamuoti = new ArrayList<>();
         HashMap<Long, LikutisHelper> likuciaiPajamuotiHash = new HashMap<>();
-        for (Likutis itemL : likuciai)
-        {
-            if (itemL.isArSaskaita())
-            {
+        for (Likutis itemL : likuciai) {
+            if (itemL.isArSaskaita()) {
                 LikutisHelper likutisHelper = new LikutisHelper(itemL);
                 likuciaiPajamuoti.add(likutisHelper);
                 likuciaiPajamuotiHash.put(itemL.getId(), likutisHelper);
@@ -239,10 +239,8 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
         }
 
         // surandam panaudojimus
-        for (Likutis itemL : likuciai)
-        {
-            if (!itemL.isArSaskaita())
-            {
+        for (Likutis itemL : likuciai) {
+            if (!itemL.isArSaskaita()) {
                 LikutisHelper likutisHelper = likuciaiPajamuotiHash.get(itemL.getPirminisId());
                 likutisHelper.panaudoti(-itemL.getKiekis().doubleValue());
             }
@@ -250,24 +248,22 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
 
         // rusiuojame pagal pajamavimo data
         Collections.sort(likuciaiPajamuoti, new Comparator<LikutisHelper>() {
-                    @Override
-                    public int compare(LikutisHelper o1, LikutisHelper o2) {
-                        return o1.likutis.getData().compareTo(o2.likutis.getData());
-                    }
-                });
+            @Override
+            public int compare(LikutisHelper o1, LikutisHelper o2) {
+                return o1.likutis.getData().compareTo(o2.likutis.getData());
+            }
+        });
         // kuriame likucio irasus
         double kiekis = itemP.getKiekis().doubleValue();
         int lIndex = 0;
-        while (kiekis > 0 && likuciaiPajamuoti.size() > lIndex)
-        {
+        while (kiekis > 0 && likuciaiPajamuoti.size() > lIndex) {
             LikutisHelper likutisHelper = likuciaiPajamuoti.get(lIndex);
             lIndex++;
-            if (likutisHelper.laisvasKiekis <= 0){
+            if (likutisHelper.laisvasKiekis <= 0) {
                 continue;
             }
             double pKiekis = likutisHelper.laisvasKiekis;
-            if (pKiekis > kiekis);
-            {
+            if (pKiekis > kiekis) {
                 pKiekis = kiekis;
             }
             kiekis -= pKiekis;
@@ -282,11 +278,12 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
             l.setKiekis(new BigDecimal(-pKiekis));
             l.setZurnaloId(item.getId());
             l.setZurnaloVaistoId(itemP.getId());
+            l.setMatavimoVienetasId(likutisHelper.likutis.getMatavimoVienetasId());
             l.setDokumentas(String.format("GZ: %s", item.getEilesNumeris()));
             repo.getSession().save(l);
         }
-        getAssertor().isTrue(kiekis <=0, "Nėra pajamuota pakankamai prekių. Reikia: " + ANumberUtils.DecimalToString(itemP.getKiekis()) + " trūksta: " +
-                            ANumberUtils.DecimalToString(kiekis));
+        getAssertor().isTrue(kiekis <= 0, "Nėra pajamuota pakankamai prekių. Reikia: " + ANumberUtils.DecimalToString(itemP.getKiekis()) + " trūksta: " +
+                ANumberUtils.DecimalToString(kiekis));
 
     }
 
@@ -345,20 +342,64 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
     }
 
     @Override
-    public List<StringLookupItemDto> sarasasReceptai(ReceptaiRequest req) throws Exception {
-        return new ProcessorBase<ReceptaiRequest, List<StringLookupItemDto>>() {
+    public List<String> sarasasReceptai(ReceptaiRequest req) throws Exception {
+        return new ProcessorBase<ReceptaiRequest, List<String>>() {
             @Override
-            protected List<StringLookupItemDto> processInt(ReceptaiRequest req) throws Exception {
-                List<String> result = getSession().createQuery("select c.receptas from ZurnaloVaistas c " +
+            protected List<String> processInt(ReceptaiRequest req) throws Exception {
+                List<String> result = getSession().createQuery("select distinct c.receptas from ZurnaloVaistas c " +
                         "where c.prekeId = ?1").setParameter("1", req.prekeId).
                         list();
                 Collections.sort(result);
-                List<StringLookupItemDto> res = new ArrayList<StringLookupItemDto>();
+                List<String> res = new ArrayList<>();
                 for (String item : result) {
-                    StringLookupItemDto dto = new StringLookupItemDto(item);
-                    dto.setPavadinimas(item);
-                    res.add(dto);
+                    //StringLookupItemDto dto = new StringLookupItemDto(item);
+                    //
+                    res.add(item);
                 }
+                return res;
+            }
+        }.process(req);
+    }
+
+    @Override
+    public List<String> sarasasNumeriai(NumeriaiRequest req) throws Exception {
+        return new ProcessorBase<NumeriaiRequest, List<String>>() {
+            @Override
+            protected List<String> processInt(NumeriaiRequest req) throws Exception {
+                List<String> result = getSession().createQuery("select distinct c.numeris from vGyvunas c " +
+                        "where c.laikytojas = ?1 and c.gyvunoRusisId = ?2").
+                        setParameter("1", req.laikytojas).
+                        setParameter("2", req.gyvunoRusisId).
+                        list();
+                List<String> res = new ArrayList<>();
+                for (String item : result) {
+                    if (StringUtils.isNotEmpty(item)) {
+                        res.add(item);
+                    }
+                }
+                Collections.sort(res);
+
+                return res;
+            }
+        }.process(req);
+    }
+
+    @Override
+    public List<String> sarasasAmzius(AmziusRequest req) throws Exception {
+        return new ProcessorBase<AmziusRequest, List<String>>() {
+            @Override
+            protected List<String> processInt(AmziusRequest req) throws Exception {
+                List<String> result = getSession().createQuery("select distinct c.amzius from ZurnaloGyvunas c " +
+                        "where c.gyvunoRusisId = ?1").setParameter("1", req.gyvunoRusisId).
+                        list();
+
+                List<String> res = new ArrayList<>();
+                for (String item : result) {
+                    if (StringUtils.isNotEmpty(item)) {
+                        res.add(item);
+                    }
+                }
+                Collections.sort(res);
                 return res;
             }
         }.process(req);

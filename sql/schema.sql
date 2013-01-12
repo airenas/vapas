@@ -167,6 +167,12 @@ create view vGydomuGyvunuZurnalas as
 select n.Id, n.eilesNumeris, n.laikytojas, n.registracijosData, n.gyvunuSarasas, n.gydymas, i.PAVADINIMAS as imone
 	from GydomuGyvunuZurnalas n left join imones i on n.IMONEID = i.id; 
 
+	-- drop view vGyvunai
+-- select * from vGyvunai
+create view vGyvunai as 
+select l.Id, l.numeris, l.GYVUNORUSISID, i.LAIKYTOJAS
+	from ZurnaloGyvunai l left join GydomuGyvunuZurnalas i on l.ZURNALOID = i.id;
+
 --drop table likuciai
 create table Likuciai (
         Id bigint not null,
@@ -209,5 +215,7 @@ select l.Id, l.kiekis, l.PAJAMUOTA, l.DATA, i.PAVADINIMAS as imone, mv.KODAS as 
 	from vLikuciaiInt l left join imones i on l.IMONEID = i.id
 					left join Prekes p on l.PREKEID = p.id
 					left join MATAVIMOVIENETAS mv on mv.id = l.MATAVIMOVIENETASID;
+
+
 
 		

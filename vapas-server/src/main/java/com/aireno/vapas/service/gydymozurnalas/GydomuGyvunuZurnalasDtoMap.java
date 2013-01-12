@@ -57,4 +57,21 @@ public class GydomuGyvunuZurnalasDtoMap {
         itemP.setKiekis(itemPDto.getKiekis());
         itemP.setZurnaloId(item.getId());
     }
+
+    public ZurnaloGyvunasDto toGyvunasDto(ZurnaloGyvunas itemP) {
+        ZurnaloGyvunasDto dto = new ZurnaloGyvunasDto();
+        dto.setId(itemP.getId());
+        dto.setNumeris(itemP.getNumeris());
+        dto.setGyvunoRusisId(itemP.getGyvunoRusisId());
+        dto.setAmzius(itemP.getAmzius());
+        return dto;
+    }
+
+    public void fromGyvunasDto(ZurnaloGyvunas itemP, ZurnaloGyvunasDto itemPDto, GydomuGyvunuZurnalas item) {
+        itemP.setId(itemP.getId());
+        itemP.setNumeris(itemPDto.getNumeris());
+        itemP.setGyvunoRusisId(itemPDto.getGyvunoRusisId());
+        itemP.setAmzius(itemPDto.getAmzius());
+        itemP.setZurnaloId(item.getId());
+    }
 }

@@ -5,6 +5,7 @@ import com.aireno.dto.StringLookupItemDto;
 import com.aireno.vapas.gui.base.EditFieldDefinition;
 import com.aireno.vapas.gui.controls.EditingCell;
 import com.aireno.vapas.gui.controls.StringFilterLookup;
+import com.aireno.vapas.gui.controls.StringNewLookup;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
@@ -36,11 +37,11 @@ public class StringLookupFieldDefinitionCB<T> extends EditFieldDefinition<T, Str
     }
 
     public interface DataProvider<T>{
-        public abstract List<StringLookupItemDto> getDataList(T item, String sId) throws Exception;
+        public abstract List<String> getDataList(T item, String sId) throws Exception;
     }
 }
 
-class StringLookupCellCB<T extends LookupDto> extends EditingCell<T, String, StringFilterLookup> {
+class StringLookupCellCB<T extends LookupDto> extends EditingCell<T, String, StringNewLookup> {
     private final StringLookupFieldDefinitionCB.DataProvider<T> provider;
     private final int size;
 
@@ -62,23 +63,23 @@ class StringLookupCellCB<T extends LookupDto> extends EditingCell<T, String, Str
     }
 
     @Override
-    protected StringFilterLookup createFieldInternal() throws Exception {
-        StringFilterLookup result = new StringFilterLookup();
+    protected StringNewLookup createFieldInternal() throws Exception {
+        StringNewLookup result = new StringNewLookup();
         result.setEditable(true);
         result.setPrefWidth(size);
         result.setProvider(new CellDataProvider(this, provider));
         result.setMinWidth(size);// - this.getGraphicTextGap() * 2);
 
-        result.valueProperty().addListener(new ChangeListener<StringLookupItemDto>() {
+        result.valueProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends StringLookupItemDto> observableValue, StringLookupItemDto stringLookupItemDto, StringLookupItemDto stringLookupItemDto2) {
+            public void changed(ObservableValue<? extends String> observableValue, String stringLookupItemDto, String stringLookupItemDto2) {
                 onChangedTo(field.getStringValue());
             }
         });
         return result;
     }
 
-    class CellDataProvider implements StringFilterLookup.DataProvider {
+    class CellDataProvider implements StringNewLookup.DataProvider {
         final StringLookupCellCB<T> cell;
         final StringLookupFieldDefinitionCB.DataProvider provider;
 
@@ -88,7 +89,7 @@ class StringLookupCellCB<T extends LookupDto> extends EditingCell<T, String, Str
         }
 
         @Override
-        public List<StringLookupItemDto> getDataList(String sId) throws Exception {
+        public List<String> getDataList(String sId) throws Exception {
             return provider.getDataList(cell.getRecord(), sId);
         }
     }

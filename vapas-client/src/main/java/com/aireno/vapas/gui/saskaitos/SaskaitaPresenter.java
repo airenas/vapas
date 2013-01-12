@@ -56,8 +56,8 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     private TableView<SaskaitosPrekeDto> prekes;
     @FXML
     private Button bSaugoti;
-    @FXML
-    private Button bTvirtinti;
+   /* @FXML
+    private Button bTvirtinti;*/
     @FXML
     private Button bPridetiPreke;
 
@@ -178,7 +178,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
 
     class MListDefinition extends ListDefinition<SaskaitosPrekeDto> {
         MListDefinition() {
-            fields.add(new TextFieldDefinition("Serija", 100, new PropertyValueFactory<SaskaitosPrekeDto, String>("serija"),
+            fields.add(new TextFieldDefinition("Serija", 200, new PropertyValueFactory<SaskaitosPrekeDto, String>("serija"),
                     new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, String>() {
                         @Override
                         public void handle(ChangeEventParam<SaskaitosPrekeDto, String> param) {
@@ -187,7 +187,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
                         }
                     })
             );
-            fields.add(new LookupFieldDefinitionCB<SaskaitosPrekeDto, LookupDto>("Prekė", 150,
+            fields.add(new LookupFieldDefinitionCB<SaskaitosPrekeDto, LookupDto>("Prekė", 200,
                     new PropertyValueFactory<SaskaitosPrekeDto, Long>("prekeId"),
                     new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, Long>() {
                         @Override
@@ -237,9 +237,9 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     @Override
     public void updateControls() {
         boolean pakeista = pakeista();
-        bSaugoti.setDisable(!pakeista || StringUtils.equals(item.getStatusas(), "Patvirtinta"));
-        bTvirtinti.setDisable(pakeista || StringUtils.equals(item.getStatusas(), "Patvirtinta"));
-        bPridetiPreke.setDisable(StringUtils.equals(item.getStatusas(), "Patvirtinta"));
+        bSaugoti.setDisable(!pakeista);
+        //bTvirtinti.setDisable(pakeista || StringUtils.equals(item.getStatusas(), "Patvirtinta"));
+        //bPridetiPreke.setDisable(StringUtils.equals(item.getStatusas(), "Patvirtinta"));
     }
 
     public String getTitle() {

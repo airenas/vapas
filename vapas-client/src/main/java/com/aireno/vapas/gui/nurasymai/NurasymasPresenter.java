@@ -203,7 +203,7 @@ public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implem
             }
             ));
 
-            fields.add(new StringLookupFieldDefinitionCB("Serija", 100, new PropertyValueFactory<NurasymoPrekeDto, String>("serija"),
+            /*fields.add(new StringLookupFieldDefinitionCB("Serija", 100, new PropertyValueFactory<NurasymoPrekeDto, String>("serija"),
                     new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, String>() {
                         @Override
                         public void handle(ChangeEventParam<NurasymoPrekeDto, String> param) {
@@ -219,7 +219,7 @@ public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implem
                             return result;
                         }
                     }
-            ));
+            ));*/
             fields.add(new DecimalFieldDefinition<NurasymoPrekeDto>("Kiekis", 100,
                     new PropertyValueFactory<NurasymoPrekeDto, BigDecimal>("kiekis"),
                     new EditFieldDefinition.ChangeEvent<NurasymoPrekeDto, BigDecimal>() {

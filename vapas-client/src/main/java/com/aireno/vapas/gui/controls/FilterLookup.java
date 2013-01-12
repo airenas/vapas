@@ -64,25 +64,17 @@ public class FilterLookup<T extends LookupDto> extends ComboBox<T> {
                         System.out.println("old " + oldValue);
                         System.out.println("new " + newValue);
                         final TextField editor = getEditor();
-                        final T selected = getSelectionModel()
-                                .getSelectedItem();
+                        T selected = null;
+                        Object selectedO = getSelectionModel().getSelectedItem();
+                        //if (selectedO  T)
+                        {
+                            selected = (T)selectedO;
+                        }
                         if (selected == null || !selected.getPavadinimas().equals(editor.getText())) {
-                            filterItems(newValue);
                             show();
-                            if (getItems().size() == 1) {
-                                final T onlyOption = getItems().get(0);
-                                final String current = editor.getText();
-//                                if (onlyOption.getPavadinimas().length() > current.length()) {
-//                                    editor.setText(onlyOption.getPavadinimas());
-//                                    // Not quite sure why this only works using
-//                                    // Platform.runLater(...)
-//                                    Platform.runLater(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            editor.selectRange(current.length(), onlyOption.getPavadinimas().length());
-//                                        }
-//                                    });
-//                                }
+                            filterItems(newValue);
+                            if (getItems().size() == 0) {
+                                editor.setText(newValue);
                             }
                         }
                     }
