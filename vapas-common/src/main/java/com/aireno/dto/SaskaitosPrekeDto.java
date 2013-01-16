@@ -27,17 +27,6 @@ public class SaskaitosPrekeDto extends DtoBase {
     public SaskaitosPrekeDto() {
     }
 
-    public SaskaitosPrekeDto(SaskaitosPrekeDto copy) {
-        super(copy);
-        serija = copy.serija;
-        prekeId = copy.prekeId;
-        kiekis = copy.kiekis;
-        galiojaIki = copy.galiojaIki;
-        kaina = copy.kaina;
-        nuolaidosProc = copy.nuolaidosProc;
-        pvm = copy.pvm;
-    }
-
     public String getSerija() {
         return serija;
     }

@@ -111,6 +111,13 @@ public class PrekesListPresenter extends PresenterBase implements Initializable,
 
             fields.add(new FieldDefinition<PrekeListDto, String>("Mat. vienetas", 200, new PropertyValueFactory<PrekeListDto, String>("matVienetas"))
                     .addCellFactory(new GenericCellFactory<PrekeListDto, String>(onClick)));
+            fields.add(new FieldDefinition<PrekeListDto, Long>("Išlauka pien.", 100,
+                    new PropertyValueFactory<PrekeListDto, Long>("islaukaPienui"))
+                    .addCellFactory(new GenericCellFactory<PrekeListDto, Long>(onClick)));
+            fields.add(new FieldDefinition<PrekeListDto, Long>("Išlauka mėsai", 100,
+                    new PropertyValueFactory<PrekeListDto, Long>("islaukaMesai"))
+                    .addCellFactory(new GenericCellFactory<PrekeListDto, Long>(onClick)));
+
             //fields.add(new FieldDefinition<PrekeListDto, Long>("Id", 50, new PropertyValueFactory<PrekeListDto,Long>("id")));
         }
     }

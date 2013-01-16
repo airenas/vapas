@@ -20,6 +20,9 @@
         <property name="registracijosData" type="timestamp" length="100" not-null="true" unique="false"/>
         <property name="pirmuPozymiuData" type="timestamp" length="100" not-null="false" unique="false"/>
 
+        <property name="islaukaPienui" type="timestamp" not-null="false"/>
+        <property name="islaukaMesai" type="timestamp" not-null="false"/>
+
         <property name="diagnoze" type="string" length="500" unique="false"/>
         <property name="gyvunuSarasas" type="string" length="500" unique="false"/>
         <property name="gydymas" type="string" length="500" unique="false"/>

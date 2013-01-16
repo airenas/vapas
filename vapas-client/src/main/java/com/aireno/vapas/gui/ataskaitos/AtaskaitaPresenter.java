@@ -67,7 +67,7 @@ public class AtaskaitaPresenter extends PresenterBase {
     public void likuciai(ActionEvent event) {
         try {
             this.setText("GENERUOJAMA ....");
-            getService().generuotiNurasymus(new AtaskaitaService.GeneruotiRequest(
+            getService().generuotiLikucius(new AtaskaitaService.GeneruotiRequest(
                     data.getValue(), imone.getValueId(), numeris.getText()));
             this.setText("Sugeneruota");
         } catch (Exception e) {
@@ -83,7 +83,7 @@ public class AtaskaitaPresenter extends PresenterBase {
     public void zurnalas(ActionEvent event) {
         try {
             this.setText("GENERUOJAMA ....");
-            getService().generuotiNurasymus(new AtaskaitaService.GeneruotiRequest(
+            getService().generuotiZurnala(new AtaskaitaService.GeneruotiRequest(
                     data.getValue(), imone.getValueId(), numeris.getText()));
             this.setText("Sugeneruota");
         } catch (Exception e) {

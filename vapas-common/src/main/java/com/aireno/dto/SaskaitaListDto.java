@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class SaskaitaListDto extends DtoBase {
     protected String numeris;
-    protected Date data;
+    protected String data;
     protected String tiekejas;
     protected String imone;
     protected BigDecimal suma;
@@ -28,11 +28,11 @@ public class SaskaitaListDto extends DtoBase {
         this.numeris = numeris;
     }
 
-    public Date getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(String data) {
         this.data = data;
     }
 

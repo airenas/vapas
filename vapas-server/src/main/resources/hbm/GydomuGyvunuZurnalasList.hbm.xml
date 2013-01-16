@@ -19,6 +19,9 @@
         <property name="laikytojas" type="string" length="200" not-null="true" unique="false"/>
         <property name="registracijosData" type="timestamp" length="100" not-null="true" unique="false"/>
 
+        <property name="islaukaPienui" type="timestamp" not-null="false"/>
+        <property name="islaukaMesai" type="timestamp" not-null="false"/>
+
         <property name="gyvunuSarasas" type="string" length="500" unique="false"/>
         <property name="gydymas" type="string" length="500" unique="false"/>
 

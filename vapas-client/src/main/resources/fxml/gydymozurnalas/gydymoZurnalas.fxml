@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.aireno.vapas.gui.controls.StringFilterLookup?>
-<?import com.aireno.vapas.gui.controls.StringNewLookup?>
-<?import com.aireno.vapas.gui.controls.FilterLookup?>
-<?import com.panemu.tiwulfx.form.DateControl?>
+<?import com.aireno.vapas.gui.controls.*?>
+<?import com.panemu.tiwulfx.form.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import com.mytdev.javafx.scene.control.*?>
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-client/1.0/vapas-client-1.0.jar?>
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-common/1.0/vapas-common-1.0.jar?>
+<?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/panemu/tiwulfx/1.0/tiwulfx-1.0.jar?>
 
 <BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.gydymozurnalas.GydymoZurnalasPresenter">
   <center>
     <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="499.9999000000025">
       <children>
-        <Label layoutX="17.0" layoutY="16.0" text="Data" />
-        <Label layoutX="20.0" layoutY="43.0" text="Laikytojas" />
-        <Label layoutX="285.0" layoutY="16.0" text="Įmonė" />
-        <Label layoutX="20.0" layoutY="74.0" text="Diagnozė" />
-        <DateControl fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="84.0" AnchorPane.topAnchor="14.0" />
-        <FilterLookup fx:id="imone" onKeyReleased="#update" prefWidth="151.0" AnchorPane.leftAnchor="335.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="13.0" />
-        <StringNewLookup fx:id="laikytojas" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.25" AnchorPane.leftAnchor="83.75" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="43.0" />
-        <StringNewLookup fx:id="diagnoze"  editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.0" AnchorPane.leftAnchor="84.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="74.0" />
-        <Button fx:id="bPridetiGyvuna" mnemonicParsing="false" onAction="#pridetiGyvuna" prefWidth="150.0" text="Pridėti gyvūną" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="104.0" />
-        <TableView fx:id="gyvunai" prefHeight="125.0" prefWidth="486.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="125.0">
+        <Label layoutX="5.0" layoutY="8.0" text="Data" />
+        <Label layoutX="5.0" layoutY="35.0" text="Laikytojas" />
+        <Label layoutX="285.0" layoutY="7.0" text="Įmonė" />
+        <Label layoutX="5.0" layoutY="65.0" text="Diagnozė" />
+        <DateControl fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="84.0" AnchorPane.topAnchor="5.0" />
+        <FilterLookup fx:id="imone" onKeyReleased="#update" prefWidth="151.0" AnchorPane.leftAnchor="335.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="4.0" />
+        <StringNewLookup fx:id="laikytojas" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.25" AnchorPane.leftAnchor="83.75" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="34.0" />
+        <StringNewLookup fx:id="diagnoze" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.0" AnchorPane.leftAnchor="84.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="65.0" />
+        <Label layoutX="5.0" layoutY="96.0" text="Išlauka pien." />
+        <DateControl id="data" fx:id="islaukaPienui" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="84.0" AnchorPane.topAnchor="96.0" />
+        <DateControl id="data" fx:id="islaukaMesai" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="264.0" AnchorPane.topAnchor="96.0" />
+        <Label layoutX="226.0" layoutY="99.0" text="mėsai" />
+        <Button id="skaiciuoti" fx:id="bSkaiciuoti" mnemonicParsing="false" onAction="#skaiciuoti" prefWidth="78.0" text="Skaičiuoti" AnchorPane.leftAnchor="407.0" AnchorPane.topAnchor="96.0" />
+        <Button fx:id="bPridetiGyvuna" mnemonicParsing="false" onAction="#pridetiGyvuna" prefWidth="150.0" text="Pridėti gyvūną" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="122.0" />
+        <TableView fx:id="gyvunai" prefHeight="125.0" prefWidth="486.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="143.0">
           <columns>
             <TableColumn prefWidth="75.0" text="Column X" />
             <TableColumn prefWidth="75.0" text="Column X" />
           </columns>
         </TableView>
-        <Button id="" mnemonicParsing="false" onAction="#pridetiPreke" prefWidth="150.0" text="Pridėti prekę" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="250.0" />
-        <TableView fx:id="prekes" prefHeight="125.0" prefWidth="485.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="271.0">
+        <Button id="" mnemonicParsing="false" onAction="#pridetiPreke" prefWidth="150.0" text="Pridėti prekę" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="268.0" />
+        <TableView fx:id="prekes" prefHeight="104.0" prefWidth="486.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="289.0">
           <columns>
             <TableColumn prefWidth="75.0" text="Column X" />
             <TableColumn prefWidth="75.0" text="Column X" />

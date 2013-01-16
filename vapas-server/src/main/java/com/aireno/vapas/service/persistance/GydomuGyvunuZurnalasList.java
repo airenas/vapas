@@ -15,6 +15,26 @@ public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable
     private String gyvunuSarasas;
     private String gydymas;
 
+    private Date islaukaPienui;
+    private Date islaukaMesai;
+
+
+    public Date getIslaukaPienui() {
+        return islaukaPienui;
+    }
+
+    public void setIslaukaPienui(Date islaukaPienui) {
+        this.islaukaPienui = islaukaPienui;
+    }
+
+    public Date getIslaukaMesai() {
+        return islaukaMesai;
+    }
+
+    public void setIslaukaMesai(Date islaukaMesai) {
+        this.islaukaMesai = islaukaMesai;
+    }
+
     public long getEilesNumeris() {
         return eilesNumeris;
     }

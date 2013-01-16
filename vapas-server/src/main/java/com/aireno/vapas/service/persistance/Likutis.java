@@ -24,6 +24,25 @@ public class Likutis extends EntityBase implements Serializable {
     private Long saskaitosPrekesId;
     private Long pirminisId;
 
+    private Long nurasymoId;
+    private Long nurasymoPrekesId;
+
+    public Long getNurasymoId() {
+        return nurasymoId;
+    }
+
+    public void setNurasymoId(Long nurasymoId) {
+        this.nurasymoId = nurasymoId;
+    }
+
+    public Long getNurasymoPrekesId() {
+        return nurasymoPrekesId;
+    }
+
+    public void setNurasymoPrekesId(Long nurasymoPrekesId) {
+        this.nurasymoPrekesId = nurasymoPrekesId;
+    }
+
     public boolean isArSaskaita() {
         return arSaskaita;
     }

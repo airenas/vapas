@@ -222,8 +222,8 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                     }
 
                     getAssertor().isFalse(itemP.getKiekis().doubleValue() > suma, "Nėra pajamuota prekių su serija "
-                            + itemP.getSerija() + ". Reikia " + ANumberUtils.DecimalToString(itemP.getKiekis()) + " yra " +
-                            ANumberUtils.DecimalToString(suma));
+                            + itemP.getSerija() + ". Reikia " + ANumberUtils.decimalToString(itemP.getKiekis()) + " yra " +
+                            ANumberUtils.decimalToString(suma));
 
                     Likutis l = new Likutis();
                     l.setArSaskaita(false);
@@ -339,7 +339,7 @@ public class NurasymasServiceImpl extends ServiceBase implements NurasymasServic
                     BigDecimal value = entry.getValue();
                     if (value.compareTo(new BigDecimal(0)) > 0) {
                         StringLookupItemDto dto = new StringLookupItemDto(key);
-                        dto.setPavadinimas(String.format("%s (%s)", key, ANumberUtils.DecimalToString(value)));
+                        dto.setPavadinimas(String.format("%s (%s)", key, ANumberUtils.decimalToString(value)));
                         result.add(dto);
                     }
                 }

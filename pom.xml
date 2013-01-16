@@ -48,8 +48,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jdk.path>c:\glassfish3\jdk7</jdk.path>
-		<!--<jdk.path>c:\Program Files\Java\jdk1.7.0_09</jdk.path>-->
+       <!-- <jdk.path>c:\glassfish3\jdk7</jdk.path>-->
+		<jdk.path>c:\Program Files\Java\jdk1.7.0_09</jdk.path>
         <deploy.path>deploy/target</deploy.path>
         <distribution.repo>${project.basedir}/repo</distribution.repo>
     </properties>

@@ -35,6 +35,13 @@ public class Repository {
         return list;
     }
 
+    public <T> List<T> getList(Class<T> tClass) throws Exception {
+        String queryString = "from " + tClass.getSimpleName();
+        List<T> list = getSession().createQuery(queryString)
+                .list();
+        return list;
+    }
+
     public <T> Query prepareQuery(Class<T> tClass, String filterFields) throws Exception {
         String queryString = "from " + tClass.getSimpleName() + " where " + filterFields;
         return getSession().createQuery(queryString);

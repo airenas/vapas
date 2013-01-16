@@ -13,7 +13,7 @@
         <id name="id" column="Id">
             <generator class="increment"/>
         </id>
-        <property name="dokumentas" type="string" length="100" not-null="true" unique="false"/>
+        <property name="dokumentas" type="string" length="100" not-null="false" unique="false"/>
         <property name="prekeId" type="long" not-null="true"/>
         <property name="imoneId" type="long" not-null="true"/>
         <property name="matavimoVienetasId" type="long" not-null="true"/>

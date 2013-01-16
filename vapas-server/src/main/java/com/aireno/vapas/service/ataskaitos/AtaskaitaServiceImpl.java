@@ -2,9 +2,11 @@ package com.aireno.vapas.service.ataskaitos;
 
 import com.aireno.Constants;
 import com.aireno.dto.AtaskaitaListDto;
-import com.aireno.dto.NurasymoPrekeDto;
+import com.aireno.utils.ADateUtils;
+import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.AtaskaitaService;
 import com.aireno.vapas.service.base.ProcessorBase;
+import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.nurasymai.NurasymasDtoMap;
 import com.aireno.vapas.service.persistance.*;
@@ -13,6 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 import org.hibernate.Session;
 
@@ -73,6 +76,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
             protected Boolean processInt(GeneruotiRequest request) throws Exception {
                 getAssertor().isTrue(request.imoneId > 0, "Nenurodyta įmonė");
                 getAssertor().isNotNullStr(request.numeris, "Nenurodytas numeris");
+                getAssertor().isNotNull(request.date, "Nenurodyta data");
                 Date data = request.date;
                 String imone = gautiImone(request.imoneId, getSession()).getPavadinimas();
                 String numeris = request.numeris;
@@ -81,7 +85,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 String failas = String.format("documents/nurasymas_%s_%s.docx", imone, df1.format(data));
 
                 String queryString = "from Likutis c where c.imoneId = ?1 " +
-                        "and data > ?2 and data < ?3 and arSaskaita = ?4";
+                        "and data >= ?2 and data < ?3 and arSaskaita = ?4";
                 Date from = DateUtils.truncate(data, Calendar.MONTH);
                 Date to = DateUtils.addMonths(from, 1);
                 List<Likutis> list = getSession().createQuery(queryString)
@@ -106,6 +110,12 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                     SaskaitosPreke sPreke = getRepo().get(SaskaitosPreke.class, pirminis.getSaskaitosPrekesId());
                     ReportN pr = raskPreke(result, itemP, sPreke.getSerija());
                     pr.values += (-itemP.getKiekis().doubleValue());
+                }
+
+                // updatinam likucius nustatom numeri
+                for (Likutis itemP : list) {
+                    itemP.setDokumentas(numeris);
+                    getSession().save(itemP);
                 }
 
                 int i = 1;
@@ -138,9 +148,207 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         }.process(request);
     }
 
+    @Override
+    public Boolean generuotiZurnala(GeneruotiRequest request) throws Exception {
+        return new ProcessorBase<GeneruotiRequest, Boolean>() {
+            @Override
+            protected Boolean processInt(GeneruotiRequest request) throws Exception {
+                Date data = request.date;
+                SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT);
+                SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM");
+                String failas = String.format("documents/zurnalas_%s.docx", df1.format(data));
+
+                String queryString = "from GydomuGyvunuZurnalas c where  " +
+                        "c.registracijosData >= ?1 and c.registracijosData < ?2 ";
+                Date from = DateUtils.truncate(data, Calendar.MONTH);
+                Date to = DateUtils.addMonths(from, 1);
+                List<GydomuGyvunuZurnalas> list = getSession().createQuery(queryString)
+                        .setParameter("1", from)
+                        .setParameter("2", to)
+                        .list();
+
+                Collections.sort(list, new Comparator<GydomuGyvunuZurnalas>() {
+                    @Override
+                    public int compare(GydomuGyvunuZurnalas o1, GydomuGyvunuZurnalas o2) {
+                        return o1.getRegistracijosData().compareTo(o2.getRegistracijosData());
+                    }
+                });
+
+                WordprocessingMLPackage template = getTemplate("template/zurnalas.docx");
+
+                List<Map<String, String>> textToAdd = new ArrayList<Map<String, String>>();
+
+
+                int i = 1;
+                for (GydomuGyvunuZurnalas itemP : list) {
+                    List<ZurnaloVaistas> vaistai = getRepo().getList(ZurnaloVaistas.class, "zurnaloId", itemP.getId());
+                    List<ZurnaloGyvunas> gyvunai = getRepo().getList(ZurnaloGyvunas.class, "zurnaloId", itemP.getId());
+                    Map<String, String> repl1 = new HashMap<String, String>();
+
+                    repl1.put("{NR}", Integer.toString(i));
+                    repl1.put("{DATA}", df.format(itemP.getRegistracijosData()));
+                    repl1.put("{LAIKYTOJAS}", itemP.getLaikytojas());
+                    repl1.put("{DIAGNOZE}", itemP.getDiagnoze());
+                    repl1.put("{GYVUNAS}", gautiGyvunasStr(gyvunai, getRepo()));
+                    repl1.put("{GYDYMAS}", gautiGydymoStr(vaistai, getRepo()));
+                    textToAdd.add(repl1);
+                    i++;
+                }
+
+                replaceTable(new String[]{"{NR}", "{DATA}", "{LAIKYTOJAS}",
+                        "{DIAGNOZE}", "{GYVUNAS}", "{GYDYMAS}"},
+                        textToAdd, template);
+                writeDocxToStream(template, failas);
+
+
+                return true;
+            }
+        }.process(request);
+    }
+
+    @Override
+    public Boolean generuotiLikucius(GeneruotiRequest request) throws Exception {
+        return new ProcessorBase<GeneruotiRequest, Boolean>() {
+            @Override
+            protected Boolean processInt(GeneruotiRequest request) throws Exception {
+                getAssertor().isTrue(request.imoneId > 0, "Nenurodyta įmonė");
+                Date data = request.date;
+                String imone = gautiImone(request.imoneId, getSession()).getPavadinimas();
+                SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM");
+                String failas = String.format("documents/apskaita_%s_%s.docx", imone, df1.format(data));
+
+                Date from = DateUtils.truncate(data, Calendar.MONTH);
+                Date to = DateUtils.addMonths(from, 1);
+                String queryString = "select distinct prekeId from Likutis where imoneId = ?1 " +
+                        "and data >= ?2 and data < ?3";
+                List<Long> prekeIds = getSession().createQuery(queryString)
+                        .setParameter("1", request.imoneId)
+                        .setParameter("2", from)
+                        .setParameter("3", to).list();
+
+
+                WordprocessingMLPackage doc = getTemplate("template/apskaita.docx");
+                MainDocumentPart mainDocumentPart = doc.getMainDocumentPart();
+
+                for (Long pId : prekeIds) {
+                    WordprocessingMLPackage template = getTemplate("template/apskaitaPart.docx");
+                    Preke preke = getRepo().get(Preke.class, pId);
+                    MatavimoVienetas mvienetas = getRepo().get(MatavimoVienetas.class, preke.getMatVienetasId());
+                    List<Likutis> likuciai = getRepo().prepareQuery(Likutis.class, "prekeId = ?1 and imoneId =?2")
+                            .setParameter("1", pId).setParameter("2", request.imoneId).list();
+                    Collections.sort(likuciai, new Comparator<Likutis>() {
+                        @Override
+                        public int compare(Likutis o1, Likutis o2) {
+                            int i = ADateUtils.trimTime(o1.getData()).compareTo(ADateUtils.trimTime(o2.getData()));
+                            if (i != 0) {
+                                return i;
+                            }
+                            return ANumberUtils.defaultValue(o1.getPirminisId())
+                                    .compareTo(ANumberUtils.defaultValue(o2.getPirminisId()));
+                        }
+                    });
+                    replacePlaceholder(template, preke.getPavadinimas(), "{VAISTAS}");
+                    replacePlaceholder(template, mvienetas.getKodas(), "{MVNT}");
+
+                    List<Map<String, String>> textToAdd = new ArrayList<Map<String, String>>();
+                    double kiekis = 0;
+                    for (Likutis itemP : likuciai) {
+
+                        Map<String, String> repl1 = new HashMap<String, String>();
+                        repl1.put("{DATA}", ADateUtils.dateToString(itemP.getData()));
+                        Saskaita saskaita = null;
+                        SaskaitosPreke sPreke = null;
+                        if (itemP.isArSaskaita()) {
+                            kiekis += itemP.getKiekis().doubleValue();
+                            saskaita = getRepo().get(Saskaita.class, itemP.getSaskaitosId());
+                            String tiekejasStr = "";
+                            if (ANumberUtils.defaultValue(saskaita.getTiekejasId()) > 0) {
+                                Tiekejas tiekejas = getRepo().get(Tiekejas.class, saskaita.getTiekejasId());
+                                tiekejasStr = tiekejas.getPavadinimas();
+                            }
+                            sPreke = getRepo().get(SaskaitosPreke.class, itemP.getSaskaitosPrekesId());
+                            repl1.put("{DOKNR}", saskaita.getNumeris() + " " + tiekejasStr);
+                            repl1.put("{SERIJA}", sPreke.getSerija());
+                            repl1.put("{TINKAIKI}", ADateUtils.dateToString(sPreke.getGaliojaIki()));
+                            repl1.put("{SUNAUDOTA}", "");
+                            repl1.put("{LIKUTIS}", ANumberUtils.decimalToString(kiekis));
+                            repl1.put("{KIEKIS}", ANumberUtils.decimalToString(itemP.getKiekis()));
+                        } else {
+                            kiekis -= (-itemP.getKiekis().doubleValue());
+                            repl1.put("{DOKNR}", itemP.getDokumentas());
+                            repl1.put("{SERIJA}", getPrekesSerija(likuciai, itemP, getRepo()));
+                            repl1.put("{TINKAIKI}", "");
+                            repl1.put("{SUNAUDOTA}", ANumberUtils.decimalToString(-itemP.getKiekis().doubleValue()));
+                            repl1.put("{LIKUTIS}", ANumberUtils.decimalToString(kiekis));
+                            repl1.put("{KIEKIS}", "");
+                        }
+
+                        textToAdd.add(repl1);
+                    }
+
+                    replaceTable(new String[]{"{DATA}", "{DOKNR}", "{KIEKIS}", "{TINKAIKI}", "{SERIJA}", "{SUNAUDOTA}", "{LIKUTIS}"},
+                            textToAdd, template);
+                    for (Object i : template.getMainDocumentPart().getContent()) {
+                        mainDocumentPart.addObject(i);
+                    }
+
+                }
+                writeDocxToStream(doc, failas);
+                return true;
+            }
+        }.process(request);
+    }
+
+    private String getPrekesSerija(List<Likutis> likuciai, Likutis itemP, Repository repo) throws Exception {
+        for (Likutis l : likuciai) {
+            if (l.getId() == itemP.getPirminisId()) {
+                return repo.get(SaskaitosPreke.class, l.getSaskaitosPrekesId()).getSerija();
+            }
+        }
+        return "";
+    }
+
+    public static String gautiGydymoStr(List<ZurnaloVaistas> vaistai, Repository repo) throws Exception {
+        String result = "";
+        for (ZurnaloVaistas v : vaistai) {
+            Preke p = null;
+            MatavimoVienetas mv = null;
+
+            p = repo.get(Preke.class, v.getPrekeId());
+            mv = repo.get(MatavimoVienetas.class, p.getMatVienetasId());
+            if (!StringUtils.isEmpty(result)) {
+                result += "\n";
+            }
+            result += String.format("%s %s%s %s", p.getPavadinimas(), ANumberUtils.decimalToString(v.getKiekis()),
+                    mv.getKodas(), v.getReceptas());
+        }
+        return result;
+    }
+
+    public static String gautiGyvunasStr(List<ZurnaloGyvunas> gyvunai, Repository repo) throws Exception {
+        String result = "";
+        for (ZurnaloGyvunas g : gyvunai) {
+            GyvunoRusis gr = null;
+            if (g.getGyvunoRusisId() > 0) {
+                gr = repo.get(GyvunoRusis.class, g.getGyvunoRusisId());
+            }
+            String rusis = "";
+
+            if (gr != null) {
+                rusis = gr.getPavadinimas();
+            }
+            if (!StringUtils.isEmpty(result)) {
+                result += "\n";
+            }
+            result += String.format("%s %s %s", rusis, StringUtils.defaultString(g.getAmzius()),
+                    StringUtils.defaultString(g.getNumeris()));
+        }
+        return result;
+    }
+
     private ReportN raskPreke(List<ReportN> result, Likutis itemP, String serija) {
         for (ReportN n : result) {
-            if (n.prekeId == itemP.getPrekeId() && StringUtils.equals(n.serija, serija)){
+            if (n.prekeId == itemP.getPrekeId() && StringUtils.equals(n.serija, serija)) {
                 return n;
             }
         }
@@ -157,21 +365,6 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         public double values;
     }
 
-    private MatavimoVienetas gautiMatavimoVieneta(long prekeId, Session session) throws Exception {
-        String queryString = "from Preke c where c.id = ?1";
-        List<Preke> list = session.createQuery(queryString)
-                .setParameter("1", prekeId).list();
-        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-        Preke item = list.get(0);
-
-        queryString = "from MatavimoVienetas c where c.id = ?1";
-        List<MatavimoVienetas> listMv = session.createQuery(queryString)
-                .setParameter("1", item.getMatVienetasId()).list();
-        getAssertor().isTrue(list.size() == 1, "Nerastas matavimo vienetas pagal id " + item.getMatVienetasId() + " įrašas");
-        MatavimoVienetas item1 = listMv.get(0);
-        return item1;
-    }
-
     private Imone gautiImone(long id, Session session) throws Exception {
         String queryString = "from Imone c where c.id = ?1";
         List<Imone> list = session.createQuery(queryString)
@@ -179,22 +372,6 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
         Imone item = list.get(0);
         return item;
-    }
-
-    private NurasymoPreke raskPaimkPreke(List<NurasymoPreke> listP, NurasymoPrekeDto itemPDto) {
-        NurasymoPreke result = null;
-        for (NurasymoPreke p : listP) {
-            if (p.getId() == itemPDto.getId() || (p.getPrekeId() == itemPDto.getPrekeId()
-                    && StringUtils.equals(p.getSerija(), itemPDto.getSerija()))
-                    ) {
-                result = p;
-                break;
-            }
-        }
-        if (result != null) {
-            listP.remove(result);
-        }
-        return result;
     }
 
     public Boolean generuotiAtaskaita(long id) throws Exception {
@@ -300,8 +477,10 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
 
         for (Object text : texts) {
             Text textElement = (Text) text;
-            if (textElement.getValue().equals(placeholder)) {
-                textElement.setValue(name);
+            if (StringUtils.contains(textElement.getValue(), placeholder)) {
+                String value = textElement.getValue();
+                value = StringUtils.replace(value, placeholder, name);
+                textElement.setValue(value);
             }
         }
     }
@@ -357,9 +536,9 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         List<Object> rows = getAllElementFromObject(tempTable, Tr.class);
 
         // first row is header, second row is content
-        if (rows.size() == 2) {
+        if (rows.size() > 1) {
             // this is our template row
-            Tr templateRow = (Tr) rows.get(1);
+            Tr templateRow = (Tr) rows.get(rows.size() - 1);
 
             for (Map<String, String> replacements : textToAdd) {
                 // 2 and 3 are done in this method
@@ -387,13 +566,16 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
     private static void addRowToTable(Tbl reviewtable, Tr templateRow, Map<String, String> replacements) {
         Tr workingRow = (Tr) XmlUtils.deepCopy(templateRow);
         List<?> textElements = getAllElementFromObject(workingRow, Text.class);
-        for (Object object : textElements) {
-            Text text = (Text) object;
-            String replacementValue = (String) replacements.get(text.getValue());
-            if (replacementValue != null)
-                text.setValue(replacementValue);
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            for (Object object : textElements) {
+                Text text = (Text) object;
+                String value = text.getValue();
+                if (StringUtils.contains(value, entry.getKey())) {
+                    value = StringUtils.replace(value, entry.getKey(), StringUtils.defaultIfEmpty(entry.getValue(), ""));
+                    text.setValue(value);
+                }
+            }
         }
-
         reviewtable.getContent().add(workingRow);
     }
 

@@ -9,10 +9,8 @@ import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
 import com.aireno.vapas.gui.controls.FilterLookup;
-import com.aireno.vapas.gui.tablefields.DateFieldDefinition;
-import com.aireno.vapas.gui.tablefields.DecimalFieldDefinition;
-import com.aireno.vapas.gui.tablefields.LookupFieldDefinitionCB;
-import com.aireno.vapas.gui.tablefields.TextFieldDefinition;
+import com.aireno.vapas.gui.gydymozurnalas.ZurnaloVaistasGui;
+import com.aireno.vapas.gui.tablefields.*;
 import com.aireno.vapas.service.LookupService;
 import com.aireno.vapas.service.SaskaitaService;
 import com.panemu.tiwulfx.form.DateControl;
@@ -49,11 +47,11 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     @FXML
     private DateControl data;
     @FXML
-    private FilterLookup tiekejas;
+    private FilterLookup<LookupDto> tiekejas;
     @FXML
     private FilterLookup<LookupDto> imone;
     @FXML
-    private TableView<SaskaitosPrekeDto> prekes;
+    private TableView<SaskaitosPrekeGui> prekes;
     @FXML
     private Button bSaugoti;
    /* @FXML
@@ -61,7 +59,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     @FXML
     private Button bPridetiPreke;
 
-    ObservableList<SaskaitosPrekeDto> prekesList;
+    ObservableList<SaskaitosPrekeGui> prekesList;
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
@@ -88,9 +86,9 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
             }
         });
         prekesList = FXCollections.observableArrayList();
-        prekesList.addListener(new ListChangeListener<SaskaitosPrekeDto>() {
+        prekesList.addListener(new ListChangeListener<SaskaitosPrekeGui>() {
             @Override
-            public void onChanged(Change<? extends SaskaitosPrekeDto> change) {
+            public void onChanged(Change<? extends SaskaitosPrekeGui> change) {
                 update();
             }
         });
@@ -104,7 +102,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
                 tiekejas.setValueId(dto.getTiekejasId());
                 imone.setValueId(dto.getImoneId());
                 for (SaskaitosPrekeDto i : dto.getPrekes())
-                    prekesList.add(new SaskaitosPrekeDto(i));
+                    prekesList.add(new SaskaitosPrekeGui(i));
                 item = dto;
 
             } catch (Exception e) {
@@ -149,9 +147,9 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
         dto.setId(getId());
 
         dto.getPrekes().clear();
-        for (SaskaitosPrekeDto item : prekesList) {
+        for (SaskaitosPrekeGui item : prekesList) {
             if (StringUtils.isNotEmpty(item.getSerija())) {
-                dto.getPrekes().add(item);
+                dto.getPrekes().add(item.toDto());
             }
         }
 
@@ -160,7 +158,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
         item = dto;
         prekesList.clear();
         for (SaskaitosPrekeDto i : dto.getPrekes()) {
-            prekesList.add(new SaskaitosPrekeDto(i));
+            prekesList.add(new SaskaitosPrekeGui(i));
         }
         update();
     }
@@ -176,24 +174,22 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
         }
     }
 
-    class MListDefinition extends ListDefinition<SaskaitosPrekeDto> {
+    class MListDefinition extends ListDefinition<SaskaitosPrekeGui> {
         MListDefinition() {
-            fields.add(new TextFieldDefinition("Serija", 200, new PropertyValueFactory<SaskaitosPrekeDto, String>("serija"),
-                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, String>() {
+
+            fields.add(new LookupFieldDefinitionCB<SaskaitosPrekeGui, LookupDto>("Prekė", 250,
+                    new PropertyValueFactory<SaskaitosPrekeGui, Long>("prekeId"),
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeGui, Long>() {
                         @Override
-                        public void handle(ChangeEventParam<SaskaitosPrekeDto, String> param) {
-                            param.item.setSerija(param.value);
-                            update();
-                        }
-                    })
-            );
-            fields.add(new LookupFieldDefinitionCB<SaskaitosPrekeDto, LookupDto>("Prekė", 200,
-                    new PropertyValueFactory<SaskaitosPrekeDto, Long>("prekeId"),
-                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, Long>() {
-                        @Override
-                        public void handle(ChangeEventParam<SaskaitosPrekeDto, Long> param) {
-                            param.item.setPrekeId(param.value);
-                            update();
+                        public void handle(ChangeEventParam<SaskaitosPrekeGui, Long> param) {
+                            if (initializing) {
+                                return;
+                            }
+                            if (param.item.getPrekeId() != param.value) {
+                                param.item.setPrekeId(param.value);
+                                param.item.setSerija(null);
+                                update();
+                            }
                         }
                     }
                     , new LookupFieldDefinitionCB.DataProvider<LookupDto>() {
@@ -204,29 +200,49 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
                 }
             }
             ));
-            fields.add(new DecimalFieldDefinition<SaskaitosPrekeDto>("Kiekis", 100,
-                    new PropertyValueFactory<SaskaitosPrekeDto, BigDecimal>("kiekis"),
-                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, BigDecimal>() {
+            fields.add(new StringLookupFieldDefinitionCB("Serija", 200,
+                    new PropertyValueFactory<SaskaitosPrekeGui, String>("serija"),
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeGui, String>() {
                         @Override
-                        public void handle(ChangeEventParam<SaskaitosPrekeDto, BigDecimal> param) {
+                        public void handle(ChangeEventParam<SaskaitosPrekeGui, String> param) {
+                            param.item.setSerija(param.value);
+                            update();
+                        }
+                    },
+                    new StringLookupFieldDefinitionCB.DataProvider<SaskaitosPrekeGui>() {
+
+                        @Override
+                        public List<String> getDataList(SaskaitosPrekeGui item, String sId) throws Exception {
+                            List<String> result = getService()
+                                    .sarasasSerijos(new SaskaitaService.SerijosRequest(item.getPrekeId()));
+                            return result;
+                        }
+                    }
+            ));
+            fields.add(new DecimalFieldDefinition<SaskaitosPrekeGui>("Kiekis", 100,
+                    new PropertyValueFactory<SaskaitosPrekeGui, BigDecimal>("kiekis"),
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeGui, BigDecimal>() {
+                        @Override
+                        public void handle(ChangeEventParam<SaskaitosPrekeGui, BigDecimal> param) {
                             param.item.setKiekis(param.value);
                             update();
                         }
                     })
             );
-            fields.add(new DateFieldDefinition<SaskaitosPrekeDto>("GaliojaIki", 120, new PropertyValueFactory<SaskaitosPrekeDto, Date>("galiojaIki"),
-                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, Date>() {
+            fields.add(new DateFieldDefinition<SaskaitosPrekeGui>("GaliojaIki", 120,
+                    new PropertyValueFactory<SaskaitosPrekeGui, Date>("galiojaIki"),
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeGui, Date>() {
                         @Override
-                        public void handle(ChangeEventParam<SaskaitosPrekeDto, Date> param) {
+                        public void handle(ChangeEventParam<SaskaitosPrekeGui, Date> param) {
                             param.item.setGaliojaIki(param.value);
                             update();
                         }
                     }));
-            fields.add(new DecimalFieldDefinition<SaskaitosPrekeDto>("Kaina", 100,
-                    new PropertyValueFactory<SaskaitosPrekeDto, BigDecimal>("kaina"),
-                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeDto, BigDecimal>() {
+            fields.add(new DecimalFieldDefinition<SaskaitosPrekeGui>("Kaina", 100,
+                    new PropertyValueFactory<SaskaitosPrekeGui, BigDecimal>("kaina"),
+                    new EditFieldDefinition.ChangeEvent<SaskaitosPrekeGui, BigDecimal>() {
                         @Override
-                        public void handle(ChangeEventParam<SaskaitosPrekeDto, BigDecimal> param) {
+                        public void handle(ChangeEventParam<SaskaitosPrekeGui, BigDecimal> param) {
                             param.item.setKaina(param.value);
                             update();
                         }
@@ -256,7 +272,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
             return true;
         if (!ADateUtils.equalDate(item.getData(), data.getValue()))
             return true;
-        for (SaskaitosPrekeDto dto : prekesList) {
+        for (SaskaitosPrekeGui dto : prekesList) {
             if (pakeistaPreke(dto, item.getPrekes())) {
                 return true;
             }
@@ -264,7 +280,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
         return false;
     }
 
-    private boolean pakeistaPreke(SaskaitosPrekeDto dto, List<SaskaitosPrekeDto> prekes) {
+    private boolean pakeistaPreke(SaskaitosPrekeGui dto, List<SaskaitosPrekeDto> prekes) {
         SaskaitosPrekeDto preke = raskPreke(prekes, dto.getId());
         if (preke == null)
             return true;
@@ -294,6 +310,6 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     }
 
     public void pridetiPreke() {
-        prekesList.add(new SaskaitosPrekeDto());
+        prekesList.add(new SaskaitosPrekeGui());
     }
 }

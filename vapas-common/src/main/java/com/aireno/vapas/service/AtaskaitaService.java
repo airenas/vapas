@@ -14,6 +14,10 @@ public interface AtaskaitaService {
 
     Boolean generuotiNurasymus(GeneruotiRequest request) throws Exception;
 
+    Boolean generuotiZurnala(GeneruotiRequest generuotiRequest) throws Exception;
+
+    Boolean generuotiLikucius(GeneruotiRequest generuotiRequest) throws Exception;
+
     class GeneruotiRequest {
         public Date date;
         public long imoneId;

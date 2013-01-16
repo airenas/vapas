@@ -18,8 +18,12 @@ create table Prekes (
         FOREIGN KEY (matVienetasId) REFERENCES MatavimoVienetas(Id)
     );
 
+alter table prekes add column islaukaMesai bigint null;
+alter table prekes add column islaukaPienui bigint null;
+
+--drop view vPrekes
 create view vPrekes as 
-select p.Id, p.Pavadinimas, v.kodas as matVienetas from prekes p left join MATAVIMOVIENETAS v on p.MATVIENETASID = v.id;
+select p.Id, p.Pavadinimas, p.ISLAUKAMESAI, p.ISLAUKAPIENUI, v.kodas as matVienetas from prekes p left join MATAVIMOVIENETAS v on p.MATVIENETASID = v.id;
 
 --drop table prekes
 create table Tiekejai (
@@ -202,6 +206,8 @@ create table Likuciai (
         FOREIGN KEY (pirminisId) REFERENCES Likuciai(ID)
     );
 
+
+
     -- drop view vLikuciaiInt
     -- select * from vLikuciaiInt
 create view vLikuciaiInt as 
@@ -215,6 +221,25 @@ select l.Id, l.kiekis, l.PAJAMUOTA, l.DATA, i.PAVADINIMAS as imone, mv.KODAS as 
 	from vLikuciaiInt l left join imones i on l.IMONEID = i.id
 					left join Prekes p on l.PREKEID = p.id
 					left join MATAVIMOVIENETAS mv on mv.id = l.MATAVIMOVIENETASID;
+
+-- v2
+alter table prekes add column islaukaMesai bigint null;
+alter table prekes add column islaukaPienui bigint null;
+
+drop view vPrekes;
+create view vPrekes as 
+select p.Id, p.Pavadinimas, p.ISLAUKAMESAI, p.ISLAUKAPIENUI, v.kodas as matVienetas from prekes p left join MATAVIMOVIENETAS v on p.MATVIENETASID = v.id;
+
+alter table GydomuGyvunuZurnalas add column islaukaMesai timestamp null;
+alter table GydomuGyvunuZurnalas add column islaukaPienui timestamp null;
+
+drop view vGydomuGyvunuZurnalas;
+create view vGydomuGyvunuZurnalas as 
+select n.Id, n.eilesNumeris, n.laikytojas, n.registracijosData, n.gyvunuSarasas, n.gydymas, n.islaukaMesai, n.islaukaPienui, i.PAVADINIMAS as imone
+	from GydomuGyvunuZurnalas n left join imones i on n.IMONEID = i.id; 
+
+alter table likuciai alter column DOKUMENTAS SET null;
+ 
 
 
 

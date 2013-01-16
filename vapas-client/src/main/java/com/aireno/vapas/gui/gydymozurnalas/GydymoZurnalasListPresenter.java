@@ -2,6 +2,7 @@ package com.aireno.vapas.gui.gydymozurnalas;
 
 import com.aireno.base.ApplicationContextProvider;
 import com.aireno.dto.GydomuGyvunuZurnalasListDto;
+import com.aireno.dto.PrekeListDto;
 import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.*;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
@@ -96,9 +97,9 @@ public class GydymoZurnalasListPresenter extends PresenterBase {
 
     class MListDefinition extends ListDefinition<GydomuGyvunuZurnalasListDto> {
         MListDefinition(EventHandler onClick) {
-            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, Date>("Data", 200,
-                    new PropertyValueFactory<GydomuGyvunuZurnalasListDto, Date>("registracijosData"))
-                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, Date>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Data", 200,
+                    new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("registracijosData"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
             fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Laikytojas", 200, new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("laikytojas"))
                     .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
             fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Gyvūnai", 200, new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("gyvunuSarasas"))
@@ -107,6 +108,12 @@ public class GydymoZurnalasListPresenter extends PresenterBase {
                     .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
             fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Įmonė", 100,
                     new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("imone"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Išlauka pien.", 100,
+                    new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("islaukaPienui"))
+                    .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
+            fields.add(new FieldDefinition<GydomuGyvunuZurnalasListDto, String>("Išlauka mėsai", 100,
+                    new PropertyValueFactory<GydomuGyvunuZurnalasListDto, String>("islaukaMesai"))
                     .addCellFactory(new GenericCellFactory<GydomuGyvunuZurnalasListDto, String>(onClick)));
         }
     }

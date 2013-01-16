@@ -28,12 +28,24 @@ public interface GydomuGyvunuZurnalasService {
 
     List<String> sarasasDiagnozes(String[] keywords) throws Exception;
 
+    IslaukaResponse gautiIslauka(List<ZurnaloVaistasDto> lDto) throws Exception;
+
     public class ReceptaiRequest {
         public long prekeId;
 
         public ReceptaiRequest(long prekeId) {
             this.prekeId = prekeId;
 
+        }
+    }
+
+    public class IslaukaResponse {
+        public Long mesai;
+        public Long pienui;
+
+        public IslaukaResponse(Long mesai, Long pienui) {
+            this.mesai = mesai;
+            this.pienui = pienui;
         }
     }
 

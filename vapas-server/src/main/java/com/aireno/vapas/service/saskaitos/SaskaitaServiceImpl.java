@@ -4,6 +4,7 @@ import com.aireno.dto.SaskaitaDto;
 import com.aireno.dto.SaskaitaListDto;
 import com.aireno.dto.SaskaitosPrekeDto;
 import com.aireno.utils.ANumberUtils;
+import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.SaskaitaService;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
@@ -147,7 +148,7 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
 
         // jei maziau, patikrinti ar nera daug isnaudota
         double dabartinisKiekis = itemP.getKiekis().doubleValue();
-        double kiekis = ANumberUtils.DefaultValue(likutis.getKiekis());
+        double kiekis = ANumberUtils.defaultValue(likutis.getKiekis());
 
         if (kiekis > dabartinisKiekis)
         {
@@ -159,7 +160,7 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
             }
             getAssertor().isTrue(panaudota < dabartinisKiekis, "Negalima išsaugoti prekės '%s' kiekio pakeitimo į '%s', nes jau panaudota '%s'",
                     gautiPrekesPavadinima(itemP.getPrekeId(), repo),
-                    ANumberUtils.DecimalToString(dabartinisKiekis), ANumberUtils.DecimalToString(panaudota));
+                    ANumberUtils.decimalToString(dabartinisKiekis), ANumberUtils.decimalToString(panaudota));
         }
 
         // kuriame likucio irasa
@@ -271,5 +272,25 @@ public class SaskaitaServiceImpl extends ServiceBase implements SaskaitaService 
                 return true;
             }
         }.process(id);
+    }
+
+    @Override
+    public List<String> sarasasSerijos(SerijosRequest req) throws Exception {
+        return new ProcessorBase<SaskaitaService.SerijosRequest, List<String>>() {
+            @Override
+            protected List<String> processInt(SaskaitaService.SerijosRequest req) throws Exception {
+                List<String> result = getSession().createQuery("select distinct c.serija from SaskaitosPreke c " +
+                        "where c.prekeId = ?1").setParameter("1", req.prekeId).
+                        list();
+                Collections.sort(result);
+                List<String> res = new ArrayList<>();
+                for (String item : result) {
+                    //StringLookupItemDto dto = new StringLookupItemDto(item);
+                    //
+                    res.add(item);
+                }
+                return res;
+            }
+        }.process(req);
     }
 }

@@ -41,12 +41,12 @@ class DecimalCell<T> extends com.aireno.vapas.gui.controls.EditingCell<T, BigDec
     protected BigDecimal getValue(String s) throws ParseException {
         if (StringUtils.isEmpty(s))
             return null;
-        return ANumberUtils.StringToDecimal(s);
+        return ANumberUtils.stringToDecimal(s);
     }
 
     @Override
     protected void setFieldValue(BigDecimal item) {
-        field.setText(ANumberUtils.DecimalToString(item));
+        field.setText(ANumberUtils.decimalToString(item));
     }
 
     @Override

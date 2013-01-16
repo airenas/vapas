@@ -22,19 +22,27 @@ public class ANumberUtils {
         return item1.compareTo(item2) == 0;
     }
 
-    public static String DecimalToString(BigDecimal item1) {
+    public static boolean greater(double a1, double a2) {
+        return a1 > a2 + 0.0000001;
+    }
+
+    public static boolean lessOrEqual(double a1, double a2) {
+        return  a1 <= a2 + 0.0000001;
+    }
+
+    public static String decimalToString(BigDecimal item1) {
         if (item1 == null)
             return null;
         DecimalFormat df = new DecimalFormat("0.00");
         return df.format(item1);
     }
 
-    public static String DecimalToString(double item1) {
+    public static String decimalToString(double item1) {
         DecimalFormat df = new DecimalFormat("0.00");
         return df.format(item1);
     }
 
-    public static BigDecimal StringToDecimal(String item1) throws ParseException {
+    public static BigDecimal stringToDecimal(String item1) throws ParseException {
         if (StringUtils.isEmpty(item1)) {
             return null;
         }
@@ -43,10 +51,17 @@ public class ANumberUtils {
         return new BigDecimal(number.doubleValue());
     }
 
-    public static double DefaultValue(BigDecimal kiekis) {
+    public static double defaultValue(BigDecimal kiekis) {
         if (kiekis == null) {
             return 0;
         }
         return kiekis.doubleValue();
+    }
+
+    public static Long defaultValue(Long kiekis) {
+        if (kiekis == null) {
+            return new Long(0);
+        }
+        return kiekis;
     }
 }

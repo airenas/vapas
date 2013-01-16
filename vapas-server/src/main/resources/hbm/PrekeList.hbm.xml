@@ -16,6 +16,8 @@
 
         <property name="pavadinimas" type="string" length="100" not-null="true" unique="true"/>
         <property name="matVienetas" type="string" length="100" not-null="true" unique="true"/>
+        <property name="islaukaPienui" type="long" not-null="false"/>
+        <property name="islaukaMesai" type="long" not-null="false"/>
 
     </class>
 

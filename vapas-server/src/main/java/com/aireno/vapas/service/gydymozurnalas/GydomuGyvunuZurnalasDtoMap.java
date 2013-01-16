@@ -1,6 +1,7 @@
 package com.aireno.vapas.service.gydymozurnalas;
 
 import com.aireno.dto.*;
+import com.aireno.utils.ADateUtils;
 import com.aireno.vapas.service.persistance.*;
 
 /**
@@ -19,6 +20,8 @@ public class GydomuGyvunuZurnalasDtoMap {
         dto.setLaikytojas(item.getLaikytojas());
         dto.setDiagnoze(item.getDiagnoze());
         dto.setRegistracijosData(item.getRegistracijosData());
+        dto.setIslaukaMesai(item.getIslaukaMesai());
+        dto.setIslaukaPienui(item.getIslaukaPienui());
         return dto;
     }
 
@@ -27,6 +30,8 @@ public class GydomuGyvunuZurnalasDtoMap {
         item.setDiagnoze(dto.getDiagnoze());
         item.setRegistracijosData(dto.getRegistracijosData());
         item.setImoneId(dto.getImoneId());
+        item.setIslaukaMesai(dto.getIslaukaMesai());
+        item.setIslaukaPienui(dto.getIslaukaPienui());
     }
 
     public GydomuGyvunuZurnalasListDto toListDto(GydomuGyvunuZurnalasList item) {
@@ -37,7 +42,9 @@ public class GydomuGyvunuZurnalasDtoMap {
         dto.setGyvunuSarasas(item.getGyvunuSarasas());
         dto.setImone(item.getImone());
         dto.setLaikytojas(item.getLaikytojas());
-        dto.setRegistracijosData(item.getRegistracijosData());
+        dto.setRegistracijosData(ADateUtils.dateToString(item.getRegistracijosData()));
+        dto.setIslaukaMesai(ADateUtils.dateToString(item.getIslaukaMesai()));
+        dto.setIslaukaPienui(ADateUtils.dateToString(item.getIslaukaPienui()));
         return dto;
     }
 

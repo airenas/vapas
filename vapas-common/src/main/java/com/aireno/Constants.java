@@ -13,4 +13,5 @@ public class Constants {
     public static final String LOOKUP_IMONE = "imone";
     public static final String LOOKUP_PREKE = "preke";
     public static final String LOOKUP_GYVUNO_RUSIS = "gyvunoRusis";
+    public static final String LOOKUP_MATAVIMO_VIENETAI = "matavimoVienetai";
 }

@@ -24,6 +24,24 @@ public class GydomuGyvunuZurnalasDto extends DtoBase {
     private String gydymas;
     private List<ZurnaloVaistasDto> vaistai;
     private List<ZurnaloGyvunasDto> gyvunai;
+    private Date islaukaPienui;
+    private Date islaukaMesai;
+
+    public Date getIslaukaPienui() {
+        return islaukaPienui;
+    }
+
+    public void setIslaukaPienui(Date islaukaPienui) {
+        this.islaukaPienui = islaukaPienui;
+    }
+
+    public Date getIslaukaMesai() {
+        return islaukaMesai;
+    }
+
+    public void setIslaukaMesai(Date islaukaMesai) {
+        this.islaukaMesai = islaukaMesai;
+    }
 
     public List<ZurnaloVaistasDto> getVaistai() {
         if (vaistai == null) {

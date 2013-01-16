@@ -15,9 +15,28 @@ public class GydomuGyvunuZurnalasListDto extends DtoBase {
     private long eilesNumeris;
     private String imone;
     private String laikytojas;
-    private Date registracijosData;
+    private String registracijosData;
     private String gyvunuSarasas;
     private String vaistai;
+
+    private String islaukaPienui;
+    private String islaukaMesai;
+
+    public String getIslaukaPienui() {
+        return islaukaPienui;
+    }
+
+    public void setIslaukaPienui(String islaukaPienui) {
+        this.islaukaPienui = islaukaPienui;
+    }
+
+    public String getIslaukaMesai() {
+        return islaukaMesai;
+    }
+
+    public void setIslaukaMesai(String islaukaMesai) {
+        this.islaukaMesai = islaukaMesai;
+    }
 
     public long getEilesNumeris() {
         return eilesNumeris;
@@ -43,11 +62,11 @@ public class GydomuGyvunuZurnalasListDto extends DtoBase {
         this.laikytojas = laikytojas;
     }
 
-    public Date getRegistracijosData() {
+    public String getRegistracijosData() {
         return registracijosData;
     }
 
-    public void setRegistracijosData(Date registracijosData) {
+    public void setRegistracijosData(String registracijosData) {
         this.registracijosData = registracijosData;
     }
 

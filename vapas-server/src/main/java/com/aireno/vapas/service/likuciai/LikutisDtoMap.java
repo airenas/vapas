@@ -1,6 +1,8 @@
 package com.aireno.vapas.service.likuciai;
 
 import com.aireno.dto.LikutisListDto;
+import com.aireno.utils.ADateUtils;
+import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.persistance.LikutisList;
 
 /**
@@ -15,12 +17,11 @@ public class LikutisDtoMap {
     public LikutisListDto toListDto(LikutisList item) {
         LikutisListDto dto = new LikutisListDto();
         dto.setId(item.getId());
-
-        dto.setPajamuota(item.getPajamuota());
+        dto.setPajamuota(ANumberUtils.decimalToString(item.getPajamuota()));
         dto.setPreke(item.getPreke());
         dto.setImone(item.getImone());
-        dto.setData(item.getData());
-        dto.setKiekis(item.getKiekis());
+        dto.setData(ADateUtils.dateToString(item.getData()));
+        dto.setKiekis(ANumberUtils.decimalToString(item.getKiekis()));
         dto.setMatavimoVienetas(item.getMatavimoVienetas());
         dto.setNurasyta(item.getNurasyta());
         dto.setSerija(item.getSerija());

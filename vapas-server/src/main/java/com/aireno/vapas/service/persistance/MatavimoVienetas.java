@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 
-public class MatavimoVienetas extends EntityBase implements Serializable
+public class MatavimoVienetas extends EntityBase implements Serializable, LookupEntityDto
 {
     public String getKodas() {
         return kodas;

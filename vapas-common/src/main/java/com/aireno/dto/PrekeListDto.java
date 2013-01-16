@@ -11,6 +11,25 @@ import com.aireno.base.DtoBase;
  */
 public class PrekeListDto extends DtoBase {
 
+    private Long islaukaPienui;
+    private Long islaukaMesai;
+
+    public Long getIslaukaPienui() {
+        return islaukaPienui;
+    }
+
+    public void setIslaukaPienui(Long islaukaPienui) {
+        this.islaukaPienui = islaukaPienui;
+    }
+
+    public Long getIslaukaMesai() {
+        return islaukaMesai;
+    }
+
+    public void setIslaukaMesai(Long islaukaMesai) {
+        this.islaukaMesai = islaukaMesai;
+    }
+
     public String getPavadinimas() {
         return pavadinimas;
     }

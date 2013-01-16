@@ -4,6 +4,7 @@ import com.aireno.base.LookupDto;
 import com.aireno.dto.*;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
+import com.aireno.vapas.service.ataskaitos.AtaskaitaServiceImpl;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
@@ -92,6 +93,37 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 return res;
             }
         }.process(keywords);
+    }
+
+    @Override
+    public IslaukaResponse gautiIslauka(List<ZurnaloVaistasDto> request) throws Exception {
+        return new ProcessorBase<List<ZurnaloVaistasDto>, IslaukaResponse>() {
+            @Override
+            protected IslaukaResponse processInt(List<ZurnaloVaistasDto> request) throws Exception {
+                Long pienui = null;
+                Long mesai = null;
+                if (request.size() == 0) {
+                    return new IslaukaResponse(null, null);
+                }
+                List<Long> array = new ArrayList<Long>(request.size());
+                for (int i = 0; i < request.size(); i++) {
+                    array.add(request.get(i).getPrekeId());
+                }
+
+                List<Preke> result = getRepo().prepareQuery(Preke.class, "id in (?1)")
+                        .setParameterList("1", array).list();
+
+                for (Preke i : result) {
+                    if (ANumberUtils.defaultValue(i.getIslaukaPienui()) > ANumberUtils.defaultValue(pienui)) {
+                        pienui = i.getIslaukaPienui();
+                    }
+                    if (ANumberUtils.defaultValue(i.getIslaukaMesai()) > ANumberUtils.defaultValue(mesai)) {
+                        mesai = i.getIslaukaMesai();
+                    }
+                }
+                return new IslaukaResponse(mesai, pienui);
+            }
+        }.process(request);
     }
 
     GydomuGyvunuZurnalasDtoMap getMapper() {
@@ -208,6 +240,13 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                     issaugotiPanaudojima(item, itemP, getRepo());
                 }
 
+                // updatinam pagalbinius laukus
+                item.setGydymas(AtaskaitaServiceImpl.gautiGydymoStr(vaistai, getRepo()));
+                item.setGyvunuSarasas(AtaskaitaServiceImpl.gautiGyvunasStr(gyvunai, getRepo()));
+
+                item.setGydymas(StringUtils.substring(item.getGydymas(), 0, 400));
+                item.setGyvunuSarasas(StringUtils.substring(item.getGyvunuSarasas(), 0, 400));
+                getSession().save(item);
                 GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
                 result.getGyvunai().clear();
                 for (ZurnaloGyvunas itemP : gyvunai) {
@@ -256,16 +295,19 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
         // kuriame likucio irasus
         double kiekis = itemP.getKiekis().doubleValue();
         int lIndex = 0;
-        while (kiekis > 0 && likuciaiPajamuoti.size() > lIndex) {
+        double likutis = 0;
+        while (ANumberUtils.greater(kiekis, 0) && likuciaiPajamuoti.size() > lIndex) {
             LikutisHelper likutisHelper = likuciaiPajamuoti.get(lIndex);
             lIndex++;
-            if (likutisHelper.laisvasKiekis <= 0) {
+            if (ANumberUtils.lessOrEqual(likutisHelper.laisvasKiekis, 0)) {
                 continue;
             }
+            likutis += likutisHelper.laisvasKiekis;
             double pKiekis = likutisHelper.laisvasKiekis;
             if (pKiekis > kiekis) {
                 pKiekis = kiekis;
             }
+
             kiekis -= pKiekis;
             likutisHelper.panaudoti(pKiekis);
             // kuriame irasa
@@ -279,11 +321,12 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
             l.setZurnaloId(item.getId());
             l.setZurnaloVaistoId(itemP.getId());
             l.setMatavimoVienetasId(likutisHelper.likutis.getMatavimoVienetasId());
-            l.setDokumentas(String.format("GZ: %s", item.getEilesNumeris()));
+            //l.setDokumentas(String.format("GZ: %s", item.getEilesNumeris()));
             repo.getSession().save(l);
         }
-        getAssertor().isTrue(kiekis <= 0, "Nėra pajamuota pakankamai prekių. Reikia: " + ANumberUtils.DecimalToString(itemP.getKiekis()) + " trūksta: " +
-                ANumberUtils.DecimalToString(kiekis));
+        getAssertor().isTrue(ANumberUtils.lessOrEqual(kiekis, 0), "Nėra pajamuota pakankamai prekių. Reikia: " +
+                ANumberUtils.decimalToString(itemP.getKiekis()) + " yra: " +
+                ANumberUtils.decimalToString(likutis));
 
     }
 

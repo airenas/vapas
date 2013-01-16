@@ -3,6 +3,7 @@ package com.aireno.vapas.service.saskaitos;
 import com.aireno.dto.SaskaitaDto;
 import com.aireno.dto.SaskaitaListDto;
 import com.aireno.dto.SaskaitosPrekeDto;
+import com.aireno.utils.ADateUtils;
 import com.aireno.vapas.service.persistance.Saskaita;
 import com.aireno.vapas.service.persistance.SaskaitaList;
 import com.aireno.vapas.service.persistance.SaskaitaStatusas;
@@ -65,7 +66,7 @@ public class SaskaitaDtoMap {
         } else {
             dto.setStatusas("Patvirtinta");
         }
-        dto.setData(item.getData());
+        dto.setData(ADateUtils.dateToString(item.getData()));
         dto.setSuma(item.getSumaSuPvm());
         return dto;
     }

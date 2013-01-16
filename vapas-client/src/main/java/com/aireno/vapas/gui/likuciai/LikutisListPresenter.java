@@ -84,9 +84,9 @@ public class LikutisListPresenter extends PresenterBase implements Initializable
            //fields.add(new FieldDefinition<LikutisListDto, String>("Serija", 200, new PropertyValueFactory<LikutisListDto,String>("serija")));
            fields.add(new FieldDefinition<LikutisListDto, String>("Prekė", 200, new PropertyValueFactory<LikutisListDto,String>("preke")));
            fields.add(new FieldDefinition<LikutisListDto, String>("Įmonė", 200, new PropertyValueFactory<LikutisListDto,String>("imone")));
-           fields.add(new FieldDefinition<LikutisListDto, Date>("Data", 100, new PropertyValueFactory<LikutisListDto,Date>("data")));
-           fields.add(new FieldDefinition<LikutisListDto, BigDecimal>("Likutis", 50, new PropertyValueFactory<LikutisListDto,BigDecimal>("kiekis")));
-           fields.add(new FieldDefinition<LikutisListDto, BigDecimal>("Pajamuota", 50, new PropertyValueFactory<LikutisListDto,BigDecimal>("pajamuota")));
+           fields.add(new FieldDefinition<LikutisListDto, String>("Data", 100, new PropertyValueFactory<LikutisListDto,String>("data")));
+           fields.add(new FieldDefinition<LikutisListDto, String>("Likutis", 100, new PropertyValueFactory<LikutisListDto,String>("kiekis")));
+           fields.add(new FieldDefinition<LikutisListDto, String>("Pajamuota", 100, new PropertyValueFactory<LikutisListDto,String>("pajamuota")));
        }
    }
 }
