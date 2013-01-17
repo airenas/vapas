@@ -20,11 +20,11 @@ public class Repository {
     Session session;
 
     public <T> T get(Class<T> tClass, long id) throws Exception {
-        String queryString = "from " + tClass.getSimpleName() + " c where c.id = ?1";
+        /*String queryString = "from " + tClass.getSimpleName() + " c where c.id = ?1";
         List<T> list = getSession().createQuery(queryString)
                 .setParameter("1", id).list();
-        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas '%s' pagal id '%s'", tClass.getSimpleName(), id);
-        return list.get(0);
+        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas '%s' pagal id '%s'", tClass.getSimpleName(), id);*/
+        return get(tClass, "id", id);
     }
 
     public <T> List<T> getList(Class<T> tClass, String filterField, long filterId) throws Exception {
@@ -33,6 +33,14 @@ public class Repository {
         List<T> list = getSession().createQuery(queryString)
                 .setParameter("1", filterId).list();
         return list;
+    }
+
+    public <T> T get(Class<T> tClass, String filterField, Object filter) throws Exception {
+        String queryString = "from " + tClass.getSimpleName() + " where " + filterField + " = ?1";
+        List<T> list = getSession().createQuery(queryString)
+                .setParameter("1", filter).list();
+        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas '%s' pagal '%s' = '%s'", tClass.getSimpleName(), filterField, filter);
+        return list.get(0);
     }
 
     public <T> List<T> getList(Class<T> tClass) throws Exception {

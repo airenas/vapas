@@ -9,14 +9,29 @@ import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.nurasymai.NurasymasDtoMap;
-import com.aireno.vapas.service.persistance.*;
+import com.aireno.vapas.service.persistance.GydomuGyvunuZurnalas;
+import com.aireno.vapas.service.persistance.GyvunoRusis;
+import com.aireno.vapas.service.persistance.Imone;
+import com.aireno.vapas.service.persistance.Likutis;
+import com.aireno.vapas.service.persistance.MatavimoVienetas;
+import com.aireno.vapas.service.persistance.Nustatymas;
+import com.aireno.vapas.service.persistance.Preke;
+import com.aireno.vapas.service.persistance.Saskaita;
+import com.aireno.vapas.service.persistance.SaskaitosPreke;
+import com.aireno.vapas.service.persistance.Tiekejas;
+import com.aireno.vapas.service.persistance.ZurnaloGyvunas;
+import com.aireno.vapas.service.persistance.ZurnaloVaistas;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.docx4j.wml.*;
+import org.docx4j.wml.ContentAccessor;
+import org.docx4j.wml.P;
+import org.docx4j.wml.Tbl;
+import org.docx4j.wml.Text;
+import org.docx4j.wml.Tr;
 import org.hibernate.Session;
 
 import javax.xml.bind.JAXBElement;
@@ -26,10 +41,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -123,10 +146,8 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
 
                     Map<String, String> repl1 = new HashMap<String, String>();
                     repl1.put("{NR}", Integer.toString(i));
-                    Preke preke = gautiIrasa(itemP.prekeId,
-                            Preke.class, getSession());
-                    MatavimoVienetas mvienetas = gautiIrasa(preke.getMatVienetasId(),
-                            MatavimoVienetas.class, getSession());
+                    Preke preke = getRepo().get(Preke.class, itemP.prekeId);
+                    MatavimoVienetas mvienetas = getRepo().get(MatavimoVienetas.class, preke.getMatVienetasId());
                     repl1.put("{PAV}", preke.getPavadinimas());
                     repl1.put("{SERIJA}", itemP.serija);
                     repl1.put("{MATVNT}", mvienetas.getKodas());
@@ -153,6 +174,14 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         return new ProcessorBase<GeneruotiRequest, Boolean>() {
             @Override
             protected Boolean processInt(GeneruotiRequest request) throws Exception {
+                getAssertor().isNotNullStr(request.numeris, "Nenurodytas numeris");
+                getAssertor().isNotNull(request.date, "Nenurodyta data");
+                int numeris;
+                try {
+                    numeris = Integer.parseInt(request.numeris);
+                } catch (Exception e) {
+                    throw getAssertor().newException("Numeris turi būti skaičius. Jis naudojamas žurnalo eilės numeriui pildyti");
+                }
                 Date data = request.date;
                 SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT);
                 SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM");
@@ -179,7 +208,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 List<Map<String, String>> textToAdd = new ArrayList<Map<String, String>>();
 
 
-                int i = 1;
+                int i = numeris;
                 for (GydomuGyvunuZurnalas itemP : list) {
                     List<ZurnaloVaistas> vaistai = getRepo().getList(ZurnaloVaistas.class, "zurnaloId", itemP.getId());
                     List<ZurnaloGyvunas> gyvunai = getRepo().getList(ZurnaloGyvunas.class, "zurnaloId", itemP.getId());
@@ -191,12 +220,13 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                     repl1.put("{DIAGNOZE}", itemP.getDiagnoze());
                     repl1.put("{GYVUNAS}", gautiGyvunasStr(gyvunai, getRepo()));
                     repl1.put("{GYDYMAS}", gautiGydymoStr(vaistai, getRepo()));
+                    repl1.put("{ISLAUKA}", gautiIslaukaStr(itemP, getRepo()));
                     textToAdd.add(repl1);
                     i++;
                 }
 
                 replaceTable(new String[]{"{NR}", "{DATA}", "{LAIKYTOJAS}",
-                        "{DIAGNOZE}", "{GYVUNAS}", "{GYDYMAS}"},
+                        "{DIAGNOZE}", "{GYVUNAS}", "{GYDYMAS}", "{ISLAUKA}"},
                         textToAdd, template);
                 writeDocxToStream(template, failas);
 
@@ -308,7 +338,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         return "";
     }
 
-    public static String gautiGydymoStr(List<ZurnaloVaistas> vaistai, Repository repo) throws Exception {
+    public static String gautiGydymoStr(List<ZurnaloVaistas> vaistai, Repository repo, ) throws Exception {
         String result = "";
         for (ZurnaloVaistas v : vaistai) {
             Preke p = null;
@@ -319,11 +349,50 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
             if (!StringUtils.isEmpty(result)) {
                 result += "\n";
             }
-            result += String.format("%s %s%s %s", p.getPavadinimas(), ANumberUtils.decimalToString(v.getKiekis()),
-                    mv.getKodas(), v.getReceptas());
+            result += String.format("%s\n%s\n%s", p.getPavadinimas()
+                    , formuotiKiekioStr(v.getKiekis(), mv.getKodas(), p, repo)
+                    , v.getReceptas());
         }
         return result;
     }
+
+    private static formuotiKiekioStr(BigDecimal kiekis, String kodas, Repository repo) throws Exception {
+        String template;
+        if (ANumberUtils.equal(kiekis, new BigDecimal(0))) {
+            template = getSetting("KIEKIS=1_STR", repo);
+        } else {
+            template = getSetting("KIEKIS>1_STR", repo);
+        }
+        getAssertor().isNotNullStr(template, "Nėra nustatymuose šablono vaistų kiekio spausdinimui");
+        String result;
+        try {
+            result = String.format(template, ANumberUtils.decimalToStringTryAsInt(kiekis), kodas);
+        } catch (Exception e) {
+            throw getAssertor().newException("Blogas šablonas kiekio spausdinimui '%s'. Klaida: %s", template, e.getLocalizedMessage());
+        }
+        return result;
+    }
+
+    private static String getSetting(String s, Repository repo) throws Exception {
+        Nustatymas nustatymas = repo.get(Nustatymas.class, "kodas", s);
+        return nustatymas.getReiksme();
+    }
+
+    public static String gautiIslaukaStr(GydomuGyvunuZurnalas item, Repository repo) throws Exception {
+        String result = "";
+        if (item.getIslaukaMesai() != null) {
+            result += "m." + ADateUtils.dateToString(item.getIslaukaMesai());
+        }
+        if (!StringUtils.isEmpty(result)) {
+            result += "\n";
+        }
+        if (item.getIslaukaPienui() != null) {
+            result += "m." + ADateUtils.dateToString(item.getIslaukaPienui());
+        }
+
+        return result;
+    }
+
 
     public static String gautiGyvunasStr(List<ZurnaloGyvunas> gyvunai, Repository repo) throws Exception {
         String result = "";
@@ -374,7 +443,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         return item;
     }
 
-    public Boolean generuotiAtaskaita(long id) throws Exception {
+    /* public Boolean generuotiAtaskaita(long id) throws Exception {
         return new ProcessorBase<Long, Boolean>() {
             @Override
             protected Boolean processInt(Long id) throws Exception {
@@ -435,16 +504,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 return true;
             }
         }.process(id);
-    }
-
-    private <T> T gautiIrasa(long id, Class<T> tClass, Session session) throws Exception {
-        String queryString = "from " + tClass.getSimpleName() + " c where c.id = ?1";
-        List<T> list = session.createQuery(queryString)
-                .setParameter("1", id).list();
-        getAssertor().isTrue(list.size() == 1, "Nerastas įrašas");
-        T item = list.get(0);
-        return item;
-    }
+    }*/
 
     private WordprocessingMLPackage getTemplate(String name) throws Docx4JException, FileNotFoundException {
         WordprocessingMLPackage template = WordprocessingMLPackage.load(new FileInputStream(new File(name)));
