@@ -79,6 +79,25 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 getAssertor().isTrue(request.imoneId > 0, "Nenurodyta įmonė");
                 getAssertor().isNotNullStr(request.numeris, "Nenurodytas numeris");
                 getAssertor().isNotNull(request.date, "Nenurodyta data");
+
+                // randame menesio zurnalo irasus
+               /* String queryString = "from GydomuGyvunuZurnalas c where c.imoneId = ?1 " +
+                        "and registracijosData >= ?2 and registracijosData < ?3";
+                Date from = DateUtils.truncate(request.date, Calendar.MONTH);
+                Date to = DateUtils.addMonths(from, 1);
+                List<GydomuGyvunuZurnalas> list = getSession().createQuery(queryString)
+                        .setParameter("1", request.imoneId)
+                        .setParameter("2", from)
+                        .setParameter("3", to).list();
+                // randame nenurasytus gydymo zurnalo irasus
+                List<Long> array = new ArrayList<Long>(list.size());
+                for (int i = 0; i < list.size(); i++) {
+                    array.add(list.get(i).getId());
+                }
+                // randame nenurasytus vaistus
+                List<ZurnaloVaistas> vaistai = getRepo().prepareQuery(ZurnaloVaistas.class, "zurnaloId in (?1)")
+                        .setParameterList("1", array).list();*/
+
                 Date data = request.date;
                 String imone = gautiImone(request.imoneId, getSession()).getPavadinimas();
                 String numeris = request.numeris;
@@ -265,7 +284,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                     MatavimoVienetas mvienetas = getRepo().get(MatavimoVienetas.class, preke.getMatVienetasId());
                     List<Likutis> likuciai = getRepo().prepareQuery(Likutis.class, "prekeId = ?1 and imoneId =?2")
                             .setParameter("1", pId).setParameter("2", request.imoneId).list();
-                    Collections.sort(likuciai, new Comparator<Likutis>() {
+                    /*Collections.sort(likuciai, new Comparator<Likutis>() {
                         @Override
                         public int compare(Likutis o1, Likutis o2) {
                             int i = ADateUtils.trimTime(o1.getData()).compareTo(ADateUtils.trimTime(o2.getData()));
@@ -275,43 +294,79 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                             return ANumberUtils.defaultValue(o1.getPirminisId())
                                     .compareTo(ANumberUtils.defaultValue(o2.getPirminisId()));
                         }
+                    });*/
+
+                    List<ReportL> reportLList = new ArrayList<>();
+                    for (Likutis itemP : likuciai) {
+                        if (!itemP.getData().before(to)) {
+                            continue;
+                        }
+                        getAssertor().isTrue(itemP.isArSaskaita() || ANumberUtils.defaultValue(itemP.getNurasymoId()) > 0,
+                                "Pirmiausiai sugeneruokite nurašymą, likučio prekė dar neįdėta į nurašymą");
+                        ReportL item = raskPreke(reportLList, itemP, getPrekesSerija(likuciai, itemP, getRepo()),
+                                ANumberUtils.defaultValue(itemP.getNurasymoId()));
+
+                    }
+                    // pildom duomenis
+                    for (ReportL item : reportLList) {
+                        if (item.nurasymoId > 0)
+                        {
+                            Nurasymas nurasymas = getRepo().get(Nurasymas.class, item.nurasymoId);
+                            item.data = nurasymas.getData();
+                        }
+                        else
+                        {
+                            item.data = item.itemL.getData();
+                        }
+                    }
+                    // rusiuojame
+                    Collections.sort(reportLList, new Comparator<ReportL>() {
+                        @Override
+                        public int compare(ReportL o1, ReportL o2) {
+                            int i = ADateUtils.trimTime(o1.data).compareTo(ADateUtils.trimTime(o2.data));
+                            if (i != 0) {
+                                return i;
+                            }
+                            return ANumberUtils.defaultValue(o2.nurasymoId)
+                                    .compareTo(ANumberUtils.defaultValue(o1.nurasymoId));
+                        }
                     });
+
+                    // ruosiame dokumenta
+
                     replacePlaceholder(template, preke.getPavadinimas(), "{VAISTAS}");
                     replacePlaceholder(template, mvienetas.getKodas(), "{MVNT}");
 
                     List<Map<String, String>> textToAdd = new ArrayList<Map<String, String>>();
                     double kiekis = 0;
-                    for (Likutis itemP : likuciai) {
+                    for (ReportL item : reportLList) {
 
                         Map<String, String> repl1 = new HashMap<String, String>();
                         Saskaita saskaita = null;
                         SaskaitosPreke sPreke = null;
-                        if (itemP.isArSaskaita()) {
-                            kiekis += itemP.getKiekis().doubleValue();
-                            saskaita = getRepo().get(Saskaita.class, itemP.getSaskaitosId());
+                        if (item.nurasymoId == 0) {
+                            kiekis += item.kiekis;
+                            saskaita = getRepo().get(Saskaita.class, item.itemL.getSaskaitosId());
                             String tiekejasStr = "";
                             if (ANumberUtils.defaultValue(saskaita.getTiekejasId()) > 0) {
                                 Tiekejas tiekejas = getRepo().get(Tiekejas.class, saskaita.getTiekejasId());
                                 tiekejasStr = tiekejas.getPavadinimas();
                             }
-                            sPreke = getRepo().get(SaskaitosPreke.class, itemP.getSaskaitosPrekesId());
-                            repl1.put("{DATA}", ADateUtils.dateToString(itemP.getData()));
+                            sPreke = getRepo().get(SaskaitosPreke.class, item.itemL.getSaskaitosPrekesId());
+                            repl1.put("{DATA}", ADateUtils.dateToString(item.data));
                             repl1.put("{DOKNR}", saskaita.getNumeris() + " " + tiekejasStr);
                             repl1.put("{SERIJA}", sPreke.getSerija());
                             repl1.put("{TINKAIKI}", ADateUtils.dateToString(sPreke.getGaliojaIki()));
                             repl1.put("{SUNAUDOTA}", "");
                             repl1.put("{LIKUTIS}", ANumberUtils.decimalToString(kiekis));
-                            repl1.put("{KIEKIS}", ANumberUtils.decimalToString(itemP.getKiekis()));
+                            repl1.put("{KIEKIS}", ANumberUtils.decimalToString(item.kiekis));
                         } else {
-                            kiekis -= (-itemP.getKiekis().doubleValue());
-                            getAssertor().isTrue(ANumberUtils.defaultValue(itemP.getNurasymoId()) > 0,
-                                    "Pirmiausiai sugeneruokite nurašymą, likučio prekė dar neįdėta į nurašymą");
-                            Nurasymas nurasymas = getRepo().get(Nurasymas.class, itemP.getNurasymoId());
-                            repl1.put("{DATA}", ADateUtils.dateToString(nurasymas.getData()));
-                            repl1.put("{DOKNR}", itemP.getDokumentas());
-                            repl1.put("{SERIJA}", getPrekesSerija(likuciai, itemP, getRepo()));
+                            kiekis -= (-item.kiekis);
+                            repl1.put("{DATA}", ADateUtils.dateToString(item.data));
+                            repl1.put("{DOKNR}", item.itemL.getDokumentas());
+                            repl1.put("{SERIJA}", item.serija);
                             repl1.put("{TINKAIKI}", "");
-                            repl1.put("{SUNAUDOTA}", ANumberUtils.decimalToString(-itemP.getKiekis().doubleValue()));
+                            repl1.put("{SUNAUDOTA}", ANumberUtils.decimalToString(-item.kiekis));
                             repl1.put("{LIKUTIS}", ANumberUtils.decimalToString(kiekis));
                             repl1.put("{KIEKIS}", "");
                         }
@@ -330,6 +385,37 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 return true;
             }
         }.process(request);
+    }
+
+    private ReportL raskPreke(List<ReportL> result, Likutis itemP, String serija, long nurasymoId) {
+        if (!itemP.isArSaskaita()) {
+            for (ReportL n : result) {
+                if (n.prekeId == itemP.getPrekeId() && StringUtils.equals(n.serija, serija)
+                        && n.nurasymoId == nurasymoId) {
+                    n.kiekis += itemP.getKiekis().doubleValue();
+                    return n;
+                }
+            }
+        }
+        ReportL n = new ReportL();
+        n.prekeId = itemP.getPrekeId();
+        n.serija = serija;
+        n.nurasymoId = nurasymoId;
+        n.kiekis = itemP.getKiekis().doubleValue();
+        n.itemL = itemP;
+        result.add(n);
+        return n;
+    }
+
+    private class ReportL {
+        public Date data;
+        public String serija;
+        public long prekeId;
+        public long nurasymoId;
+        Likutis itemL;
+        public String prekePavadinimas;
+        public String matavimoVienetas;
+        public double kiekis;
     }
 
     private String getPrekesSerija(List<Likutis> likuciai, Likutis itemP, Repository repo) throws Exception {

@@ -31,7 +31,6 @@ public abstract class EntityPresenterBase<T extends DtoBase> extends PresenterBa
         } catch (Exception e) {
             this.setText("Klaida: " + e.getLocalizedMessage());
         }
-
     }
 
     @Override

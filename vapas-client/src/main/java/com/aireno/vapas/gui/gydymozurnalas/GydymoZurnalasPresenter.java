@@ -23,11 +23,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import jfxtras.labs.dialogs.DialogFX;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
@@ -66,6 +68,8 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
     @FXML
     private Button bSkaiciuoti;
 
+    private boolean arReikiaPerskaiciuoti;
+
     ObservableList<ZurnaloVaistasGui> prekesList;
 
     ObservableList<ZurnaloGyvunasGui> gyvunaiList;
@@ -93,6 +97,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                             if (initializing) {
                                 return;
                             }
+                            arReikiaPerskaiciuoti = true;
                             update();
                         }
                     });
@@ -104,6 +109,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                             if (initializing) {
                                 return;
                             }
+                            arReikiaPerskaiciuoti = false;
                             update();
                         }
                     });
@@ -115,6 +121,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                             if (initializing) {
                                 return;
                             }
+                            arReikiaPerskaiciuoti = false;
                             update();
                         }
                     });
@@ -204,6 +211,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
             gyvunai.setEditable(true);
             defG.InitTable(gyvunai);
             gyvunai.setItems(gyvunaiList);
+            arReikiaPerskaiciuoti = false;
         } finally {
             initializing = false;
         }
@@ -251,6 +259,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
             for (ZurnaloGyvunasDto i : item.getGyvunai()) {
                 gyvunaiList.add(new ZurnaloGyvunasGui(i));
             }
+            arReikiaPerskaiciuoti = false;
             this.setText("Išsaugota");
         } finally {
             initializing = false;
@@ -272,6 +281,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                             if (param.item.getPrekeId() != param.value) {
                                 param.item.setPrekeId(param.value);
                                 param.item.setReceptas(null);
+                                arReikiaPerskaiciuoti = true;
                                 // param.item.setMatavimoVienetasId(getLookupService().gautiPrekesMatavimoVieneta(param.value));
                                 update();
                             }
@@ -475,6 +485,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
             GydomuGyvunuZurnalasService.IslaukaResponse response = getService().gautiIslauka(lDto);
             islaukaMesai.setValue(gautiIslauka(response.mesai));
             islaukaPienui.setValue(gautiIslauka(response.pienui));
+            arReikiaPerskaiciuoti = false;
         } catch (Exception e) {
             this.setError("Klaida skaičiuojant: ", e);
         }
@@ -485,5 +496,32 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
             return null;
         }
         return DateUtils.addDays(data.getValue(), mesai.intValue());
+    }
+
+    @Override
+    public void save() throws Exception {
+        if (arReikiaPerskaiciuoti && perskaiciuotiYes(getTitle())) {
+            skaiciuoti();
+        }
+        saugotiInt();
+    }
+
+    public void saugoti(ActionEvent event) {
+        try {
+            if (arReikiaPerskaiciuoti && perskaiciuotiYes(getTitle())) {
+                skaiciuoti();
+            }
+            super.saugoti(event);
+        } catch (Exception e) {
+            this.setText("Klaida: " + e.getLocalizedMessage());
+        }
+    }
+
+    private boolean perskaiciuotiYes(String title) {
+        DialogFX dialog = new DialogFX(DialogFX.Type.QUESTION);
+        dialog.setTitleText(title);
+        dialog.setMessage("Buvo pakeitimų prekėse ir datoje ar perskaičiuoti išlaukos laukus?");
+        int result = dialog.showDialog();
+        return result == 0;
     }
 }
