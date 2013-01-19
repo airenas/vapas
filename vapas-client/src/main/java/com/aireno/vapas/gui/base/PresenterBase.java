@@ -5,12 +5,14 @@ import com.aireno.base.ApplicationContextProvider;
 import com.aireno.base.Processor;
 import com.aireno.vapas.gui.main.MainPresenter;
 import com.aireno.vapas.service.LookupService;
-import com.aireno.vapas.service.SaskaitaService;
 import jfxtras.labs.dialogs.DialogFX;
 
 public abstract class PresenterBase implements GuiPresenter {
     GuiPresenter from;
     protected long id;
+    protected boolean initializing = false;
+
+    boolean initDone = false;
 
     public LookupService getLookupService() {
         return ApplicationContextProvider.getProvider().getBean(LookupService.class);
@@ -77,7 +79,39 @@ public abstract class PresenterBase implements GuiPresenter {
     public void save() throws Exception {
     }
 
-    public void setError(String msg, Exception e) {
+    public boolean init() throws Exception {
+        initializing = true;
+        try {
+            try {
+                if (!initDone) {
+                    initOnce();
+                    initDone = true;
+                }
+                initInternal();
+
+            } catch (Exception e) {
+                this.setText(e.getLocalizedMessage());
+                return false;
+            }
+
+
+        } finally {
+            initializing = false;
+        }
+        return true;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    //protected abstract void initInternal() throws Exception;
+
+    protected void initOnce() throws Exception {
+
+    }
+
+    protected void initInternal() throws Exception {
+
+    }
+
+    public void setError(String msg, Throwable e) {
         DialogFX dialog = new DialogFX(DialogFX.Type.ERROR);
         dialog.setTitleText("Klaida");
         dialog.setMessage(msg + e.getLocalizedMessage());

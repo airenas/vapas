@@ -28,4 +28,5 @@ public interface GuiPresenter {
     boolean needSave();
 
     void save() throws Exception;
+
 }

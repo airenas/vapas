@@ -41,6 +41,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaService {
+
     NurasymasDtoMap getMapper() {
         return new NurasymasDtoMap();
     }
@@ -260,6 +261,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
             @Override
             protected Boolean processInt(GeneruotiRequest request) throws Exception {
                 getAssertor().isTrue(request.imoneId > 0, "Nenurodyta įmonė");
+                getAssertor().isNotNull(request.date, "Nenurodyta data");
                 Date data = request.date;
                 String imone = gautiImone(request.imoneId, getSession()).getPavadinimas();
                 SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM");

@@ -6,14 +6,19 @@ import com.aireno.vapas.gui.base.GuiException;
 import com.aireno.vapas.gui.base.GuiPresenter;
 import com.aireno.vapas.gui.base.PresenterBase;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import jfxtras.labs.dialogs.DialogFX;
 import org.springframework.beans.BeansException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPresenter extends PresenterBase {
     @FXML
@@ -120,6 +125,18 @@ public class MainPresenter extends PresenterBase {
         return result == 0;
     }
 
+    private boolean leaveWithoutSave(String title) {
+        DialogFX dialog = new DialogFX(DialogFX.Type.QUESTION);
+        dialog.setTitleText(title);
+        dialog.setMessage("Buvo pakeitimų. Ar tikrai išeiti neišsaugojus?");
+        List<String> buttonLabels = new ArrayList<>(2);
+        buttonLabels.add("Atšaukti");
+        buttonLabels.add("Išeiti neišsaugojus");
+        dialog.addButtons(buttonLabels, 0, 0);
+        int result = dialog.showDialog();
+        return result == 1;
+    }
+
     public void showMain(ActionEvent event) {
         show(Constants.MAIN_PRESENTER);
     }
@@ -131,6 +148,20 @@ public class MainPresenter extends PresenterBase {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        stage.setOnCloseRequest(
+                new EventHandler<WindowEvent>() {
+                    public void handle(final WindowEvent event) {
+                        if (currentPresenter != null) {
+                            if (currentPresenter.needSave()) {
+                                if (leaveWithoutSave(currentPresenter.getTitle())) {
+                                    //stage.close();
+                                } else {
+                                    event.consume();
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
     public void setTitle(String info) {

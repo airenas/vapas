@@ -83,140 +83,131 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
     }
 
     @Override
-    public boolean init() throws Exception {
-        initializing = true;
-
-        try {
-            prekesList = FXCollections.observableArrayList();
-            gyvunaiList = FXCollections.observableArrayList();
-            data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
-            data.getInputComponent().selectedDateProperty()
-                    .addListener(new ChangeListener<Date>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
-                            if (initializing) {
-                                return;
-                            }
-                            arReikiaPerskaiciuoti = true;
-                            update();
+    protected void initOnce() throws Exception {
+        prekesList = FXCollections.observableArrayList();
+        gyvunaiList = FXCollections.observableArrayList();
+        data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        data.getInputComponent().selectedDateProperty()
+                .addListener(new ChangeListener<Date>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+                        if (initializing) {
+                            return;
                         }
-                    });
-            islaukaMesai.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
-            islaukaMesai.getInputComponent().selectedDateProperty()
-                    .addListener(new ChangeListener<Date>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
-                            if (initializing) {
-                                return;
-                            }
-                            arReikiaPerskaiciuoti = false;
-                            update();
+                        arReikiaPerskaiciuoti = true;
+                        update();
+                    }
+                });
+        islaukaMesai.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        islaukaMesai.getInputComponent().selectedDateProperty()
+                .addListener(new ChangeListener<Date>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+                        if (initializing) {
+                            return;
                         }
-                    });
-            islaukaPienui.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
-            islaukaPienui.getInputComponent().selectedDateProperty()
-                    .addListener(new ChangeListener<Date>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
-                            if (initializing) {
-                                return;
-                            }
-                            arReikiaPerskaiciuoti = false;
-                            update();
+                        arReikiaPerskaiciuoti = false;
+                        update();
+                    }
+                });
+        islaukaPienui.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        islaukaPienui.getInputComponent().selectedDateProperty()
+                .addListener(new ChangeListener<Date>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+                        if (initializing) {
+                            return;
                         }
-                    });
-            imone.setEditable(true);
-            imone.setData(getLookupService().
-                    sarasas(new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
-            imone.valueProperty().addListener(new ChangeListener<LookupDto>() {
-                @Override
-                public void changed(ObservableValue<? extends LookupDto> observableValue, LookupDto lookupDto, LookupDto lookupDto2) {
-                    if (initializing) {
-                        return;
+                        arReikiaPerskaiciuoti = false;
+                        update();
                     }
-                    update();
+                });
+        imone.setEditable(true);
+        imone.setData(getLookupService().
+                sarasas(new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
+        imone.valueProperty().addListener(new ChangeListener<LookupDto>() {
+            @Override
+            public void changed(ObservableValue<? extends LookupDto> observableValue, LookupDto lookupDto, LookupDto lookupDto2) {
+                if (initializing) {
+                    return;
+                }
+                update();
 
-                }
-            });
-            laikytojas.setEditable(true);
-
-            laikytojas.setProvider(new StringNewLookup.DataProvider() {
-                @Override
-                public List<String> getDataList(String sId) throws Exception {
-                    return getService().sarasasLaikytoju(null);
-                }
-            });
-            laikytojas.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observableValue,
-                                    String lookupDto, String lookupDto2) {
-                    if (initializing) {
-                        return;
-                    }
-                    update();
-
-                }
-            });
-
-            diagnoze.setProvider(new StringNewLookup.DataProvider() {
-                @Override
-                public List<String> getDataList(String sId) throws Exception {
-                    return getService().sarasasDiagnozes(null);
-                }
-            });
-            diagnoze.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observableValue,
-                                    String lookupDto, String lookupDto2) {
-                    if (initializing) {
-                        return;
-                    }
-                    update();
-
-                }
-            });
-            if (id > 0) {
-                try {
-                    item = getService().gauti(id);
-                    this.setText("Gauta");
-                } catch (Exception e) {
-                    this.setText(e.getLocalizedMessage());
-                    return false;
-                }
-            } else {
-                item = new GydomuGyvunuZurnalasDto();
-                item.setRegistracijosData(new Date());
             }
-            data.setValue(item.getRegistracijosData());
-            islaukaMesai.setValue(item.getIslaukaMesai());
-            islaukaPienui.setValue(item.getIslaukaPienui());
-            imone.setValueId(item.getImoneId());
-            diagnoze.setStringValue(item.getDiagnoze());
-            laikytojas.setStringValue(item.getLaikytojas());
-            prekesList.clear();
-            for (ZurnaloVaistasDto i : item.getVaistai()) {
-                prekesList.add(new ZurnaloVaistasGui(i));
-            }
-            gyvunaiList.clear();
-            for (ZurnaloGyvunasDto i : item.getGyvunai()) {
-                gyvunaiList.add(new ZurnaloGyvunasGui(i));
-            }
+        });
+        laikytojas.setEditable(true);
 
-            MListDefinition def = new MListDefinition();
-            prekes.setEditable(true);
-            def.InitTable(prekes);
-            prekes.setItems(prekesList);
+        laikytojas.setProvider(new StringNewLookup.DataProvider() {
+            @Override
+            public List<String> getDataList(String sId) throws Exception {
+                return getService().sarasasLaikytoju(null);
+            }
+        });
+        laikytojas.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue,
+                                String lookupDto, String lookupDto2) {
+                if (initializing) {
+                    return;
+                }
+                update();
 
-            MListDefinitionG defG = new MListDefinitionG();
-            gyvunai.setEditable(true);
-            defG.InitTable(gyvunai);
-            gyvunai.setItems(gyvunaiList);
-            arReikiaPerskaiciuoti = false;
-        } finally {
-            initializing = false;
+            }
+        });
+
+        diagnoze.setProvider(new StringNewLookup.DataProvider() {
+            @Override
+            public List<String> getDataList(String sId) throws Exception {
+                return getService().sarasasDiagnozes(null);
+            }
+        });
+        diagnoze.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue,
+                                String lookupDto, String lookupDto2) {
+                if (initializing) {
+                    return;
+                }
+                update();
+
+            }
+        });
+        MListDefinition def = new MListDefinition();
+        prekes.setEditable(true);
+        def.InitTable(prekes);
+
+        MListDefinitionG defG = new MListDefinitionG();
+        gyvunai.setEditable(true);
+        defG.InitTable(gyvunai);
+    }
+
+    @Override
+    protected void initInternal() throws Exception {
+        if (id > 0) {
+            item = getService().gauti(id);
+        } else {
+            item = new GydomuGyvunuZurnalasDto();
+            item.setRegistracijosData(new Date());
+        }
+        data.setValue(item.getRegistracijosData());
+        islaukaMesai.setValue(item.getIslaukaMesai());
+        islaukaPienui.setValue(item.getIslaukaPienui());
+        imone.setValueId(item.getImoneId());
+        diagnoze.setStringValue(item.getDiagnoze());
+        laikytojas.setStringValue(item.getLaikytojas());
+        prekesList.clear();
+        for (ZurnaloVaistasDto i : item.getVaistai()) {
+            prekesList.add(new ZurnaloVaistasGui(i));
+        }
+        gyvunaiList.clear();
+        for (ZurnaloGyvunasDto i : item.getGyvunai()) {
+            gyvunaiList.add(new ZurnaloGyvunasGui(i));
         }
 
-        return true;  //To change body of implemented methods use File | Settings | File Templates.
+        prekes.setItems(prekesList);
+
+        gyvunai.setItems(gyvunaiList);
+        arReikiaPerskaiciuoti = false;
     }
 
     @Override

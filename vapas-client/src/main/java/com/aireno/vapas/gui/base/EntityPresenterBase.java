@@ -9,7 +9,6 @@ import java.util.List;
 
 public abstract class EntityPresenterBase<T extends DtoBase> extends PresenterBase {
     protected T item;
-    protected boolean initializing = false;
 
     protected Long getId() {
         if (item != null) {

@@ -8,13 +8,18 @@ import com.aireno.vapas.gui.controls.FilterLookup;
 import com.aireno.vapas.service.AtaskaitaService;
 import com.aireno.vapas.service.LookupService;
 import com.panemu.tiwulfx.form.DateControl;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.concurrent.Callable;
 
 public class AtaskaitaPresenter extends PresenterBase {
     @FXML
@@ -28,6 +33,17 @@ public class AtaskaitaPresenter extends PresenterBase {
     private TextField numeris;
     @FXML
     private FilterLookup<LookupDto> imone;
+
+    @FXML
+    private Button bZurnalas;
+
+    @FXML
+    private Button bNurasymai;
+
+    @FXML
+    private Button bLikuciai;
+
+    boolean working;
 
     public Node getView() {
         return root;
@@ -53,27 +69,67 @@ public class AtaskaitaPresenter extends PresenterBase {
     }
 
     public void nurasymai(ActionEvent event) {
-        try {
-            this.setText("GENERUOJAMA ....");
-            getService().generuotiNurasymus(new AtaskaitaService.GeneruotiRequest(
-                    data.getValue(), imone.getValueId(), numeris.getText()));
-            this.setText("Sugeneruota");
-        } catch (Exception e) {
-            this.setText("");
-            this.setError("Klaida generuojant: ", e);
+        RunAssync(new Callable() {
+            @Override
+            public Object call() throws Exception {
+                getService().generuotiNurasymus(new AtaskaitaService.GeneruotiRequest(
+                        data.getValue(), imone.getValueId(), numeris.getText()));
+                return true;
+            }
+        });
+    }
+
+    private class RTask extends Task<Boolean> {
+        Callable func;
+
+        @Override
+        protected Boolean call() throws Exception {
+            working = true;
+            try {
+                func.call();
+            } finally {
+                working = false;
+            }
+            return true;
         }
+
+        private RTask(Callable func) {
+            this.func = func;
+            stateProperty().addListener(new ChangeListener<Worker.State>() {
+                public void changed(ObservableValue<? extends Worker.State> source, Worker.State oldState, Worker.State newState) {
+                    if (newState.equals(Worker.State.SUCCEEDED)) {
+                        setText("Paruošta");
+                    } else if (newState.equals(Worker.State.FAILED)) {
+                        setText("");
+                        setError("Klaida ruošiant: ", getException());
+                    }
+                    update();
+                }
+            });
+        }
+
+
     }
 
     public void likuciai(ActionEvent event) {
-        try {
-            this.setText("GENERUOJAMA ....");
-            getService().generuotiLikucius(new AtaskaitaService.GeneruotiRequest(
-                    data.getValue(), imone.getValueId(), numeris.getText()));
-            this.setText("Sugeneruota");
-        } catch (Exception e) {
-            this.setText("");
-            this.setError("Klaida generuojant: ", e);
-        }
+        RunAssync(new Callable() {
+            @Override
+            public Object call() throws Exception {
+                getService().generuotiLikucius(new AtaskaitaService.GeneruotiRequest(
+                        data.getValue(), imone.getValueId(), numeris.getText()));
+                return true;
+            }
+        });
+    }
+
+    private void RunAssync(Callable func)
+    {
+        RTask task = new RTask(func);
+        working = true;
+        update();
+        setText("RUOŠIAMA ....");
+        new Thread(task).start();
+
     }
 
     public void iseiti(ActionEvent event) {
@@ -81,18 +137,25 @@ public class AtaskaitaPresenter extends PresenterBase {
     }
 
     public void zurnalas(ActionEvent event) {
-        try {
-            this.setText("GENERUOJAMA ....");
-            getService().generuotiZurnala(new AtaskaitaService.GeneruotiRequest(
-                    data.getValue(), imone.getValueId(), numeris.getText()));
-            this.setText("Sugeneruota");
-        } catch (Exception e) {
-            this.setText("");
-            this.setError("Klaida generuojant: ", e);
-        }
+        RunAssync(new Callable() {
+            @Override
+            public Object call() throws Exception {
+                getService().generuotiZurnala(new AtaskaitaService.GeneruotiRequest(
+                        data.getValue(), imone.getValueId(), numeris.getText()));
+                return true;
+            }
+        });
     }
 
     public String getTitle() {
-        return "Ataskaitos generavimas";
+        return "Ataskaitos ruošimas";
+    }
+
+    @Override
+    public void updateControls() {
+
+        bNurasymai.setDisable(working);
+        bLikuciai.setDisable(working);
+        bZurnalas.setDisable(working);
     }
 }

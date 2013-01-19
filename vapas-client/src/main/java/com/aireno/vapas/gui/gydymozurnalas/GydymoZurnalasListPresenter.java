@@ -41,7 +41,14 @@ public class GydymoZurnalasListPresenter extends PresenterBase {
     }
 
     @Override
-    public boolean init() throws GuiException {
+    protected void initInternal() throws Exception {
+        data = FXCollections.observableArrayList();
+        resultsList.setItems(data);
+        search(null);
+    }
+
+    @Override
+    protected void initOnce() throws Exception {
         MListDefinition def = new MListDefinition(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -51,10 +58,6 @@ public class GydymoZurnalasListPresenter extends PresenterBase {
             }
         });
         def.InitTable(resultsList);
-        data = FXCollections.observableArrayList();
-        resultsList.setItems(data);
-        search(null);
-        return true;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public String getTitle() {
