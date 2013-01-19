@@ -37,6 +37,13 @@ public class ANumberUtils {
         return df.format(item1);
     }
 
+    public static String decimalToStringAsInt(BigDecimal item1) {
+        if (item1 == null)
+            return null;
+        DecimalFormat df = new DecimalFormat("0");
+        return df.format(item1);
+    }
+
     public static String decimalToString(double item1) {
         DecimalFormat df = new DecimalFormat("0.00");
         return df.format(item1);
@@ -63,5 +70,15 @@ public class ANumberUtils {
             return new Long(0);
         }
         return kiekis;
+    }
+
+    public static String decimalToStringTryAsInt(BigDecimal kiekis) {
+        if (kiekis == null)
+            return null;
+        if (equal(kiekis, new BigDecimal(kiekis.intValue())))
+        {
+            return decimalToStringAsInt(kiekis);
+        }
+        return decimalToString(kiekis);
     }
 }

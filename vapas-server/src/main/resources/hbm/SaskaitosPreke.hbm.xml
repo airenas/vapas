@@ -18,14 +18,14 @@
         <property name="saskaitaId" type="long" not-null="true"/>
         <property name="prekeId" type="long" not-null="true"/>
         <property name="matavimoVienetasId" type="long" not-null="true"/>
-        <property name="kiekis" type="big_decimal" not-null="true"/>
+        <property name="kiekis" type="big_decimal" precision="3" scale="15" not-null="true"/>
         <property name="galiojaIki" type="timestamp" not-null="false"/>
-        <property name="kainaBePvm" type="big_decimal" not-null="false"/>
-        <property name="nuolaidosProc" type="big_decimal" not-null="false"/>
-        <property name="pvm" type="big_decimal" not-null="false"/>
-        <property name="sumaPvm" type="big_decimal" not-null="false"/>
-        <property name="sumaSuPvm" type="big_decimal" not-null="false"/>
-        <property name="sumaBePvm" type="big_decimal" not-null="false"/>
+        <property name="kainaBePvm" type="big_decimal" precision="3" scale="15" not-null="false"/>
+        <property name="nuolaidosProc" type="big_decimal" precision="3" scale="15" not-null="false"/>
+        <property name="pvm" type="big_decimal" precision="3" scale="15" not-null="false"/>
+        <property name="sumaPvm" type="big_decimal" precision="3" scale="15" not-null="false"/>
+        <property name="sumaSuPvm" type="big_decimal" precision="3" scale="15" not-null="false"/>
+        <property name="sumaBePvm" type="big_decimal" precision="3" scale="15" not-null="false"/>
     </class>
 
 </hibernate-mapping>

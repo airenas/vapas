@@ -1,6 +1,7 @@
 package com.aireno.vapas.service.nurasymai;
 
 import com.aireno.dto.*;
+import com.aireno.utils.ADateUtils;
 import com.aireno.vapas.service.persistance.*;
 
 /**
@@ -44,7 +45,7 @@ public class NurasymasDtoMap {
         } else {
             dto.setStatusas("Patvirtinta");
         }
-        dto.setData(item.getData());
+        dto.setData(ADateUtils.dateToString(item.getData()));
         return dto;
     }
 

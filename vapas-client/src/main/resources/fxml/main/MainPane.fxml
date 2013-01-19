@@ -15,10 +15,11 @@
             <children>
                 <Button mnemonicParsing="false" onAction="#showGydymoZurnalas" prefHeight="41.0" prefWidth="275.0"
                         text="Gydymo žurnalas"/>
-<!--                <Button mnemonicParsing="false" onAction="#showNurasymai" prefHeight="41.0" prefWidth="275.0"
-                        text="Nurašymai"/>-->
+
                 <Button mnemonicParsing="false" onAction="#showSaskaitos" prefHeight="41.0" prefWidth="275.0"
                         text="Sąskaitos"/>
+                <Button mnemonicParsing="false" onAction="#showNurasymai" prefHeight="41.0" prefWidth="275.0"
+                        text="Nurašymai"/>
                 <Button mnemonicParsing="false" onAction="#showLikuciai" prefHeight="41.0" prefWidth="275.0"
                         text="Likučiai"/>
                 <Button mnemonicParsing="false" onAction="#showAtaskaitos" prefHeight="41.0" prefWidth="275.0" text="Ataskaitos"/>

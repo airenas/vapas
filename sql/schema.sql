@@ -239,8 +239,56 @@ select n.Id, n.eilesNumeris, n.laikytojas, n.registracijosData, n.gyvunuSarasas,
 	from GydomuGyvunuZurnalas n left join imones i on n.IMONEID = i.id; 
 
 alter table likuciai alter column DOKUMENTAS SET null;
+alter table likuciai add column nurasymoId bigint null;
+alter table likuciai add CONSTRAINT likuciai_nurasymoId FOREIGN KEY (nurasymoId) REFERENCES nurasymai(Id);
+
+--drop table nustatymai
+    create table Nustatymai (
+        Id bigint not null,
+        kodas varchar(100) not null,
+        reiksme varchar(500),
+        primary key (Id),
+        unique (kodas)
+    );
+
+    delete from nustatymai;
+    insert into nustatymai (id, kodas, reiksme) values (1, 'KIEKIS=1_STR', 'D.S. ');
+    insert into nustatymai (id, kodas, reiksme) values (2, 'KIEKIS>1_STR', 'D.t.d. No {kiekis} {mvienetas}{newline}');
+
+ alter table SaskaitosPrekes alter column kiekis numeric(15,3);
+ alter table SaskaitosPrekes alter column kainaBePvm numeric(15,3);
+ alter table SaskaitosPrekes alter column nuolaidosProc numeric(15,3);
+ alter table SaskaitosPrekes alter column pvm numeric(15,3);
+ alter table SaskaitosPrekes alter column sumaPvm numeric(15,3);
+ alter table SaskaitosPrekes alter column sumaSuPvm numeric(15,3);
+ alter table SaskaitosPrekes alter column sumaBePvm numeric(15,3);
+
+drop view vSaskaitos;
+ alter table Saskaitos alter column sumaSuPvm numeric(15,3);
+ alter table Saskaitos alter column sumaBePvm numeric(15,3);
+ alter table Saskaitos alter column sumaPvm numeric(15,3);
  
+create view vSaskaitos as 
+select s.Id, s.arSaskaita, s.numeris, s.SUMASUPVM, s.STATUSAS, s.DATA, i.PAVADINIMAS as imone, t.PAVADINIMAS as tiekejas
+	from saskaitos s 	left join imones i on s.IMONEID = i.id
+					left join TIEKEJAI t on s.TIEKEJASID = t.id;
 
+alter table ZurnaloVaistai alter column kiekis numeric(15,3);
 
+drop view vLikuciai;
+drop view vLikuciaiInt;
+
+ 
+ alter table Likuciai alter column kiekis numeric(15,3);
+
+create view vLikuciaiInt as 
+select l.PREKEID, min(l.MATAVIMOVIENETASID) as MATAVIMOVIENETASID, l.IMONEID, sum(l.KIEKIS) as kiekis, max(l.DATA) as data, min(l.id) as id, sum(Case When l.KIEKIS > 0 Then l.KIEKIS Else 0 End) as pajamuota
+	from likuciai l group by l.prekeid, l.imoneid;
+
+create view vLikuciai as 
+select l.Id, l.kiekis, l.PAJAMUOTA, l.DATA, i.PAVADINIMAS as imone, mv.KODAS as matavimovienetas, p.PAVADINIMAS as preke
+	from vLikuciaiInt l left join imones i on l.IMONEID = i.id
+					left join Prekes p on l.PREKEID = p.id
+					left join MATAVIMOVIENETAS mv on mv.id = l.MATAVIMOVIENETASID;
 
 		

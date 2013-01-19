@@ -108,10 +108,11 @@ public class NurasymasListPresenter extends PresenterBase implements Initializab
                     .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
             fields.add(new FieldDefinition<NurasymasListDto, String>("Įmonė", 200, new PropertyValueFactory<NurasymasListDto, String>("imone"))
                     .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
-            fields.add(new FieldDefinition<NurasymasListDto, Date>("Data", 100, new PropertyValueFactory<NurasymasListDto, Date>("data"))
-                    .addCellFactory(new GenericCellFactory<NurasymasListDto, Date>(onClick)));
-            fields.add(new FieldDefinition<NurasymasListDto, String>("Statusas", 70, new PropertyValueFactory<NurasymasListDto, String>("statusas"))
+            fields.add(new FieldDefinition<NurasymasListDto, String>("Data", 100,
+                    new PropertyValueFactory<NurasymasListDto, String>("data"))
                     .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));
+            /*fields.add(new FieldDefinition<NurasymasListDto, String>("Statusas", 70, new PropertyValueFactory<NurasymasListDto, String>("statusas"))
+                    .addCellFactory(new GenericCellFactory<NurasymasListDto, String>(onClick)));*/
         }
     }
 }

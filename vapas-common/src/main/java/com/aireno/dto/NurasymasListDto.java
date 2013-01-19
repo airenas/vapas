@@ -14,10 +14,10 @@ import java.util.Date;
  */
 public class NurasymasListDto extends DtoBase {
     protected String numeris;
-    protected Date data;
+    protected String data;
     protected String tiekejas;
     protected String imone;
-    protected BigDecimal suma;
+    //protected String suma;
     protected String statusas;
 
     public String getNumeris() {
@@ -26,14 +26,6 @@ public class NurasymasListDto extends DtoBase {
 
     public void setNumeris(String numeris) {
         this.numeris = numeris;
-    }
-
-    public Date getData() {
-        return data;
-    }
-
-    public void setData(Date data) {
-        this.data = data;
     }
 
     public String getTiekejas() {
@@ -52,19 +44,19 @@ public class NurasymasListDto extends DtoBase {
         this.imone = imone;
     }
 
-    public BigDecimal getSuma() {
-        return suma;
-    }
-
-    public void setSuma(BigDecimal suma) {
-        this.suma = suma;
-    }
-
     public String getStatusas() {
         return statusas;
     }
 
     public void setStatusas(String statusas) {
         this.statusas = statusas;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }
