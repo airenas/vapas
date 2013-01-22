@@ -260,7 +260,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
 
     class MListDefinition extends ListDefinition<ZurnaloVaistasGui> {
         MListDefinition() {
-            fields.add(new LookupFieldDefinitionCB<ZurnaloVaistasGui, LookupDto>("Vaistas", 150,
+            fields.add(new LookupFieldDefinitionCB<ZurnaloVaistasGui, LookupDto>("Vaistas", 250,
                     new PropertyValueFactory<ZurnaloVaistasGui, Long>("prekeId"),
                     new EditFieldDefinition.ChangeEvent<ZurnaloVaistasGui, Long>() {
 
@@ -298,7 +298,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                     })
             );
 
-            fields.add(new StringLookupFieldDefinitionCB("Receptas", 550, new PropertyValueFactory<ZurnaloVaistasGui, String>("receptas"),
+            fields.add(new StringLookupFieldDefinitionCB("Receptas", 600, new PropertyValueFactory<ZurnaloVaistasGui, String>("receptas"),
                     new EditFieldDefinition.ChangeEvent<ZurnaloVaistasGui, String>() {
                         @Override
                         public void handle(ChangeEventParam<ZurnaloVaistasGui, String> param) {
@@ -365,7 +365,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                         }
                     }
             ));
-            fields.add(new StringLookupFieldDefinitionCB("Amžius", 70, new PropertyValueFactory<ZurnaloGyvunasGui, String>("amzius"),
+            fields.add(new StringLookupFieldDefinitionCB("Amžius", 100, new PropertyValueFactory<ZurnaloGyvunasGui, String>("amzius"),
                     new EditFieldDefinition.ChangeEvent<ZurnaloGyvunasGui, String>() {
                         @Override
                         public void handle(ChangeEventParam<ZurnaloGyvunasGui, String> param) {
