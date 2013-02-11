@@ -4,7 +4,6 @@ import com.aireno.dto.MatavimoVienetasGautiReq;
 import com.aireno.dto.MatavimoVienetasGautiResp;
 import com.aireno.dto.MatavimoVienetasSaveReq;
 import com.aireno.dto.MatavimoVienetasSaveResp;
-import com.aireno.vapas.service.base.Assertor;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.persistance.MatavimoVienetas;
 

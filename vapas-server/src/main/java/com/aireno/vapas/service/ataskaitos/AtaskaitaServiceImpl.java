@@ -5,10 +5,10 @@ import com.aireno.dto.AtaskaitaListDto;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.AtaskaitaService;
-import com.aireno.vapas.service.base.Assertor;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
+import com.aireno.vapas.service.base.SttsAssertorImpl;
 import com.aireno.vapas.service.nurasymai.NurasymasDtoMap;
 import com.aireno.vapas.service.persistance.*;
 import org.apache.commons.lang.StringUtils;
@@ -454,14 +454,14 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
         } else {
             template = getSetting("KIEKIS>1_STR", repo);
         }
-        new Assertor().isNotNullStr(template, "Nėra nustatymuose šablono vaistų kiekio spausdinimui");
+        new SttsAssertorImpl().isNotNullStr(template, "Nėra nustatymuose šablono vaistų kiekio spausdinimui");
         String result;
         try {
             result = StringUtils.replace(template, "{kiekis}", ANumberUtils.decimalToStringTryAsInt(kiekis));
             result = StringUtils.replace(result, "{mvienetas}", kodas);
             result = StringUtils.replace(result, "{newline}", "\n");
         } catch (Exception e) {
-            throw new Assertor().newException("Blogas šablonas kiekio spausdinimui '%s'. Klaida: %s", template, e.getLocalizedMessage());
+            throw new SttsAssertorImpl().newException("Blogas šablonas kiekio spausdinimui '%s'. Klaida: %s", template, e.getLocalizedMessage());
         }
         return result;
     }

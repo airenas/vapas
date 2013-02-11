@@ -1,12 +1,13 @@
 package com.aireno.vapas.service.base;
 
+import com.aireno.base.ClassBase;
 import org.hibernate.Query;
 import org.hibernate.classic.Session;
 import org.springframework.util.Assert;
 
 import java.util.List;
 
-public class Repository {
+public class Repository extends ClassBase {
     private Assert assertor;
 
     public Repository(Session session) {
@@ -67,7 +68,7 @@ public class Repository {
         return deleteList(tClass, "id", id);
     }
 
-    public Assertor getAssertor() {
-        return new Assertor();
+    public SttsAssertor getAssertor() {
+        return new SttsAssertorImpl();
     }
 }

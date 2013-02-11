@@ -8,8 +8,26 @@
 
         </layout>
     </appender>
+
+    <!-- log all logs to a separate log file every day -->
+    <appender name="logFile" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="log/vapas.log" />
+        <param name="datePattern" value="'.'yyyy-MM-dd" />
+        <param name="append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %C{6} (%F:%L) - %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="com.aireno" additivity="true" >
+        <level value="DEBUG" />
+        <appender-ref ref="logFile"/>
+    </logger>
+
     <root>
         <priority value="debug"></priority>
         <appender-ref ref="stdout"/>
+
     </root>
+
 </log4j:configuration>

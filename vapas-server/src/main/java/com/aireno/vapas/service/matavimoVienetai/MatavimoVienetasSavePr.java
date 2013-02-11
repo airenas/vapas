@@ -1,7 +1,6 @@
 package com.aireno.vapas.service.matavimoVienetai;
 
 import com.aireno.dto.*;
-import com.aireno.vapas.service.base.Assertor;
 import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.persistance.MatavimoVienetas;
 
