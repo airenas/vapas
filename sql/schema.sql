@@ -290,5 +290,8 @@ select l.Id, l.kiekis, l.PAJAMUOTA, l.DATA, i.PAVADINIMAS as imone, mv.KODAS as 
 	from vLikuciaiInt l left join imones i on l.IMONEID = i.id
 					left join Prekes p on l.PREKEID = p.id
 					left join MATAVIMOVIENETAS mv on mv.id = l.MATAVIMOVIENETASID;
+					
+-- v3
+alter table GydomuGyvunuZurnalas add column pabaigosData timestamp null;				
 
 		

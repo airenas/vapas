@@ -18,6 +18,7 @@
         <property name="imoneId" type="long" not-null="true" unique="false"/>
         <property name="laikytojas" type="string" length="200" not-null="true" unique="false"/>
         <property name="registracijosData" type="timestamp" length="100" not-null="true" unique="false"/>
+        <property name="pabaigosData" type="timestamp" length="100" not-null="false" unique="false"/>
         <property name="pirmuPozymiuData" type="timestamp" length="100" not-null="false" unique="false"/>
 
         <property name="islaukaPienui" type="timestamp" not-null="false"/>

@@ -9,23 +9,24 @@
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-common/1.0/vapas-common-1.0.jar?>
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/panemu/tiwulfx/1.0/tiwulfx-1.0.jar?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.gydymozurnalas.GydymoZurnalasPresenter">
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="407.0000999999975" prefWidth="653.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.gydymozurnalas.GydymoZurnalasPresenter">
   <center>
     <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="499.9999000000025">
       <children>
         <Label layoutX="5.0" layoutY="8.0" text="Data" />
         <Label layoutX="5.0" layoutY="35.0" text="Laikytojas" />
-        <Label layoutX="285.0" layoutY="7.0" text="Įmonė" />
+        <Label layoutX="387.0" layoutY="8.0" text="Įmonė" />
         <Label layoutX="5.0" layoutY="65.0" text="Diagnozė" />
-        <DateControl fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="84.0" AnchorPane.topAnchor="5.0" />
-        <FilterLookup fx:id="imone" onKeyReleased="#update" prefWidth="151.0" AnchorPane.leftAnchor="335.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="4.0" />
-        <StringNewLookup fx:id="laikytojas" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.25" AnchorPane.leftAnchor="83.75" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="34.0" />
-        <StringNewLookup fx:id="diagnoze" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="402.0" AnchorPane.leftAnchor="84.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="65.0" />
+        <DateControl fx:id="data" prefHeight="22.0" prefWidth="125.00009999999747" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="7.0" />
+        <DateControl id="data" fx:id="iki" layoutX="255.0" layoutY="7.0" prefHeight="22.0" prefWidth="117.0" />
+        <FilterLookup fx:id="imone" onKeyReleased="#update" prefHeight="21.0" prefWidth="102.0" AnchorPane.leftAnchor="435.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="6.0" />
+        <StringNewLookup fx:id="laikytojas" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="452.0" AnchorPane.leftAnchor="85.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="34.0" />
+        <StringNewLookup fx:id="diagnoze" editable="true" onKeyReleased="#update" prefHeight="21.0" prefWidth="452.0" AnchorPane.leftAnchor="85.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="65.0" />
         <Label layoutX="5.0" layoutY="96.0" text="Išlauka pien." />
-        <DateControl id="data" fx:id="islaukaPienui" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="84.0" AnchorPane.topAnchor="96.0" />
-        <DateControl id="data" fx:id="islaukaMesai" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="264.0" AnchorPane.topAnchor="96.0" />
-        <Label layoutX="226.0" layoutY="99.0" text="mėsai" />
-        <Button id="skaiciuoti" fx:id="bSkaiciuoti" mnemonicParsing="false" onAction="#skaiciuoti" prefWidth="78.0" text="Skaičiuoti" AnchorPane.leftAnchor="407.0" AnchorPane.topAnchor="96.0" />
+        <DateControl id="data" fx:id="islaukaPienui" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="95.0" />
+        <DateControl id="data" fx:id="islaukaMesai" prefHeight="22.0" prefWidth="117.0" AnchorPane.leftAnchor="255.0" AnchorPane.topAnchor="94.0" />
+        <Label layoutX="215.0" layoutY="98.0" text="mėsai" />
+        <Button id="skaiciuoti" fx:id="bSkaiciuoti" mnemonicParsing="false" onAction="#skaiciuoti" prefWidth="78.0" text="Skaičiuoti" AnchorPane.leftAnchor="382.0" AnchorPane.topAnchor="95.0" />
         <Button fx:id="bPridetiGyvuna" mnemonicParsing="false" onAction="#pridetiGyvuna" prefWidth="150.0" text="Pridėti gyvūną" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="122.0" />
         <TableView fx:id="gyvunai" prefHeight="125.0" prefWidth="486.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="143.0">
           <columns>
@@ -40,11 +41,12 @@
             <TableColumn prefWidth="75.0" text="Column X" />
           </columns>
         </TableView>
+        <Label layoutX="217.0" layoutY="9.0" text="iki" />
       </children>
     </AnchorPane>
   </center>
   <right>
-    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="368.0" prefWidth="100.00009999999747" spacing="10.0" BorderPane.alignment="CENTER">
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="386.0" prefWidth="101.00009999999747" spacing="10.0" BorderPane.alignment="CENTER">
       <children>
         <Button fx:id="bSaugoti" contentDisplay="CENTER" mnemonicParsing="false" onAction="#saugoti" text="Saugoti" />
         <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />

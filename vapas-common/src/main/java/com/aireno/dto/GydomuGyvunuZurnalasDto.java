@@ -18,6 +18,7 @@ public class GydomuGyvunuZurnalasDto extends DtoBase {
     private long imoneId;
     private String laikytojas;
     private Date registracijosData;
+    private Date pabaigosData;
     private Date pirmuPozymiuData;
     private String diagnoze;
     private String gyvunuSarasas;
@@ -26,6 +27,15 @@ public class GydomuGyvunuZurnalasDto extends DtoBase {
     private List<ZurnaloGyvunasDto> gyvunai;
     private Date islaukaPienui;
     private Date islaukaMesai;
+
+
+    public Date getPabaigosData() {
+        return pabaigosData;
+    }
+
+    public void setPabaigosData(Date pabaigosData) {
+        this.pabaigosData = pabaigosData;
+    }
 
     public Date getIslaukaPienui() {
         return islaukaPienui;

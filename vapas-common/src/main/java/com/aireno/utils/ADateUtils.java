@@ -23,6 +23,30 @@ public class ADateUtils {
         return DateUtils.isSameDay(date1, date2);
     }
 
+    /**
+     * Date1 > date2
+     * @param date1
+     * @param date2
+     * @return Date1 > date2
+     */
+    public static boolean greaterDate(Date date1, Date date2) {
+        if (date1 == null || date2 == null)
+            return false;
+        return trimTime(date1).after(trimTime(date2));
+    }
+
+    /**
+     * Date1 < date2
+     * @param date1
+     * @param date2
+     * @return Date1 < date2
+     */
+    public static boolean lessDate(Date date1, Date date2) {
+        if (date1 == null || date2 == null)
+            return false;
+        return trimTime(date1).before(trimTime(date2));
+    }
+
     public static Date trimTime(Date date1) {
         return DateUtils.truncate(date1, Calendar.DAY_OF_MONTH);
     }

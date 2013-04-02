@@ -20,6 +20,7 @@ public class GydomuGyvunuZurnalasDtoMap {
         dto.setLaikytojas(item.getLaikytojas());
         dto.setDiagnoze(item.getDiagnoze());
         dto.setRegistracijosData(item.getRegistracijosData());
+        dto.setPabaigosData(item.getPabaigosData());
         dto.setIslaukaMesai(item.getIslaukaMesai());
         dto.setIslaukaPienui(item.getIslaukaPienui());
         return dto;
@@ -29,6 +30,7 @@ public class GydomuGyvunuZurnalasDtoMap {
         item.setLaikytojas(dto.getLaikytojas());
         item.setDiagnoze(dto.getDiagnoze());
         item.setRegistracijosData(dto.getRegistracijosData());
+        item.setPabaigosData(dto.getPabaigosData());
         item.setImoneId(dto.getImoneId());
         item.setIslaukaMesai(dto.getIslaukaMesai());
         item.setIslaukaPienui(dto.getIslaukaPienui());

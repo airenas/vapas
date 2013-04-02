@@ -2,6 +2,7 @@ package com.aireno.vapas.service.gydymozurnalas;
 
 import com.aireno.base.LookupDto;
 import com.aireno.dto.*;
+import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.ataskaitos.AtaskaitaServiceImpl;
@@ -187,6 +188,10 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 getAssertor().isNotNullStr(dto.getLaikytojas(), "Nėra laikytojo");
                 getAssertor().isNotNullStr(dto.getDiagnoze(), "Nėra diagnozės");
                 getAssertor().isTrue(dto.getRegistracijosData() != null, "Nėra datos");
+                getAssertor().isTrue(dto.getPabaigosData() != null, "Nėra pabaigos datos");
+                getAssertor().isFalse(ADateUtils.greaterDate(dto.getRegistracijosData(), dto.getPabaigosData()),
+                        "Pabaigos data '%s' ankstesnė už pradžios datą '%s'", ADateUtils.dateToString(dto.getPabaigosData()),
+                        ADateUtils.dateToString(dto.getRegistracijosData()));
                 GydomuGyvunuZurnalas item = new GydomuGyvunuZurnalas();
                 if (dto.getId() > 0) {
                     item = getRepo().get(GydomuGyvunuZurnalas.class, dto.getId());

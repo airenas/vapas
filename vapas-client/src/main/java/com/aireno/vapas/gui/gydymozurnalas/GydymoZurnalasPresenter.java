@@ -52,6 +52,8 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
     @FXML
     private DateControl data;
     @FXML
+    private DateControl iki;
+    @FXML
     private DateControl islaukaPienui;
     @FXML
     private DateControl islaukaMesai;
@@ -94,10 +96,25 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                         if (initializing) {
                             return;
                         }
+                        if (iki.getValue() == null || ADateUtils.greaterDate(date2, iki.getValue())) {
+                            iki.setValue(date2);
+                        }
+                        update();
+                    }
+                });
+        iki.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        iki.getInputComponent().selectedDateProperty()
+                .addListener(new ChangeListener<Date>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
+                        if (initializing) {
+                            return;
+                        }
                         arReikiaPerskaiciuoti = true;
                         update();
                     }
                 });
+
         islaukaMesai.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
         islaukaMesai.getInputComponent().selectedDateProperty()
                 .addListener(new ChangeListener<Date>() {
@@ -190,6 +207,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
             item.setRegistracijosData(new Date());
         }
         data.setValue(item.getRegistracijosData());
+        iki.setValue(item.getPabaigosData());
         islaukaMesai.setValue(item.getIslaukaMesai());
         islaukaPienui.setValue(item.getIslaukaPienui());
         imone.setValueId(item.getImoneId());
@@ -220,6 +238,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
         GydomuGyvunuZurnalasDto dto = new GydomuGyvunuZurnalasDto();
         //dto.setNumeris(numeris.getText());
         dto.setRegistracijosData(data.getValue());
+        dto.setPabaigosData(iki.getValue());
         dto.setIslaukaMesai(islaukaMesai.getValue());
         dto.setIslaukaPienui(islaukaPienui.getValue());
         dto.setImoneId(imone.getValueId());
@@ -404,6 +423,8 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
 
         if (!ADateUtils.equalDate(item.getRegistracijosData(), data.getValue()))
             return true;
+        if (!ADateUtils.equalDate(item.getPabaigosData(), iki.getValue()))
+            return true;
         if (!ADateUtils.equalDate(item.getIslaukaPienui(), islaukaPienui.getValue()))
             return true;
         if (!ADateUtils.equalDate(item.getIslaukaMesai(), islaukaMesai.getValue()))
@@ -482,11 +503,15 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
         }
     }
 
-    private Date gautiIslauka(Long mesai) {
-        if (data.getValue() == null || mesai == null) {
+    private Date gautiIslauka(Long kiek) {
+        Date date = iki.getValue();
+        if (date == null) {
+            date = data.getValue();
+        }
+        if (date == null || kiek == null) {
             return null;
         }
-        return DateUtils.addDays(data.getValue(), mesai.intValue());
+        return DateUtils.addDays(date, kiek.intValue());
     }
 
     @Override
