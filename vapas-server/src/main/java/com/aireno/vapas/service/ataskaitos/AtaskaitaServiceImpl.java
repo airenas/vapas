@@ -2,7 +2,6 @@ package com.aireno.vapas.service.ataskaitos;
 
 import com.aireno.Constants;
 import com.aireno.dto.AtaskaitaListDto;
-import com.aireno.dto.LikutisListDto;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.AtaskaitaService;
@@ -10,32 +9,26 @@ import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.base.SttsAssertorImpl;
-import com.aireno.vapas.service.likuciai.LikutisDtoMap;
 import com.aireno.vapas.service.nurasymai.NurasymasDtoMap;
 import com.aireno.vapas.service.persistance.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.PartName;
-import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 import org.hibernate.Session;
-import org.xlsx4j.jaxb.Context;
-import org.xlsx4j.sml.Cell;
-import org.xlsx4j.sml.Row;
-import org.xlsx4j.sml.SheetData;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -320,13 +313,10 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                     }
                     // pildom duomenis
                     for (ReportL item : reportLList) {
-                        if (item.nurasymoId > 0)
-                        {
+                        if (item.nurasymoId > 0) {
                             Nurasymas nurasymas = getRepo().get(Nurasymas.class, item.nurasymoId);
                             item.data = nurasymas.getData();
-                        }
-                        else
-                        {
+                        } else {
                             item.data = item.itemL.getData();
                         }
                     }
@@ -424,51 +414,53 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
 
                 getLog().info("got {} items.", result.size());
 
-                SpreadsheetMLPackage pkg = SpreadsheetMLPackage.createPackage();
-                WorksheetPart sheet = pkg.createWorksheetPart(new PartName("/xl/worksheets/sheet1.xml"), "Likučiai " + imone, 1);
+                Workbook wb = new XSSFWorkbook();
+                CreationHelper createHelper = wb.getCreationHelper();
+                Sheet sheet = wb.createSheet("Likučiai " + imone);
 
-                SheetData sheetData = sheet.getJaxbElement().getSheetData();
-
-                Row row = Context.getsmlObjectFactory().createRow();
-
-                addStringCell(row, "Data: ");
-                addStringCell(row, ADateUtils.dateToString(data));
-                sheetData.getRow().add(row);
-                row = Context.getsmlObjectFactory().createRow();
-                addStringCell(row, "Įmonė: ");
-                addStringCell(row, imone);
-                sheetData.getRow().add(row);
-                row = Context.getsmlObjectFactory().createRow();
-                addStringCell(row, "Prekė");
-                addStringCell(row, "M. Vienetas");
-                addStringCell(row, "Kiekis");
-                addStringCell(row, "Pajamuota");
-                sheetData.getRow().add(row);
-
+                int rowCount = 0;
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCount++);
+                // Create a cell and put a value in it.
+                addCellToRow(row, createHelper.createRichTextString("Data: "));
+                addCellToRow(row, createHelper.createRichTextString(ADateUtils.dateToString(data)));
+                row = sheet.createRow(rowCount++);
+                addCellToRow(row, createHelper.createRichTextString("Įmonė: "));
+                addCellToRow(row, createHelper.createRichTextString(imone));
+                row = sheet.createRow(rowCount++);
+                addCellToRow(row, createHelper.createRichTextString("Prekė"));
+                addCellToRow(row, createHelper.createRichTextString("M. Vienetas"));
+                addCellToRow(row, createHelper.createRichTextString("Kiekis"));
+                addCellToRow(row, createHelper.createRichTextString("Pajamuota"));
                 for (LikutisList item : result) {
-                    row = Context.getsmlObjectFactory().createRow();
-                    addStringCell(row, item.getPreke());
-                    addStringCell(row, item.getMatavimoVienetas());
-                    addStringCell(row, ANumberUtils.decimalToString(item.getKiekis()));
-                    addStringCell(row, ANumberUtils.decimalToString(item.getPajamuota()));
-                    sheetData.getRow().add(row);
+                    row = sheet.createRow(rowCount++);
+                    addCellToRow(row, createHelper.createRichTextString(item.getPreke()));
+                    addCellToRow(row, createHelper.createRichTextString(item.getMatavimoVienetas()));
+                    addCellToRow(row, createHelper
+                            .createRichTextString(ANumberUtils.decimalToString(item.getKiekis())));
+                    addCellToRow(row, createHelper
+                            .createRichTextString(ANumberUtils.decimalToString(item.getPajamuota())));
                 }
 
                 getLog().info("done. saving...");
 
-                File f = new File(failas);
-                pkg.save(f);
+
+                try (FileOutputStream fileOut = new FileOutputStream(failas)) {
+                    wb.write(fileOut);
+                    fileOut.close();
+                }
                 getLog().info("done.");
                 return true;
             }
         }.process(request);
     }
 
-    private void addStringCell(Row row, String value) {
-        Cell cell = Context.getsmlObjectFactory().createCell();
-        cell.setV(value);
-        cell.setV(value);
-        row.getC().add(cell);
+    private void addCellToRow(org.apache.poi.ss.usermodel.Row row, RichTextString richTextString) {
+        int lCount =  row.getLastCellNum();
+        if (lCount < 0) {
+            lCount = 0;
+        }
+        org.apache.poi.ss.usermodel.Cell cell = row.createCell(lCount);
+        cell.setCellValue(richTextString);
     }
 
     private ReportL raskPreke(List<ReportL> result, Likutis itemP, String serija, long nurasymoId) {
