@@ -2,6 +2,7 @@ package com.aireno.vapas.service.ataskaitos;
 
 import com.aireno.Constants;
 import com.aireno.dto.AtaskaitaListDto;
+import com.aireno.dto.LikutisListDto;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
 import com.aireno.vapas.service.AtaskaitaService;
@@ -9,16 +10,24 @@ import com.aireno.vapas.service.base.ProcessorBase;
 import com.aireno.vapas.service.base.Repository;
 import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.base.SttsAssertorImpl;
+import com.aireno.vapas.service.likuciai.LikutisDtoMap;
 import com.aireno.vapas.service.nurasymai.NurasymasDtoMap;
 import com.aireno.vapas.service.persistance.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.PartName;
+import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 import org.hibernate.Session;
+import org.xlsx4j.jaxb.Context;
+import org.xlsx4j.sml.Cell;
+import org.xlsx4j.sml.Row;
+import org.xlsx4j.sml.SheetData;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -387,6 +396,79 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 return true;
             }
         }.process(request);
+    }
+
+    @Override
+    public Boolean generuotiDabartiniusLikucius(GeneruotiRequest request) throws Exception {
+        return new ProcessorBase<GeneruotiRequest, Boolean>() {
+            @Override
+            protected Boolean processInt(GeneruotiRequest request) throws Exception {
+                getAssertor().isTrue(request.imoneId > 0, "Nenurodyta įmonė");
+                Date data = new Date();
+                String imone = gautiImone(request.imoneId, getSession()).getPavadinimas();
+                SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
+                String failas = String.format("documents/likuciai_%s_%s.xlsx", imone, df1.format(data));
+
+                String queryString = "from LikutisList where imone = ?1";
+
+                List<LikutisList> result = getSession().createQuery(queryString)
+                        .setParameter("1", imone).list();
+
+                Collections.sort(result, new Comparator<LikutisList>() {
+                    @Override
+                    public int compare(LikutisList o1, LikutisList o2) {
+                        int i = o1.getPreke().compareTo(o2.getPreke());
+                        return i;
+                    }
+                });
+
+                getLog().info("got {} items.", result.size());
+
+                SpreadsheetMLPackage pkg = SpreadsheetMLPackage.createPackage();
+                WorksheetPart sheet = pkg.createWorksheetPart(new PartName("/xl/worksheets/sheet1.xml"), "Likučiai " + imone, 1);
+
+                SheetData sheetData = sheet.getJaxbElement().getSheetData();
+
+                Row row = Context.getsmlObjectFactory().createRow();
+
+                addStringCell(row, "Data: ");
+                addStringCell(row, ADateUtils.dateToString(data));
+                sheetData.getRow().add(row);
+                row = Context.getsmlObjectFactory().createRow();
+                addStringCell(row, "Įmonė: ");
+                addStringCell(row, imone);
+                sheetData.getRow().add(row);
+                row = Context.getsmlObjectFactory().createRow();
+                addStringCell(row, "Prekė");
+                addStringCell(row, "M. Vienetas");
+                addStringCell(row, "Kiekis");
+                addStringCell(row, "Pajamuota");
+                sheetData.getRow().add(row);
+
+                for (LikutisList item : result) {
+                    row = Context.getsmlObjectFactory().createRow();
+                    addStringCell(row, item.getPreke());
+                    addStringCell(row, item.getMatavimoVienetas());
+                    addStringCell(row, ANumberUtils.decimalToString(item.getKiekis()));
+                    addStringCell(row, ANumberUtils.decimalToString(item.getPajamuota()));
+                    sheetData.getRow().add(row);
+                }
+
+                getLog().info("done. saving...");
+
+                File f = new File(failas);
+                pkg.save(f);
+                getLog().info("done.");
+                return true;
+            }
+        }.process(request);
+    }
+
+    private void addStringCell(Row row, String value) {
+        Cell cell = Context.getsmlObjectFactory().createCell();
+        cell.setV(value);
+        cell.setV(value);
+        row.getC().add(cell);
     }
 
     private ReportL raskPreke(List<ReportL> result, Likutis itemP, String serija, long nurasymoId) {

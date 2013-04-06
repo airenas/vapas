@@ -3,6 +3,7 @@ package com.aireno.utils;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
@@ -35,6 +36,14 @@ public class ANumberUtils {
             return null;
         DecimalFormat df = new DecimalFormat("0.00");
         return df.format(item1);
+    }
+
+    public static BigDecimal toGuiDecimal(BigDecimal item1) {
+        if (item1 == null)
+            return null;
+        BigDecimal result = new BigDecimal(item1.toString());
+        result = result.setScale(2, RoundingMode.HALF_UP);
+        return result;
     }
 
     public static String decimalToStringAsInt(BigDecimal item1) {

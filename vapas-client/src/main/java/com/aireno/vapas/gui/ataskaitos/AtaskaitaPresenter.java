@@ -43,6 +43,9 @@ public class AtaskaitaPresenter extends PresenterBase {
     @FXML
     private Button bLikuciai;
 
+    @FXML
+    private Button bLikuciaiLent;
+
     boolean working;
 
     public Node getView() {
@@ -122,6 +125,17 @@ public class AtaskaitaPresenter extends PresenterBase {
         });
     }
 
+    public void likuciaiLent(ActionEvent event) {
+        RunAssync(new Callable() {
+            @Override
+            public Object call() throws Exception {
+                getService().generuotiDabartiniusLikucius(new AtaskaitaService.GeneruotiRequest(
+                        data.getValue(), imone.getValueId(), numeris.getText()));
+                return true;
+            }
+        });
+    }
+
     private void RunAssync(Callable func)
     {
         RTask task = new RTask(func);
@@ -157,5 +171,6 @@ public class AtaskaitaPresenter extends PresenterBase {
         bNurasymai.setDisable(working);
         bLikuciai.setDisable(working);
         bZurnalas.setDisable(working);
+        bLikuciaiLent.setDisable(working);
     }
 }

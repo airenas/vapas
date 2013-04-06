@@ -31,6 +31,8 @@
 
                 <Button fx:id="bLikuciai" contentDisplay="CENTER" layoutX="29.0" layoutY="149.0" mnemonicParsing="false"
                         onAction="#likuciai" prefWidth="320.0" text="Paruošti likučių ataskaitą"/>
+                <Button fx:id="bLikuciaiLent" contentDisplay="CENTER" layoutX="29.0" layoutY="180.0" mnemonicParsing="false"
+                        onAction="#likuciaiLent" prefWidth="320.0" text="Paruošti esančių likučių lentelę"/>
             </children>
         </AnchorPane>
     </left>

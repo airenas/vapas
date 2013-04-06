@@ -15,8 +15,8 @@ import java.util.Date;
 public class LikutisListDto extends DtoBase {
     protected String matavimoVienetas;
     protected String imone;
-    private String kiekis;
-    private String pajamuota;
+    private BigDecimal kiekis;
+    private BigDecimal pajamuota;
     protected String preke;
     private BigDecimal nurasyta;
     private String serija;
@@ -38,19 +38,19 @@ public class LikutisListDto extends DtoBase {
         this.matavimoVienetas = matavimoVienetas;
     }
 
-    public String getKiekis() {
+    public BigDecimal getKiekis() {
         return kiekis;
     }
 
-    public void setKiekis(String kiekis) {
+    public void setKiekis(BigDecimal kiekis) {
         this.kiekis = kiekis;
     }
 
-    public String getPajamuota() {
+    public BigDecimal getPajamuota() {
         return pajamuota;
     }
 
-    public void setPajamuota(String pajamuota) {
+    public void setPajamuota(BigDecimal pajamuota) {
         this.pajamuota = pajamuota;
     }
 

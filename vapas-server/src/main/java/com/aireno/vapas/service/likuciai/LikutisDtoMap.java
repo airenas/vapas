@@ -17,11 +17,11 @@ public class LikutisDtoMap {
     public LikutisListDto toListDto(LikutisList item) {
         LikutisListDto dto = new LikutisListDto();
         dto.setId(item.getId());
-        dto.setPajamuota(ANumberUtils.decimalToString(item.getPajamuota()));
+        dto.setPajamuota(ANumberUtils.toGuiDecimal(item.getPajamuota()));
         dto.setPreke(item.getPreke());
         dto.setImone(item.getImone());
         dto.setData(ADateUtils.dateToString(item.getData()));
-        dto.setKiekis(ANumberUtils.decimalToString(item.getKiekis()));
+        dto.setKiekis(ANumberUtils.toGuiDecimal(item.getKiekis()));
         dto.setMatavimoVienetas(item.getMatavimoVienetas());
         dto.setNurasyta(item.getNurasyta());
         dto.setSerija(item.getSerija());

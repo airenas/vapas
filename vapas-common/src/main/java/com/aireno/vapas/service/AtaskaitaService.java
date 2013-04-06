@@ -18,6 +18,8 @@ public interface AtaskaitaService {
 
     Boolean generuotiLikucius(GeneruotiRequest generuotiRequest) throws Exception;
 
+    Boolean generuotiDabartiniusLikucius(GeneruotiRequest generuotiRequest)throws Exception;
+
     class GeneruotiRequest {
         public Date date;
         public long imoneId;
