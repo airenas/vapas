@@ -1,7 +1,10 @@
 package com.aireno.vapas.service;
 
 import com.aireno.base.LookupDto;
-import com.aireno.dto.*;
+import com.aireno.dto.GydomuGyvunuZurnalasDto;
+import com.aireno.dto.GydomuGyvunuZurnalasListDto;
+import com.aireno.dto.LookupItemDto;
+import com.aireno.dto.ZurnaloVaistasDto;
 
 import java.util.List;
 
@@ -22,13 +25,15 @@ public interface GydomuGyvunuZurnalasService {
 
     LookupItemDto gautiGyvunoRusi(long id) throws Exception;
 
-    List<GydomuGyvunuZurnalasListDto> sarasas(String[] keywords) throws Exception;
+    List<GydomuGyvunuZurnalasListDto> sarasas(SarasasRequest request) throws Exception;
 
     List<String> sarasasLaikytoju(String[] keywords) throws Exception;
 
     List<String> sarasasDiagnozes(String[] keywords) throws Exception;
 
     IslaukaResponse gautiIslauka(List<ZurnaloVaistasDto> lDto) throws Exception;
+
+    GydomuGyvunuZurnalasDto saugotiNurasyma(GydomuGyvunuZurnalasDto dto) throws Exception;
 
     public class ReceptaiRequest {
         public long prekeId;
@@ -68,5 +73,13 @@ public interface GydomuGyvunuZurnalasService {
         }
 
 
+    }
+
+    class SarasasRequest {
+        public boolean arNurasymas;
+
+        public SarasasRequest(boolean arNurasymas) {
+            this.arNurasymas = arNurasymas;
+        }
     }
 }

@@ -17,6 +17,7 @@ public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable
 
     private Date islaukaPienui;
     private Date islaukaMesai;
+    private boolean arNurasymas;
 
 
     public Date getIslaukaPienui() {
@@ -81,5 +82,13 @@ public class GydomuGyvunuZurnalasList extends EntityBase implements Serializable
 
     public void setGydymas(String gydymas) {
         this.gydymas = gydymas;
+    }
+
+    public boolean isArNurasymas() {
+        return arNurasymas;
+    }
+
+    public void setArNurasymas(boolean arNurasymas) {
+        this.arNurasymas = arNurasymas;
     }
 }

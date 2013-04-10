@@ -16,6 +16,7 @@
         <property name="zurnaloId" type="long" not-null="true"/>
         <property name="prekeId" type="long" not-null="true"/>
         <property name="receptas" type="string" length="400" not-null="false" unique="false"/>
+        <property name="priezastis" type="string" length="400" not-null="false" unique="false"/>
         <property name="matavimoVienetasId" type="long" not-null="true"/>
         <property name="kiekis" type="big_decimal" not-null="true"/>
     </class>

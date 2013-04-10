@@ -17,6 +17,7 @@ public class ZurnaloVaistasDto extends DtoBase {
     private BigDecimal kiekis;
     private long matavimoVienetasId;
     private String receptas;
+    private String priezastis;
 
     public long getPrekeId() {
         return prekeId;
@@ -48,5 +49,13 @@ public class ZurnaloVaistasDto extends DtoBase {
 
     public void setReceptas(String receptas) {
         this.receptas = receptas;
+    }
+
+    public String getPriezastis() {
+        return priezastis;
+    }
+
+    public void setPriezastis(String priezastis) {
+        this.priezastis = priezastis;
     }
 }

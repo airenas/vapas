@@ -231,6 +231,9 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
 
                 int i = numeris;
                 for (GydomuGyvunuZurnalas itemP : list) {
+                    if (itemP.isArNurasymas()) {
+                        continue;
+                    }
                     List<ZurnaloVaistas> vaistai = getRepo().getList(ZurnaloVaistas.class, "zurnaloId", itemP.getId());
                     List<ZurnaloGyvunas> gyvunai = getRepo().getList(ZurnaloGyvunas.class, "zurnaloId", itemP.getId());
                     Map<String, String> repl1 = new HashMap<String, String>();

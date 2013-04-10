@@ -23,6 +23,7 @@ public class GydomuGyvunuZurnalasDtoMap {
         dto.setPabaigosData(item.getPabaigosData());
         dto.setIslaukaMesai(item.getIslaukaMesai());
         dto.setIslaukaPienui(item.getIslaukaPienui());
+        dto.setArNurasymas(item.isArNurasymas());
         return dto;
     }
 
@@ -34,6 +35,7 @@ public class GydomuGyvunuZurnalasDtoMap {
         item.setImoneId(dto.getImoneId());
         item.setIslaukaMesai(dto.getIslaukaMesai());
         item.setIslaukaPienui(dto.getIslaukaPienui());
+        item.setArNurasymas(dto.isArNurasymas());
     }
 
     public GydomuGyvunuZurnalasListDto toListDto(GydomuGyvunuZurnalasList item) {
@@ -56,6 +58,7 @@ public class GydomuGyvunuZurnalasDtoMap {
         dto.setReceptas(itemP.getReceptas());
         dto.setPrekeId(itemP.getPrekeId());
         dto.setKiekis(itemP.getKiekis());
+        dto.setPriezastis(itemP.getPriezastis());
         return dto;
     }
 
@@ -65,6 +68,7 @@ public class GydomuGyvunuZurnalasDtoMap {
         itemP.setPrekeId(itemPDto.getPrekeId());
         itemP.setKiekis(itemPDto.getKiekis());
         itemP.setZurnaloId(item.getId());
+        itemP.setPriezastis(itemPDto.getPriezastis());
     }
 
     public ZurnaloGyvunasDto toGyvunasDto(ZurnaloGyvunas itemP) {

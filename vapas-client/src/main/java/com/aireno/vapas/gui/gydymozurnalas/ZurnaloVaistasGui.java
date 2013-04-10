@@ -45,6 +45,7 @@ import java.util.ResourceBundle;
 
 public class ZurnaloVaistasGui extends DtoBase {
     private final SimpleStringProperty receptas = new SimpleStringProperty();
+    private final SimpleStringProperty priezastis = new SimpleStringProperty();
     private final SimpleLongProperty prekeId = new SimpleLongProperty();
     private final ObjectProperty<BigDecimal> kiekis = new SimpleObjectProperty<BigDecimal>(this, "kiekis");
     private final SimpleLongProperty matavimoVienetasId = new SimpleLongProperty();
@@ -58,6 +59,7 @@ public class ZurnaloVaistasGui extends DtoBase {
         setPrekeId(copy.getPrekeId());
         setMatavimoVienetasId(copy.getMatavimoVienetasId());
         setReceptas(copy.getReceptas());
+        setPriezastis(copy.getPriezastis());
     }
 
 
@@ -90,6 +92,14 @@ public class ZurnaloVaistasGui extends DtoBase {
         this.receptas.set(receptas);
     }
 
+    public String getPriezastis() {
+        return priezastis.get();
+    }
+
+    public void setPriezastis(String priezastis) {
+        this.priezastis.set(priezastis);
+    }
+
     public long getPrekeId() {
         return prekeId.get();
     }
@@ -112,6 +122,7 @@ public class ZurnaloVaistasGui extends DtoBase {
         result.setPrekeId(getPrekeId());
         result.setMatavimoVienetasId(getMatavimoVienetasId());
         result.setReceptas(getReceptas());
+        result.setPriezastis(getPriezastis());
        /* if (StringUtils.isEmpty(result.getReceptas())) {
             result.setReceptas("receptas");
         }*/

@@ -21,8 +21,8 @@ public class Constants {
     public static final String SASKAITALIST_PRESENTER = "SaskaitaListPresenter";
     public static final String SASKAITA_PRESENTER = "SaskaitaPresenter";
     public static final String LIKUTISLIST_PRESENTER = "LikutisListPresenter";
-    public static final String NURASYMASLIST_PRESENTER = "NurasymasListPresenter";
-    public static final String NURASYMAS_PRESENTER = "NurasymasPresenter";
+    public static final String NURASYMASLIST_PRESENTER = "GydymoZurnalasNurasymuiListPresenter";
+    public static final String NURASYMAS_PRESENTER = "GydymoZurnalasNurasymuiPresenter";
 
     public static final String GYVUNORUSISLIST_PRESENTER = "GyvunoRusisListPresenter";
     public static final String GYVUNORUSIS_PRESENTER = "GyvunoRusisPresenter";

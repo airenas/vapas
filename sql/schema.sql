@@ -292,6 +292,14 @@ select l.Id, l.kiekis, l.PAJAMUOTA, l.DATA, i.PAVADINIMAS as imone, mv.KODAS as 
 					left join MATAVIMOVIENETAS mv on mv.id = l.MATAVIMOVIENETASID;
 					
 -- v3
-alter table GydomuGyvunuZurnalas add column pabaigosData timestamp null;				
+alter table GydomuGyvunuZurnalas add column pabaigosData timestamp null;	
+alter table GydomuGyvunuZurnalas add column arNurasymas bit default 0;
+
+alter table ZurnaloVaistai add column priezastis varchar(400);
+
+drop view vGydomuGyvunuZurnalas;
+create view vGydomuGyvunuZurnalas as 
+select n.Id, n.eilesNumeris, n.laikytojas, n.registracijosData, n.gyvunuSarasas, n.gydymas, n.islaukaMesai, n.islaukaPienui, n.arNurasymas, i.PAVADINIMAS as imone
+	from GydomuGyvunuZurnalas n left join imones i on n.IMONEID = i.id; 
 
 		

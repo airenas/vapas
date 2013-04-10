@@ -27,7 +27,15 @@ public class GydomuGyvunuZurnalasDto extends DtoBase {
     private List<ZurnaloGyvunasDto> gyvunai;
     private Date islaukaPienui;
     private Date islaukaMesai;
+    private boolean arNurasymas;
 
+    public boolean isArNurasymas() {
+        return arNurasymas;
+    }
+
+    public void setArNurasymas(boolean arNurasymas) {
+        this.arNurasymas = arNurasymas;
+    }
 
     public Date getPabaigosData() {
         return pabaigosData;

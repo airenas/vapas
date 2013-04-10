@@ -4,6 +4,7 @@ import com.aireno.base.LookupDto;
 import com.aireno.dto.*;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
+import com.aireno.vapas.service.Constants;
 import com.aireno.vapas.service.GydomuGyvunuZurnalasService;
 import com.aireno.vapas.service.ataskaitos.AtaskaitaServiceImpl;
 import com.aireno.vapas.service.base.ProcessorBase;
@@ -35,12 +36,13 @@ import java.util.*;
  */
 public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements GydomuGyvunuZurnalasService {
     @Override
-    public List<GydomuGyvunuZurnalasListDto> sarasas(String[] keywords) throws Exception {
-        return new ProcessorBase<String[], List<GydomuGyvunuZurnalasListDto>>() {
+    public List<GydomuGyvunuZurnalasListDto> sarasas(SarasasRequest request) throws Exception {
+        return new ProcessorBase<SarasasRequest, List<GydomuGyvunuZurnalasListDto>>() {
             @Override
-            protected List<GydomuGyvunuZurnalasListDto> processInt(String[] request) throws Exception {
-                List<GydomuGyvunuZurnalasList> result = getSession().createQuery("from GydomuGyvunuZurnalasList").list();
-                Collections.sort(result, new Comparator<GydomuGyvunuZurnalasList>() {
+            protected List<GydomuGyvunuZurnalasListDto> processInt(SarasasRequest request) throws Exception {
+                List<GydomuGyvunuZurnalasList> result = getRepo()
+                        .getList(GydomuGyvunuZurnalasList.class, "arNurasymas", request.arNurasymas);
+               Collections.sort(result, new Comparator<GydomuGyvunuZurnalasList>() {
                     @Override
                     public int compare(GydomuGyvunuZurnalasList o1, GydomuGyvunuZurnalasList o2) {
                         return o2.getRegistracijosData().compareTo(o1.getRegistracijosData());
@@ -53,7 +55,7 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 }
                 return res;
             }
-        }.process(keywords);
+        }.process(request);
     }
 
     @Override
@@ -63,12 +65,15 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
             protected List<String> processInt(String[] request) throws Exception {
                 List<String> result = getSession().createQuery("select distinct laikytojas from GydomuGyvunuZurnalas").
                         list();
+                result = deleteNullOrEmpty(result);
                 Collections.sort(result);
                 GydomuGyvunuZurnalasDtoMap mapper = getMapper();
                 List<String> res = new ArrayList<String>();
                 for (String item : result) {
                     String dto = new String(item);
-                    //dto.setPavadinimas(item);
+                    if (StringUtils.equals(dto, Constants.NULL_LAIKYTOJAS)) {
+                        continue;
+                    }
                     res.add(dto);
                 }
                 return res;
@@ -83,6 +88,7 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
             protected List<String> processInt(String[] request) throws Exception {
                 List<String> result = getSession().createQuery("select distinct diagnoze from GydomuGyvunuZurnalas").
                         list();
+                result = deleteNullOrEmpty(result);
                 Collections.sort(result);
 
                 List<String> res = new ArrayList<String>();
@@ -267,6 +273,68 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
 
     }
 
+    @Override
+    public GydomuGyvunuZurnalasDto saugotiNurasyma(GydomuGyvunuZurnalasDto dto) throws Exception {
+        return new ProcessorBase<GydomuGyvunuZurnalasDto, GydomuGyvunuZurnalasDto>() {
+            @Override
+            protected GydomuGyvunuZurnalasDto processInt(GydomuGyvunuZurnalasDto dto) throws Exception {
+
+                getAssertor().isNotNull(dto, "Nėra įrašo");
+                getAssertor().isTrue(dto.getImoneId() > 0, "Nėra įmonės");
+                getAssertor().isTrue(dto.getRegistracijosData() != null, "Nėra datos");
+                GydomuGyvunuZurnalas item = new GydomuGyvunuZurnalas();
+                if (dto.getId() > 0) {
+                    item = getRepo().get(GydomuGyvunuZurnalas.class, dto.getId());
+                }
+                getMapper().fromDto(item, dto);
+                item.setLaikytojas(Constants.NULL_LAIKYTOJAS);
+                getSession().save(item);
+
+                // trinam likucius
+                getRepo().deleteList(Likutis.class, "zurnaloId", item.getId());
+                // trinam prekes
+                getRepo().deleteList(ZurnaloVaistas.class, "zurnaloId", item.getId());
+                List<ZurnaloVaistas> vaistai = new ArrayList<>();
+                // saugom prekes
+                for (ZurnaloVaistasDto itemPDto : dto.getVaistai()) {
+                    ZurnaloVaistas itemP = new ZurnaloVaistas();
+
+                    //getAssertor().isNotNullStr(itemPDto.getReceptas(), "Nėra recepto");
+                    getAssertor().isTrue(itemPDto.getKiekis().doubleValue() > 0, "Nėra kiekio");
+                    getAssertor().isTrue(itemPDto.getPrekeId() > 0, "Nėra prekės");
+
+                    getMapper().fromPrekeDto(itemP, itemPDto, item);
+                    if (itemP.getMatavimoVienetasId() == 0) {
+                        MatavimoVienetas mv = gautiMatavimoVieneta(itemP.getPrekeId(), getSession());
+                        itemP.setMatavimoVienetasId(mv.getId());
+                    }
+
+                    getSession().save(itemP);
+                    vaistai.add(itemP);
+                }
+
+                // perkuriame likuti
+
+                for (ZurnaloVaistas itemP : vaistai) {
+                    issaugotiPanaudojima(item, itemP, getRepo());
+                }
+
+                // updatinam pagalbinius laukus
+                item.setGydymas(AtaskaitaServiceImpl.gautiGydymoStr(vaistai, getRepo()));
+
+                item.setGydymas(StringUtils.substring(item.getGydymas(), 0, 400));
+                getSession().save(item);
+                GydomuGyvunuZurnalasDto result = getMapper().toDto(item);
+                result.getVaistai().clear();
+                for (ZurnaloVaistas itemP : vaistai) {
+                    result.getVaistai().add(getMapper().toPrekeDto(itemP));
+                }
+                return result;
+            }
+        }.process(dto);
+
+    }
+
     private void issaugotiPanaudojima(GydomuGyvunuZurnalas item, ZurnaloVaistas itemP, Repository repo) throws Exception {
         List<Likutis> likuciai = repo.prepareQuery(Likutis.class, "prekeId = ?1 and imoneId = ?2")
                 .setParameter("1", itemP.getPrekeId()).setParameter("2", item.getImoneId()).list();
@@ -397,6 +465,8 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 List<String> result = getSession().createQuery("select distinct c.receptas from ZurnaloVaistas c " +
                         "where c.prekeId = ?1").setParameter("1", req.prekeId).
                         list();
+                result = deleteNullOrEmpty(result);
+
                 Collections.sort(result);
                 List<String> res = new ArrayList<>();
                 for (String item : result) {
@@ -407,6 +477,17 @@ public class GydomuGyvunuZurnalasServiceImpl extends ServiceBase implements Gydo
                 return res;
             }
         }.process(req);
+    }
+
+    private List<String> deleteNullOrEmpty(List<String> in) {
+        List<String> result = new ArrayList<>();
+        for (String item : in) {
+            if (StringUtils.isEmpty(item)) {
+                continue;
+            }
+            result.add(item);
+        }
+        return result;
     }
 
     @Override

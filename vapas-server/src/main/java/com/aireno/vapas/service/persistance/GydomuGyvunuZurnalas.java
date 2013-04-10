@@ -17,12 +17,21 @@ public class GydomuGyvunuZurnalas extends EntityBase implements Serializable {
     private String diagnoze;
     private String gyvunuSarasas;
     private String gydymas;
+    private boolean arNurasymas;
 
     private Date islaukaPienui;
     private Date islaukaMesai;
 
     public Date getPabaigosData() {
         return pabaigosData;
+    }
+
+    public boolean isArNurasymas() {
+        return arNurasymas;
+    }
+
+    public void setArNurasymas(boolean arNurasymas) {
+        this.arNurasymas = arNurasymas;
     }
 
     public void setPabaigosData(Date pabaigosData) {

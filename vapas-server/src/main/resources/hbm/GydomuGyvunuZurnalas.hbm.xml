@@ -27,6 +27,7 @@
         <property name="diagnoze" type="string" length="500" unique="false"/>
         <property name="gyvunuSarasas" type="string" length="500" unique="false"/>
         <property name="gydymas" type="string" length="500" unique="false"/>
+        <property name="arNurasymas" type="boolean" not-null="true" />
     </class>
 
 </hibernate-mapping>

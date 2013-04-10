@@ -14,6 +14,7 @@ public class ZurnaloVaistas extends EntityBase implements Serializable {
     private BigDecimal kiekis;
     private long matavimoVienetasId;
     private String receptas;
+    private String priezastis;
 
     public long getZurnaloId() {
         return zurnaloId;
@@ -53,5 +54,13 @@ public class ZurnaloVaistas extends EntityBase implements Serializable {
 
     public void setReceptas(String receptas) {
         this.receptas = receptas;
+    }
+
+    public String getPriezastis() {
+        return priezastis;
+    }
+
+    public void setPriezastis(String priezastis) {
+        this.priezastis = priezastis;
     }
 }

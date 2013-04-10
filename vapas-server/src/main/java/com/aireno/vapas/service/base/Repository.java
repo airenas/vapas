@@ -28,7 +28,7 @@ public class Repository extends ClassBase {
         return get(tClass, "id", id);
     }
 
-    public <T> List<T> getList(Class<T> tClass, String filterField, long filterId) throws Exception {
+    public <T> List<T> getList(Class<T> tClass, String filterField, Object filterId) throws Exception {
         String queryString = "from " + tClass.getSimpleName() + " c where c."
                 + filterField + " = ?1";
         List<T> list = getSession().createQuery(queryString)
