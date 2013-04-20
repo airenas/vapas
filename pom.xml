@@ -17,15 +17,13 @@
         <module>vapas-server</module>
     </modules>
 
-    <distributionManagement>
+<!--    <distributionManagement>
         <repository>
             <id>VapasTarget</id>
             <name>com.aireno</name>
             <url>file://${distribution.repo}</url>
         </repository>
-    </distributionManagement>
-
-
+    </distributionManagement>-->
 
     <build>
         <defaultGoal>deploy</defaultGoal>

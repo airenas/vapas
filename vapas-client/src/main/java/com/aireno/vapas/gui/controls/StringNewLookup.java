@@ -1,7 +1,5 @@
 package com.aireno.vapas.gui.controls;
 
-import com.aireno.dto.StringLookupItemDto;
-import com.mytdev.javafx.scene.control.AutoCompleteTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -11,7 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -94,8 +91,7 @@ public class StringNewLookup extends ComboBox<String> {
                             show();
                             filterItems(s);
 
-                            if (getItems().size() == 0)
-                            {
+                            if (getItems().size() == 0) {
                                 setValue(s);
                             }
                             //String option = trySelectItem(editor.getText());
@@ -147,7 +143,7 @@ public class StringNewLookup extends ComboBox<String> {
                         protected void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
 
-                                setText(item);
+                            setText(item);
 
                         }
                     };
@@ -179,8 +175,8 @@ public class StringNewLookup extends ComboBox<String> {
         changing = true;
         this.needReloadList = needReloadList;
         try {
-             setValue(id);
-             return;
+            setValue(id);
+            return;
         } finally {
             changing = false;
         }
