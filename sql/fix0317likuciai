@@ -1,0 +1,5 @@
+select * from likuciai where zurnaloid = 74
+
+select * from nurasymai where imoneid = 2
+
+update likuciai set nurasymoid = 6 where zurnaloid = 74

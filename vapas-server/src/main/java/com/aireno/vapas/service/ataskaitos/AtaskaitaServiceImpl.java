@@ -36,11 +36,9 @@ import java.util.*;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Airenas
+ * @author Airenas Vaičiūnas
  * Date: 12.11.17
  * Time: 19.41
- * To change this template use File | Settings | File Templates.
  */
 public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaService {
 
@@ -309,7 +307,8 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                             continue;
                         }
                         getAssertor().isTrue(itemP.isArSaskaita() || ANumberUtils.defaultValue(itemP.getNurasymoId()) > 0,
-                                "Pirmiausiai sugeneruokite nurašymą, likučio prekė dar neįdėta į nurašymą");
+                                "Pirmiausiai sugeneruokite nurašymą, likučio prekė '%s' dar neįdėta į nurašymą",
+                                getLikucioPrekeInfo(preke, itemP));
                         ReportL item = raskPreke(reportLList, itemP, getPrekesSerija(likuciai, itemP, getRepo()),
                                 ANumberUtils.defaultValue(itemP.getNurasymoId()));
 
@@ -389,6 +388,10 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 return true;
             }
         }.process(request);
+    }
+
+    private String getLikucioPrekeInfo(Preke preke, Likutis itemP) {
+        return String.format("%s [%s]", preke.getPavadinimas(), ADateUtils.dateToString(itemP.getData()));
     }
 
     @Override
