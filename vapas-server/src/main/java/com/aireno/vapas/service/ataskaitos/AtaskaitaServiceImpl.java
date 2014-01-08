@@ -11,6 +11,12 @@ import com.aireno.vapas.service.base.ServiceBase;
 import com.aireno.vapas.service.base.SttsAssertorImpl;
 import com.aireno.vapas.service.nurasymai.NurasymasDtoMap;
 import com.aireno.vapas.service.persistance.*;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -37,8 +43,8 @@ import java.util.List;
 
 /**
  * @author Airenas Vaičiūnas
- * Date: 12.11.17
- * Time: 19.41
+ *         Date: 12.11.17
+ *         Time: 19.41
  */
 public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaService {
 
@@ -273,22 +279,40 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 Date from = DateUtils.truncate(data, Calendar.MONTH);
                 Date to = DateUtils.addMonths(from, 1);
                 String queryString = "select distinct prekeId from Likutis where imoneId = ?1 " +
-                        "and data >= ?2 and data < ?3";
+                        " and data < ?2";
                 List<Long> prekeIds = getSession().createQuery(queryString)
                         .setParameter("1", request.imoneId)
-                        .setParameter("2", from)
-                        .setParameter("3", to).list();
+                        .setParameter("2", to).list();
+                final HashSet<Long> prekeSet = new HashSet<>(prekeIds);
+                // gauname visas prekes
+                getLog().debug("get all ");
+                List<Preke> prekes = getRepo().getList(Preke.class);
+                getLog().debug("order and filter by needed");
+                Predicate<Preke> filter = new Predicate<Preke>() {
+                    @Override
+                    public boolean apply(Preke p) {
+                        return prekeSet.contains(p.getId());
+                    }
+                };
 
+                Function<Preke, String> orderFunction = new Function<Preke, String>() {
+                    public String apply(Preke it) {
+                        return it.getPavadinimas();
+                    }
+                };
+                ImmutableList<Preke> selectedPrekes = ImmutableList.copyOf(
+                        Ordering.natural().onResultOf(orderFunction).sortedCopy(
+                                Iterables.filter(prekes, filter)));
 
+                getLog().debug("prekes ready");
                 WordprocessingMLPackage doc = getTemplate("template/apskaita.docx");
                 MainDocumentPart mainDocumentPart = doc.getMainDocumentPart();
 
-                for (Long pId : prekeIds) {
+                for (Preke preke : selectedPrekes) {
                     WordprocessingMLPackage template = getTemplate("template/apskaitaPart.docx");
-                    Preke preke = getRepo().get(Preke.class, pId);
                     MatavimoVienetas mvienetas = getRepo().get(MatavimoVienetas.class, preke.getMatVienetasId());
                     List<Likutis> likuciai = getRepo().prepareQuery(Likutis.class, "prekeId = ?1 and imoneId =?2")
-                            .setParameter("1", pId).setParameter("2", request.imoneId).list();
+                            .setParameter("1", preke.getId()).setParameter("2", request.imoneId).list();
                     /*Collections.sort(likuciai, new Comparator<Likutis>() {
                         @Override
                         public int compare(Likutis o1, Likutis o2) {
@@ -461,7 +485,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
     }
 
     private void addCellToRow(org.apache.poi.ss.usermodel.Row row, RichTextString richTextString) {
-        int lCount =  row.getLastCellNum();
+        int lCount = row.getLastCellNum();
         if (lCount < 0) {
             lCount = 0;
         }
