@@ -4,12 +4,15 @@ import com.aireno.base.ApplicationContextProvider;
 import com.aireno.dto.LikutisListDto;
 import com.aireno.vapas.gui.base.*;
 import com.aireno.vapas.service.LikutisService;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class LikutisListPresenter extends PresenterBase implements Initializable, GuiPresenter {
+    public CheckBox cbFilterTeigiamiLikuciai;
     @FXML
     private Node root;
     @FXML
@@ -44,13 +48,23 @@ public class LikutisListPresenter extends PresenterBase implements Initializable
     }
 
     @Override
-    public boolean init() throws GuiException {
+    protected void initInternal() throws Exception {
         MListDefinition def = new MListDefinition();
         def.InitTable(resultsList);
         data = FXCollections.observableArrayList();
         resultsList.setItems(data);
         search(null);
-        return true;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void initOnce() throws Exception {
+         cbFilterTeigiamiLikuciai.selectedProperty().addListener(new ChangeListener<Boolean>() {
+             @Override
+             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lookupDto,
+                                 Boolean lookupDto2) {
+                 search(null);
+             }
+         });
     }
 
     public String getTitle() {
