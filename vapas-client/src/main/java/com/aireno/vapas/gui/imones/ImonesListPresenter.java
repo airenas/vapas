@@ -98,7 +98,7 @@ public class ImonesListPresenter extends PresenterBase implements Initializable,
            fields.add(new FieldDefinition<ImoneDto, String>("Pavadinimas", 200, new PropertyValueFactory<ImoneDto,String>("pavadinimas")));
            fields.add(new FieldDefinition<ImoneDto, String>("Adresas", 200, new PropertyValueFactory<ImoneDto,String>("adresas")));
            //fields.add(new FieldDefinition<ImoneDto, String>("Telefonas", 200, new PropertyValueFactory<ImoneDto,String>("telefonas")));
-           fields.add(new FieldDefinition<ImoneDto, Long>("Id", 50, new PropertyValueFactory<ImoneDto,Long>("id")));
+           //fields.add(new FieldDefinition<ImoneDto, Long>("Id", 50, new PropertyValueFactory<ImoneDto,Long>("id")));
        }
    }
 }
