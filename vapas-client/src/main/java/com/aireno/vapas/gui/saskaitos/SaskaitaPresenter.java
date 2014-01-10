@@ -6,11 +6,14 @@ import com.aireno.dto.SaskaitaDto;
 import com.aireno.dto.SaskaitosPrekeDto;
 import com.aireno.utils.ADateUtils;
 import com.aireno.utils.ANumberUtils;
-import com.aireno.vapas.gui.Constants;
-import com.aireno.vapas.gui.base.*;
+import com.aireno.vapas.gui.base.EditFieldDefinition;
+import com.aireno.vapas.gui.base.EntityPresenterBase;
+import com.aireno.vapas.gui.base.ListDefinition;
 import com.aireno.vapas.gui.controls.FilterLookup;
-import com.aireno.vapas.gui.gydymozurnalas.ZurnaloVaistasGui;
-import com.aireno.vapas.gui.tablefields.*;
+import com.aireno.vapas.gui.tablefields.DateFieldDefinition;
+import com.aireno.vapas.gui.tablefields.DecimalFieldDefinition;
+import com.aireno.vapas.gui.tablefields.LookupFieldDefinitionCB;
+import com.aireno.vapas.gui.tablefields.StringLookupFieldDefinitionCB;
 import com.aireno.vapas.service.LookupService;
 import com.aireno.vapas.service.SaskaitaService;
 import com.panemu.tiwulfx.form.DateControl;
@@ -54,8 +57,8 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     private TableView<SaskaitosPrekeGui> prekes;
     @FXML
     private Button bSaugoti;
-   /* @FXML
-    private Button bTvirtinti;*/
+    /* @FXML
+     private Button bTvirtinti;*/
     @FXML
     private Button bPridetiPreke;
 
@@ -78,7 +81,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
                 new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
         tiekejas.setData(getLookupService().sarasas(
                 new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_TIEKEJAS)));
-        data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        data.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         data.getInputComponent().selectedDateProperty().addListener(new ChangeListener<Date>() {
             @Override
             public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {
@@ -126,7 +129,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
     }
 
     private String dateToString(Date data) {
-        return new SimpleDateFormat(Constants.DATE_FORMAT).format(data);
+        return new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT).format(data);
     }
 
     @Override
@@ -134,7 +137,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
         return bPane;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    DateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT);
+    DateFormat formatter = new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT);
 
     public void saugotiInt() throws Exception {
 

@@ -1,6 +1,5 @@
 package com.aireno.vapas.gui.tablefields;
 
-import com.aireno.vapas.gui.Constants;
 import com.aireno.vapas.gui.base.EditFieldDefinition;
 import com.aireno.vapas.gui.controls.EditingCell;
 import com.panemu.tiwulfx.form.DateControl;
@@ -49,7 +48,7 @@ class DateEditingCell<T> extends EditingCell<T, Date, DateControl> {
     @Override
     protected DateControl createFieldInternal() {
         DateControl field = new DateControl();
-        field.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+        field.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         field.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
 
         field.getInputComponent().selectedDateProperty().addListener(new ChangeListener<Date>() {

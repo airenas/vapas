@@ -77,7 +77,7 @@ public class NurasymasPresenter extends EntityPresenterBase<NurasymasDto> implem
 
         try {
             prekesList = FXCollections.observableArrayList();
-            data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
+            data.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
             data.getInputComponent().selectedDateProperty()
                     .addListener(new ChangeListener<Date>() {
                         @Override
