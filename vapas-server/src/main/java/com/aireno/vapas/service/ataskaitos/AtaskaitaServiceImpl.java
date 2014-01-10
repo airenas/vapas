@@ -63,9 +63,15 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                     AtaskaitaListDto dto = new AtaskaitaListDto();
                     dto.setFailas(item.getAbsolutePath());
                     dto.setPavadinimas(item.getName());
-                    //dto.setData(item.);
+                    dto.setData(new Date(item.lastModified()));
                     res.add(dto);
                 }
+                Collections.sort(res, new Comparator<AtaskaitaListDto>() {
+                    @Override
+                    public int compare(AtaskaitaListDto o1, AtaskaitaListDto o2) {
+                        return - o1.getData().compareTo(o2.getData());
+                    }
+                });
                 return res;
             }
         }.process(keywords);

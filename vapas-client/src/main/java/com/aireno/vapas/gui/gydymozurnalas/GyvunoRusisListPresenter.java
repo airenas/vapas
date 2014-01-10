@@ -19,6 +19,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -79,6 +81,12 @@ public class GyvunoRusisListPresenter extends PresenterBase implements Initializ
             for (LookupDto v : items) {
                 data.add(v);
             }
+            Collections.sort(data, new Comparator<LookupDto>() {
+                @Override
+                public int compare(LookupDto o1, LookupDto o2) {
+                    return o1.getPavadinimas().compareTo(o2.getPavadinimas());
+                }
+            });
         } catch (Exception e) {
             throw new GuiException("Klaida gaunant sąskaitas: ", e);
         }

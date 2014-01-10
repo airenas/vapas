@@ -26,6 +26,7 @@ public class FieldDefinition<T, S> {
         TableColumn<T, S> col = new TableColumn<T, S>(getName());
         col.prefWidthProperty().setValue(getSize());
         col.setCellValueFactory(getValueFactory());
+        col.setSortable(true);
         if (cellFactory != null) {
             col.setCellFactory(cellFactory);
         }

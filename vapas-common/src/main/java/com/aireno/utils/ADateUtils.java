@@ -57,4 +57,11 @@ public class ADateUtils {
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT);
         return df.format(item1);
     }
+
+    public static String dateTimeToString(Date item1) {
+        if (item1 == null)
+            return null;
+        SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_TIME_FORMAT);
+        return df.format(item1);
+    }
 }
