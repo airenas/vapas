@@ -147,6 +147,8 @@
           class="com.aireno.vapas.service.gydymozurnalas.GydomuGyvunuZurnalasServiceImpl" lazy-init="true"/>
     <bean id="AtaskaitaService"
           class="com.aireno.vapas.service.ataskaitos.AtaskaitaServiceImpl" lazy-init="true"/>
+    <bean id="NustatymasService"
+          class="com.aireno.vapas.service.NustatymasServiceImpl" lazy-init="true"/>
 
 
     <!-- Database Setup -->

@@ -2,12 +2,14 @@
 package com.aireno.vapas.gui.base;
 
 import com.aireno.base.ApplicationContextProvider;
+import com.aireno.base.ClassBase;
 import com.aireno.base.Processor;
 import com.aireno.vapas.gui.main.MainPresenter;
 import com.aireno.vapas.service.LookupService;
+import com.aireno.vapas.service.NustatymasService;
 import jfxtras.labs.dialogs.DialogFX;
 
-public abstract class PresenterBase implements GuiPresenter {
+public abstract class PresenterBase extends ClassBase implements GuiPresenter {
     GuiPresenter from;
     protected long id;
     protected boolean initializing = false;
@@ -16,6 +18,10 @@ public abstract class PresenterBase implements GuiPresenter {
 
     public LookupService getLookupService() {
         return ApplicationContextProvider.getProvider().getBean(LookupService.class);
+    }
+
+    public NustatymasService getNustatymasService() {
+        return ApplicationContextProvider.getProvider().getBean(NustatymasService.class);
     }
 
     public void show(String presenter) {
@@ -115,11 +121,19 @@ public abstract class PresenterBase implements GuiPresenter {
         DialogFX dialog = new DialogFX(DialogFX.Type.ERROR);
         dialog.setTitleText("Klaida");
         dialog.setMessage(msg + e.getLocalizedMessage());
-        e.printStackTrace();
+        getLog().error(msg, e);
         dialog.showDialog();
     }
 
     public String getTitle() {
         return "Vaistų apskaita";
+    }
+
+    protected void runAndExpectError(Runnable run, String what) {
+        try {
+            run.run();
+        } catch (Exception e) {
+            setError(what, e);
+        }
     }
 }

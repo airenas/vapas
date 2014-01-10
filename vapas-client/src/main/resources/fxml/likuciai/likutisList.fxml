@@ -11,7 +11,7 @@
     <AnchorPane fx:id="root" prefHeight="375.0" prefWidth="500.0">
       <children>
         <TableView fx:id="resultsList" prefHeight="369.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="31.0" />
-        <AnchorPane prefHeight="31.0" prefWidth="500.0" AnchorPane.bottomAnchor="369.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <AnchorPane prefHeight="31.0" prefWidth="500.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <children>
             <CheckBox fx:id="cbFilterTeigiamiLikuciai" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" text="Rodyti tik teigiamus likučius" />
           </children>

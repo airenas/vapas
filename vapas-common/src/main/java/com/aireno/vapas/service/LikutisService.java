@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface LikutisService
 {
-    List<LikutisListDto> sarasas(String[] keywords) throws Exception;
-
+    List<LikutisListDto> sarasas(SarasasRequest request) throws Exception;
+    public class SarasasRequest {
+        public boolean arRodytiTikTeigiamus;
+    }
 }

@@ -18,7 +18,7 @@ public interface AtaskaitaService {
 
     Boolean generuotiLikucius(GeneruotiRequest generuotiRequest) throws Exception;
 
-    Boolean generuotiDabartiniusLikucius(GeneruotiRequest generuotiRequest)throws Exception;
+    Boolean generuotiDabartiniusLikucius(GeneruotiDabLikuciaiRequest generuotiRequest)throws Exception;
 
     class GeneruotiRequest {
         public Date date;
@@ -29,6 +29,15 @@ public interface AtaskaitaService {
             this.date = date;
             this.imoneId = imoneId;
             this.numeris = numeris;
+        }
+    }
+
+    class GeneruotiDabLikuciaiRequest extends GeneruotiRequest {
+        public boolean arTikTeigiami;
+
+        public GeneruotiDabLikuciaiRequest(Date date, long imoneId, String numeris, boolean arTikTeigiami) {
+            super(date, imoneId, numeris);
+            this.arTikTeigiami = arTikTeigiami;
         }
     }
 }

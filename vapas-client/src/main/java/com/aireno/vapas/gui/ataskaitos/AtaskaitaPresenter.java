@@ -7,21 +7,25 @@ import com.aireno.vapas.gui.base.PresenterBase;
 import com.aireno.vapas.gui.controls.FilterLookup;
 import com.aireno.vapas.service.AtaskaitaService;
 import com.aireno.vapas.service.LookupService;
+import com.aireno.vapas.service.NustatymasService;
 import com.panemu.tiwulfx.form.DateControl;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.Callable;
 
 public class AtaskaitaPresenter extends PresenterBase {
+    public CheckBox cbRodytiTikTeigiamus;
     @FXML
     private Node root;
     @FXML
@@ -57,13 +61,39 @@ public class AtaskaitaPresenter extends PresenterBase {
     }
 
     @Override
-    public boolean init() throws Exception {
+    protected void initInternal() throws Exception {
+    }
+
+    @Override
+    protected void initOnce() throws Exception {
+        cbRodytiTikTeigiamus.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lookupDto,
+                                Boolean lookupDto2) {
+                if (!initializing) {
+                    runAndExpectError(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                getNustatymasService()
+                                        .saugotiBoolean(new NustatymasService.NustatymasSaugotiRequest<Boolean>("ATASKAITA_TIK_TEIGIAMI",
+                                                cbRodytiTikTeigiamus.isSelected()));
+
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }, "Saugoma nustatymas");
+                }
+            }
+        });
         data.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
         //data.setValue(Calendar.getInstance().getTime());
         imone.setData(getLookupService().
                 sarasas(new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
-
-        return true;  //To change body of implemented methods use File | Settings | File Templates.
+        cbRodytiTikTeigiamus.setSelected(getNustatymasService()
+                .gautiBoolean(new NustatymasService.NustatymasRequest<Boolean>("ATASKAITA_TIK_TEIGIAMI", false))
+                .result);
     }
 
     @Override
@@ -129,8 +159,9 @@ public class AtaskaitaPresenter extends PresenterBase {
         RunAssync(new Callable() {
             @Override
             public Object call() throws Exception {
-                getService().generuotiDabartiniusLikucius(new AtaskaitaService.GeneruotiRequest(
-                        data.getValue(), imone.getValueId(), numeris.getText()));
+                getService().generuotiDabartiniusLikucius(new AtaskaitaService.GeneruotiDabLikuciaiRequest(
+                        data.getValue(), imone.getValueId(), numeris.getText(),
+                        cbRodytiTikTeigiamus.isSelected()));
                 return true;
             }
         });

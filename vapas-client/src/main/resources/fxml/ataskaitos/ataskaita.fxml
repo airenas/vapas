@@ -8,40 +8,36 @@
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-client/1.0/vapas-client-1.0.jar?>
 <?scenebuilder-classpath-element C:/Users/Airenas/.m2/repository/com/aireno/vapas-common/1.0/vapas-common-1.0.jar?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.aireno.vapas.gui.ataskaitos.AtaskaitaPresenter">
-    <left>
-        <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="499.9999000000025">
-            <children>
-                <Label layoutX="280.0" layoutY="16.0" text="Data"/>
-                <DateControl id="data" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5"
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.aireno.vapas.gui.ataskaitos.AtaskaitaPresenter">
+  <left>
+    <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="499.9999000000025">
+      <children>
+        <Label layoutX="280.0" layoutY="16.0" text="Data" />
+                        <DateControl id="data" fx:id="data" prefHeight="21.0" prefWidth="124.0" AnchorPane.leftAnchor="334.5"
                              AnchorPane.rightAnchor="41.5" AnchorPane.topAnchor="13.0"/>
-                <Label layoutX="29.0" layoutY="16.0" text="Numeris"/>
-                <FilterLookup fx:id="imone" editable="true" layoutY="43.0" prefHeight="21.0"
+        <Label layoutX="29.0" layoutY="16.0" text="Numeris" />
+                        <FilterLookup fx:id="imone" editable="true" layoutY="43.0" prefHeight="21.0"
                               prefWidth="388.0000999999975" AnchorPane.leftAnchor="112.0"
                               AnchorPane.rightAnchor="41.5"/>
-                <TextField fx:id="numeris" onKeyReleased="#update" prefWidth="124.0" AnchorPane.leftAnchor="112.0"
-                           AnchorPane.topAnchor="13.0"/>
-                <Label layoutX="29.0" layoutY="43.0" text="Įmonė"/>
-                <Button fx:id="bZurnalas" contentDisplay="CENTER" layoutX="29.0"  layoutY="87.0" mnemonicParsing="false"
-                        onAction="#zurnalas" prefWidth="320.0" text="Paruošti gydymo žurnalo dokumentą"/>
-                <Button fx:id="bNurasymai" contentDisplay="CENTER" layoutX="29.0" layoutY="118.0" mnemonicParsing="false"
-                        onAction="#nurasymai" prefWidth="320.0" text="Paruošti nurašymo dokumentą ir ataskaitą"/>
-
-                <Button fx:id="bLikuciai" contentDisplay="CENTER" layoutX="29.0" layoutY="149.0" mnemonicParsing="false"
-                        onAction="#likuciai" prefWidth="320.0" text="Paruošti Apskaitos registrą"/>
-                <Button fx:id="bLikuciaiLent" contentDisplay="CENTER" layoutX="29.0" layoutY="180.0" mnemonicParsing="false"
-                        onAction="#likuciaiLent" prefWidth="320.0" text="Paruošti esančių likučių lentelę"/>
-            </children>
+        <TextField fx:id="numeris" onKeyReleased="#update" prefWidth="124.0" AnchorPane.leftAnchor="112.0" AnchorPane.topAnchor="13.0" />
+        <Label layoutX="29.0" layoutY="43.0" text="Įmonė" />
+        <Button fx:id="bZurnalas" contentDisplay="CENTER" layoutX="29.0" layoutY="87.0" mnemonicParsing="false" onAction="#zurnalas" prefWidth="320.0" text="Paruošti gydymo žurnalo dokumentą" />
+        <Button fx:id="bNurasymai" contentDisplay="CENTER" layoutX="29.0" layoutY="118.0" mnemonicParsing="false" onAction="#nurasymai" prefWidth="320.0" text="Paruošti nurašymo dokumentą ir ataskaitą" />
+        <Button fx:id="bLikuciai" contentDisplay="CENTER" layoutX="29.0" layoutY="149.0" mnemonicParsing="false" onAction="#likuciai" prefWidth="320.0" text="Paruošti Apskaitos registrą" />
+        <AnchorPane id="pane:custom" prefHeight="70.0" prefWidth="486.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="177.0">
+          <children>
+            <Button fx:id="bLikuciaiLent" contentDisplay="CENTER" layoutX="29.0" layoutY="35.0" mnemonicParsing="false" onAction="#likuciaiLent" prefWidth="320.0" text="Paruošti esančių likučių lentelę" />
+            <CheckBox fx:id="cbRodytiTikTeigiamus" layoutX="29.0" layoutY="14.0" mnemonicParsing="false" text="Rodyti tik teigiamus likučius" />
+          </children>
         </AnchorPane>
-    </left>
-    <right>
-        <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0"
-              BorderPane.alignment="CENTER">
-            <children>
-                <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti"/>
-            </children>
-        </VBox>
-    </right>
+      </children>
+    </AnchorPane>
+  </left>
+  <right>
+    <VBox fx:id="bPane" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <children>
+        <Button mnemonicParsing="false" onAction="#iseiti" text="Išeiti" />
+      </children>
+    </VBox>
+  </right>
 </BorderPane>

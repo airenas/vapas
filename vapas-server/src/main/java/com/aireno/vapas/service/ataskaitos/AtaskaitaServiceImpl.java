@@ -13,7 +13,6 @@ import com.aireno.vapas.service.nurasymai.NurasymasDtoMap;
 import com.aireno.vapas.service.persistance.*;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -419,10 +418,10 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
     }
 
     @Override
-    public Boolean generuotiDabartiniusLikucius(GeneruotiRequest request) throws Exception {
-        return new ProcessorBase<GeneruotiRequest, Boolean>() {
+    public Boolean generuotiDabartiniusLikucius(GeneruotiDabLikuciaiRequest request) throws Exception {
+        return new ProcessorBase<GeneruotiDabLikuciaiRequest, Boolean>() {
             @Override
-            protected Boolean processInt(GeneruotiRequest request) throws Exception {
+            protected Boolean processInt(final GeneruotiDabLikuciaiRequest request) throws Exception {
                 getAssertor().isTrue(request.imoneId > 0, "Nenurodyta įmonė");
                 Date data = new Date();
                 String imone = gautiImone(request.imoneId, getSession()).getPavadinimas();
@@ -434,15 +433,23 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 List<LikutisList> result = getSession().createQuery(queryString)
                         .setParameter("1", imone).list();
 
-                Collections.sort(result, new Comparator<LikutisList>() {
-                    @Override
-                    public int compare(LikutisList o1, LikutisList o2) {
-                        int i = o1.getPreke().compareTo(o2.getPreke());
-                        return i;
-                    }
-                });
-
                 getLog().info("got {} items.", result.size());
+                Predicate<LikutisList> filter = new Predicate<LikutisList>() {
+                    @Override
+                    public boolean apply(LikutisList p) {
+                        return !request.arTikTeigiami || p.getKiekis().compareTo(BigDecimal.ZERO) > 0;
+                    }
+                };
+
+                Function<LikutisList, String> orderFunction = new Function<LikutisList, String>() {
+                    public String apply(LikutisList it) {
+                        return it.getPreke();
+                    }
+                };
+                ImmutableList<LikutisList> selectedLikuciai = ImmutableList.copyOf(
+                        Ordering.natural().onResultOf(orderFunction).sortedCopy(
+                                Iterables.filter(result, filter)));
+                getLog().info("filtered by ar teigiami {} items.", selectedLikuciai.size());
 
                 Workbook wb = new XSSFWorkbook();
                 CreationHelper createHelper = wb.getCreationHelper();
@@ -461,7 +468,7 @@ public class AtaskaitaServiceImpl extends ServiceBase implements AtaskaitaServic
                 addCellToRow(row, createHelper.createRichTextString("M. Vienetas"));
                 addCellToRow(row, createHelper.createRichTextString("Kiekis"));
                 addCellToRow(row, createHelper.createRichTextString("Pajamuota"));
-                for (LikutisList item : result) {
+                for (LikutisList item : selectedLikuciai) {
                     row = sheet.createRow(rowCount++);
                     addCellToRow(row, createHelper.createRichTextString(item.getPreke()));
                     addCellToRow(row, createHelper.createRichTextString(item.getMatavimoVienetas()));

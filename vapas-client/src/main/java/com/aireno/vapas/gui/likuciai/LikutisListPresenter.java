@@ -4,6 +4,7 @@ import com.aireno.base.ApplicationContextProvider;
 import com.aireno.dto.LikutisListDto;
 import com.aireno.vapas.gui.base.*;
 import com.aireno.vapas.service.LikutisService;
+import com.aireno.vapas.service.NustatymasService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -58,13 +59,31 @@ public class LikutisListPresenter extends PresenterBase implements Initializable
 
     @Override
     protected void initOnce() throws Exception {
-         cbFilterTeigiamiLikuciai.selectedProperty().addListener(new ChangeListener<Boolean>() {
-             @Override
-             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lookupDto,
-                                 Boolean lookupDto2) {
-                 search(null);
-             }
-         });
+        cbFilterTeigiamiLikuciai.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lookupDto,
+                                Boolean lookupDto2) {
+                if (!initializing) {
+                    runAndExpectError(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                getNustatymasService()
+                                        .saugotiBoolean(new NustatymasService.NustatymasSaugotiRequest<Boolean>("LIKUTIS_LIST_TIK_TEIGIAMI",
+                                                cbFilterTeigiamiLikuciai.isSelected()));
+
+                                search(null);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }, "Atidaromi likučiai");
+                }
+            }
+        });
+        cbFilterTeigiamiLikuciai.setSelected(getNustatymasService()
+                .gautiBoolean(new NustatymasService.NustatymasRequest<Boolean>("LIKUTIS_LIST_TIK_TEIGIAMI", false))
+                .result);
     }
 
     public String getTitle() {
@@ -78,7 +97,9 @@ public class LikutisListPresenter extends PresenterBase implements Initializable
 
     public void search(ActionEvent event) throws GuiException {
         try {
-            List<LikutisListDto> items = getService().sarasas(null);
+            LikutisService.SarasasRequest request = new LikutisService.SarasasRequest();
+            request.arRodytiTikTeigiamus = cbFilterTeigiamiLikuciai.isSelected();
+            List<LikutisListDto> items = getService().sarasas(request);
             data.clear();
             for (LikutisListDto v : items) {
                 data.add(v);
