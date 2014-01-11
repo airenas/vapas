@@ -88,7 +88,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
     protected void initOnce() throws Exception {
         prekesList = FXCollections.observableArrayList();
         gyvunaiList = FXCollections.observableArrayList();
-        data.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        data.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         data.getInputComponent().selectedDateProperty()
                 .addListener(new ChangeListener<Date>() {
                     @Override
@@ -102,7 +102,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                         update();
                     }
                 });
-        iki.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        iki.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         iki.getInputComponent().selectedDateProperty()
                 .addListener(new ChangeListener<Date>() {
                     @Override
@@ -115,7 +115,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                     }
                 });
 
-        islaukaMesai.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        islaukaMesai.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         islaukaMesai.getInputComponent().selectedDateProperty()
                 .addListener(new ChangeListener<Date>() {
                     @Override
@@ -127,7 +127,7 @@ public class GydymoZurnalasPresenter extends EntityPresenterBase<GydomuGyvunuZur
                         update();
                     }
                 });
-        islaukaPienui.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        islaukaPienui.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         islaukaPienui.getInputComponent().selectedDateProperty()
                 .addListener(new ChangeListener<Date>() {
                     @Override

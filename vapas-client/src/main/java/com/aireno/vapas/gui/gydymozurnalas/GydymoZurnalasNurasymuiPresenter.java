@@ -64,7 +64,7 @@ public class GydymoZurnalasNurasymuiPresenter extends EntityPresenterBase<Gydomu
     @Override
     protected void initOnce() throws Exception {
         prekesList = FXCollections.observableArrayList();
-        data.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        data.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         data.getInputComponent().selectedDateProperty()
                 .addListener(new ChangeListener<Date>() {
                     @Override

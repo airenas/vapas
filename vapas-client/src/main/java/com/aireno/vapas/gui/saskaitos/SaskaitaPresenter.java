@@ -81,7 +81,7 @@ public class SaskaitaPresenter extends EntityPresenterBase<SaskaitaDto> {
                 new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
         tiekejas.setData(getLookupService().sarasas(
                 new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_TIEKEJAS)));
-        data.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        data.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         data.getInputComponent().selectedDateProperty().addListener(new ChangeListener<Date>() {
             @Override
             public void changed(ObservableValue<? extends Date> observableValue, Date date, Date date2) {

@@ -48,7 +48,7 @@ class DateEditingCell<T> extends EditingCell<T, Date, DateControl> {
     @Override
     protected DateControl createFieldInternal() {
         DateControl field = new DateControl();
-        field.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        field.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         field.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
 
         field.getInputComponent().selectedDateProperty().addListener(new ChangeListener<Date>() {

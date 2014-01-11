@@ -87,7 +87,7 @@ public class AtaskaitaPresenter extends PresenterBase {
                 }
             }
         });
-        data.setDateFormat(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
+        data.dateFormatProperty().setValue(new SimpleDateFormat(com.aireno.Constants.DATE_FORMAT));
         //data.setValue(Calendar.getInstance().getTime());
         imone.setData(getLookupService().
                 sarasas(new LookupService.LookupRequest(com.aireno.Constants.LOOKUP_IMONE)));
